@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { Download, Github, Linkedin, Twitter, Settings, Code, Smartphone, Search, BarChart3, FileText, Briefcase, GraduationCap, Mail, Phone, MapPin } from 'lucide-react';
+import { Download, Github, Linkedin, Twitter, Code, Smartphone, Search, BarChart3, FileText, Briefcase, GraduationCap, Mail, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu';
 import { ProgressBar } from '@/components/ui/progress-bar';
@@ -8,6 +8,8 @@ import { TimelineItem } from '@/components/ui/timeline-item';
 import { TestimonialCard } from '@/components/ui/testimonial-card';
 import { ContactCard } from '@/components/ui/contact-card';
 import { Link as ScrollLink, animateScroll as scroll } from 'react-scroll';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { ThemeProvider } from '@/components/theme-provider';
 
 export default function Welcome() {
     const scrollToTop = () => {
@@ -18,20 +20,20 @@ export default function Welcome() {
     };
 
     return (
-        <>
+        <ThemeProvider defaultTheme="light" storageKey="portfolio-theme">
             <Head title="Portfolio - Creative Designer & Developer">
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
             </Head>
 
-            <div className="min-h-screen bg-white text-gray-900">
+            <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                 {/* Navigation */}
-                <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur-sm border-b border-gray-100">
+                <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={scrollToTop}>
                         <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
                             P
                         </div>
-                        <span className="font-medium">Portfolio</span>
+                        <span className="font-medium text-base">Portfolio</span>
                     </div>
 
                     <NavigationMenu>
@@ -44,10 +46,8 @@ export default function Welcome() {
                                         smooth={true}
                                         offset={-100}
                                         duration={500}
-                                        className={`text-sm font-medium cursor-pointer ${
-                                            item === 'Home' ? 'text-[#20B2AA]' : 'text-gray-600'
-                                        } hover:text-[#20B2AA] transition-colors`}
-                                        activeClass="text-[#20B2AA]"
+                                        className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
+                                        activeClass="!text-[#20B2AA] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#20B2AA] after:rounded-full"
                                     >
                                         {item}
                                     </ScrollLink>
@@ -56,10 +56,8 @@ export default function Welcome() {
                         </NavigationMenuList>
                     </NavigationMenu>
 
-                    <div className="flex items-center gap-4">
-                        <button className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
-                            <Settings className="w-5 h-5 text-gray-600" />
-                        </button>
+                    <div className="flex items-center gap-3">
+                        <ThemeToggle />
                         <ScrollLink
                             to="contact"
                             spy={true}
@@ -68,28 +66,27 @@ export default function Welcome() {
                             duration={500}
                             className="cursor-pointer"
                         >
-                            <Button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-6">
+                            <Button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-6 py-2.5 text-sm">
                                 Hire Me
                             </Button>
                         </ScrollLink>
                     </div>
-                    </nav>
+                </nav>
 
                 {/* Hero Section */}
-                <section className="pt-32 px-6 pb-20 max-w-7xl mx-auto" id="home">
-                    <div className="grid grid-cols-2 gap-12 items-center">
+                <section className="min-h-screen flex items-center pt-20 px-4 pb-16 max-w-7xl mx-auto" id="home">
+                    <div className="grid grid-cols-2 gap-8 items-center">
                         <div>
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E6F7F6] text-[#20B2AA] text-sm mb-8">
                                 <span className="w-2 h-2 rounded-full bg-[#20B2AA] animate-pulse"></span>
                                 Available for work
                             </div>
 
-                            <h1 className="text-6xl font-bold leading-tight mb-6">
-                                Creative <span className="text-[#20B2AA]">Designer</span>
-                                <br />& Developer
+                            <h1 className="text-6xl font-bold leading-[1.1] tracking-tight mb-6">
+                                Creative <span className="text-[#20B2AA]">Designer</span> & Developer
                             </h1>
 
-                            <p className="text-gray-600 text-lg mb-10 max-w-lg">
+                            <p className="text-gray-600 dark:text-gray-300 text-lg mb-8 max-w-xl">
                                 I create exceptional digital experiences that solve complex problems and connect people through elegant, user-focused design.
                             </p>
 
@@ -102,11 +99,11 @@ export default function Welcome() {
                                     duration={500}
                                     className="cursor-pointer"
                                 >
-                                    <Button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-8 py-6 text-base">
+                                    <Button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-8 py-3 text-base">
                                         View My Work
                                     </Button>
                                 </ScrollLink>
-                                <Button variant="outline" className="border-gray-200 px-8 py-6 text-base">
+                                <Button variant="outline" className="border-gray-200 px-8 py-3 text-base">
                                     <Download className="w-5 h-5 mr-2" />
                                     Download CV
                                 </Button>
@@ -122,68 +119,57 @@ export default function Welcome() {
                                 <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
                                     <Linkedin className="w-5 h-5 text-gray-600" />
                                 </a>
-                                <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
-                                    <Settings className="w-5 h-5 text-gray-600" />
-                                </a>
                             </div>
                         </div>
 
                         <div className="relative">
-                            <div className="aspect-square bg-gray-100 rounded-3xl overflow-hidden">
+                            <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-3xl overflow-hidden">
                                 {/* Profile image will go here */}
                             </div>
                             
                             {/* Stats cards */}
-                            <div className="absolute -top-6 -right-6 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
+                            <div className="absolute -top-6 -right-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-[#E6F7F6] flex items-center justify-center">
                                     <span className="text-[#20B2AA] text-xl">✓</span>
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg">50+ Projects</div>
-                                    <div className="text-sm text-gray-500">Completed</div>
+                                    <div className="font-semibold text-lg dark:text-white">50+ Projects</div>
+                                    <div className="text-sm text-gray-500 dark:text-gray-400">Completed</div>
                                 </div>
                             </div>
                             
-                            <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
+                            <div className="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-[#E6F7F6] flex items-center justify-center">
                                     <span className="text-[#20B2AA] text-xl">★</span>
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-lg">5 Years</div>
-                                    <div className="text-sm text-gray-500">Experience</div>
+                                    <div className="font-semibold text-lg dark:text-white">5 Years</div>
+                                    <div className="text-sm text-gray-500 dark:text-gray-400">Experience</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {/* Scroll Down Indicator */}
-                    <div className="flex flex-col items-center mt-20">
-                        <span className="text-sm text-gray-400 mb-2">Scroll Down</span>
-                        <div className="w-6 h-10 border-2 border-gray-300 rounded-full flex items-center justify-center">
-                            <div className="w-1.5 h-1.5 bg-gray-300 rounded-full animate-bounce"></div>
                         </div>
                     </div>
                 </section>
 
                 {/* Services Section */}
-                <section className="py-24 px-6 bg-gray-50" id="services">
+                <section className="py-32 px-4 bg-gray-50 dark:bg-gray-800" id="services">
                     <div className="max-w-7xl mx-auto">
-                        <div className="text-center mb-16">
-                            <span className="text-[#20B2AA] font-medium">Services</span>
-                            <h2 className="text-4xl font-bold mt-4 mb-6">My Expertise</h2>
-                            <p className="text-gray-600 max-w-2xl mx-auto">
+                        <div className="text-center mb-12">
+                            <span className="text-[#20B2AA] font-medium text-sm">Services</span>
+                            <h2 className="text-3xl font-bold mt-3 mb-4">My Expertise</h2>
+                            <p className="text-gray-600 dark:text-gray-300 text-sm max-w-2xl mx-auto">
                                 I provide high-quality services tailored to meet your specific needs and help your business grow
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-8">
+                        <div className="grid grid-cols-3 gap-6">
                             {/* Web Development */}
-                            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center mb-6">
-                                    <Code className="w-6 h-6 text-[#20B2AA]" />
+                            <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-10 h-10 bg-[#E6F7F6] rounded-lg flex items-center justify-center mb-4">
+                                    <Code className="w-5 h-5 text-[#20B2AA]" />
                                 </div>
-                                <h3 className="text-xl font-semibold mb-4">Web Development</h3>
-                                <p className="text-gray-600 mb-6">
+                                <h3 className="text-lg font-semibold mb-3">Web Development</h3>
+                                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
                                     Creating responsive, fast, and user-friendly websites using modern technologies and best practices.
                                 </p>
                                 <a href="#" className="text-[#20B2AA] font-medium inline-flex items-center hover:gap-2 transition-all">
@@ -195,15 +181,15 @@ export default function Welcome() {
                             </div>
 
                             {/* UI/UX Design */}
-                            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center mb-6">
-                                    <svg className="w-6 h-6 text-[#20B2AA]" viewBox="0 0 24 24" fill="none">
+                            <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-10 h-10 bg-[#E6F7F6] rounded-lg flex items-center justify-center mb-4">
+                                    <svg className="w-5 h-5 text-[#20B2AA]" viewBox="0 0 24 24" fill="none">
                                         <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                         <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-semibold mb-4">UI/UX Design</h3>
-                                <p className="text-gray-600 mb-6">
+                                <h3 className="text-lg font-semibold mb-3">UI/UX Design</h3>
+                                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
                                     Designing intuitive and beautiful user interfaces that provide exceptional user experiences.
                                 </p>
                                 <a href="#" className="text-[#20B2AA] font-medium inline-flex items-center hover:gap-2 transition-all">
@@ -215,12 +201,12 @@ export default function Welcome() {
                             </div>
 
                             {/* Mobile Development */}
-                            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center mb-6">
-                                    <Smartphone className="w-6 h-6 text-[#20B2AA]" />
+                            <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-10 h-10 bg-[#E6F7F6] rounded-lg flex items-center justify-center mb-4">
+                                    <Smartphone className="w-5 h-5 text-[#20B2AA]" />
                                 </div>
-                                <h3 className="text-xl font-semibold mb-4">Mobile Development</h3>
-                                <p className="text-gray-600 mb-6">
+                                <h3 className="text-lg font-semibold mb-3">Mobile Development</h3>
+                                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
                                     Building cross-platform mobile applications that work seamlessly on iOS and Android devices.
                                 </p>
                                 <a href="#" className="text-[#20B2AA] font-medium inline-flex items-center hover:gap-2 transition-all">
@@ -232,12 +218,12 @@ export default function Welcome() {
                             </div>
 
                             {/* SEO Optimization */}
-                            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center mb-6">
-                                    <Search className="w-6 h-6 text-[#20B2AA]" />
+                            <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-10 h-10 bg-[#E6F7F6] rounded-lg flex items-center justify-center mb-4">
+                                    <Search className="w-5 h-5 text-[#20B2AA]" />
                                 </div>
-                                <h3 className="text-xl font-semibold mb-4">SEO Optimization</h3>
-                                <p className="text-gray-600 mb-6">
+                                <h3 className="text-lg font-semibold mb-3">SEO Optimization</h3>
+                                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
                                     Improving your website's visibility in search engines to drive more organic traffic.
                                 </p>
                                 <a href="#" className="text-[#20B2AA] font-medium inline-flex items-center hover:gap-2 transition-all">
@@ -249,12 +235,12 @@ export default function Welcome() {
                             </div>
 
                             {/* Digital Marketing */}
-                            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center mb-6">
-                                    <BarChart3 className="w-6 h-6 text-[#20B2AA]" />
+                            <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-10 h-10 bg-[#E6F7F6] rounded-lg flex items-center justify-center mb-4">
+                                    <BarChart3 className="w-5 h-5 text-[#20B2AA]" />
                                 </div>
-                                <h3 className="text-xl font-semibold mb-4">Digital Marketing</h3>
-                                <p className="text-gray-600 mb-6">
+                                <h3 className="text-lg font-semibold mb-3">Digital Marketing</h3>
+                                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
                                     Creating and implementing effective digital marketing strategies to grow your business.
                                 </p>
                                 <a href="#" className="text-[#20B2AA] font-medium inline-flex items-center hover:gap-2 transition-all">
@@ -266,12 +252,12 @@ export default function Welcome() {
                             </div>
 
                             {/* Content Creation */}
-                            <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center mb-6">
-                                    <FileText className="w-6 h-6 text-[#20B2AA]" />
+                            <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                                <div className="w-10 h-10 bg-[#E6F7F6] rounded-lg flex items-center justify-center mb-4">
+                                    <FileText className="w-5 h-5 text-[#20B2AA]" />
                                 </div>
-                                <h3 className="text-xl font-semibold mb-4">Content Creation</h3>
-                                <p className="text-gray-600 mb-6">
+                                <h3 className="text-lg font-semibold mb-3">Content Creation</h3>
+                                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
                                     Producing high-quality content that engages your audience and drives conversions.
                                 </p>
                                 <a href="#" className="text-[#20B2AA] font-medium inline-flex items-center hover:gap-2 transition-all">
@@ -286,12 +272,12 @@ export default function Welcome() {
                 </section>
 
                 {/* Featured Projects Section */}
-                <section className="py-24 px-6" id="works">
+                <section className="py-32 px-6 dark:bg-gray-900" id="works">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <span className="text-[#20B2AA] font-medium">Portfolio</span>
                             <h2 className="text-4xl font-bold mt-4 mb-6">Featured Projects</h2>
-                            <p className="text-gray-600 max-w-2xl mx-auto">
+                            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                                 Explore my latest work and see how I've helped clients achieve their goals
                             </p>
                         </div>
@@ -301,13 +287,13 @@ export default function Welcome() {
                             <button className="px-6 py-2 rounded-full bg-[#20B2AA] text-white font-medium">
                                 All
                             </button>
-                            <button className="px-6 py-2 rounded-full text-gray-600 font-medium hover:bg-gray-100 transition-colors">
+                            <button className="px-6 py-2 rounded-full text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                                 Web Design
                             </button>
-                            <button className="px-6 py-2 rounded-full text-gray-600 font-medium hover:bg-gray-100 transition-colors">
+                            <button className="px-6 py-2 rounded-full text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                                 Mobile Apps
                             </button>
-                            <button className="px-6 py-2 rounded-full text-gray-600 font-medium hover:bg-gray-100 transition-colors">
+                            <button className="px-6 py-2 rounded-full text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                                 Branding
                             </button>
                         </div>
@@ -379,12 +365,12 @@ export default function Welcome() {
                 </section>
 
                 {/* Technical Proficiency Section */}
-                <section className="py-24 px-6 bg-gray-50" id="skills">
+                <section className="py-24 px-6 bg-gray-50 dark:bg-gray-800" id="skills">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <span className="text-[#20B2AA] font-medium">Skills</span>
                             <h2 className="text-4xl font-bold mt-4 mb-6">Technical Proficiency</h2>
-                            <p className="text-gray-600 max-w-2xl mx-auto">
+                            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                                 I've spent years honing my skills in various technologies and design principles
                             </p>
                         </div>
@@ -413,12 +399,12 @@ export default function Welcome() {
                 </section>
 
                 {/* Experience & Education Section */}
-                <section className="py-24 px-6" id="resume">
+                <section className="py-24 px-6 dark:bg-gray-900" id="resume">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <span className="text-[#20B2AA] font-medium">Resume</span>
                             <h2 className="text-4xl font-bold mt-4 mb-6">Experience & Education</h2>
-                            <p className="text-gray-600 max-w-2xl mx-auto">
+                            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                                 My professional journey and academic background
                             </p>
                         </div>
@@ -498,12 +484,12 @@ export default function Welcome() {
                 </section>
 
                 {/* Testimonials Section */}
-                <section className="py-24 px-6 bg-gray-50" id="testimonials">
+                <section className="py-24 px-6 bg-gray-50 dark:bg-gray-800" id="testimonials">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
                             <span className="text-[#20B2AA] font-medium">Testimonials</span>
                             <h2 className="text-4xl font-bold mt-4 mb-6">What Clients Say</h2>
-                            <p className="text-gray-600 max-w-2xl mx-auto">
+                            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
                                 Feedback from clients who have experienced working with me
                             </p>
                         </div>
@@ -534,23 +520,23 @@ export default function Welcome() {
                 </section>
 
                 {/* Contact Section */}
-                <section className="py-24 px-6" id="contact">
+                <section className="py-24 px-4 dark:bg-gray-900" id="contact">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
-                            <span className="text-[#20B2AA] font-medium">Contact</span>
-                            <h2 className="text-4xl font-bold mt-4 mb-6">Let's Work Together</h2>
-                            <p className="text-gray-600 max-w-2xl mx-auto">
+                            <span className="text-[#20B2AA] font-medium text-sm">Contact</span>
+                            <h2 className="text-3xl font-bold mt-3 mb-4">Let's Work Together</h2>
+                            <p className="text-gray-600 dark:text-gray-300 text-sm max-w-2xl mx-auto">
                                 Have a project in mind? Let's discuss how I can help bring your ideas to life
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-20">
+                        <div className="grid grid-cols-2 gap-12">
                             {/* Contact Form */}
-                            <div className="bg-white rounded-3xl p-8 shadow-sm">
-                                <h3 className="text-2xl font-semibold mb-6">Get In Touch</h3>
+                            <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-[0_4px_20px_rgba(0,0,0,0.05)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.3)] h-[600px]">
+                                <h3 className="text-xl font-semibold mb-4 dark:text-white">Get In Touch</h3>
                                 <form className="space-y-4">
                                     <div>
-                                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                             Name
                                         </label>
                                         <input
@@ -558,11 +544,11 @@ export default function Welcome() {
                                             id="name"
                                             name="name"
                                             placeholder="Your Name"
-                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] outline-none transition-colors text-sm"
+                                            className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:placeholder-gray-400 shadow-sm"
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                             Email
                                         </label>
                                         <input
@@ -570,11 +556,11 @@ export default function Welcome() {
                                             id="email"
                                             name="email"
                                             placeholder="Your Email"
-                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] outline-none transition-colors text-sm"
+                                            className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:placeholder-gray-400 shadow-sm"
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
+                                        <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                             Subject
                                         </label>
                                         <input
@@ -582,46 +568,49 @@ export default function Welcome() {
                                             id="subject"
                                             name="subject"
                                             placeholder="Subject"
-                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] outline-none transition-colors text-sm"
+                                            className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:placeholder-gray-400 shadow-sm"
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+                                        <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                             Message
                                         </label>
                                         <textarea
                                             id="message"
                                             name="message"
-                                            rows={4}
+                                            rows={6}
                                             placeholder="Your Message"
-                                            className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] outline-none transition-colors resize-none text-sm"
+                                            className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 resize-none bg-white dark:placeholder-gray-400 shadow-sm"
                                         />
                                     </div>
-                                    <Button className="w-full bg-gradient-to-r from-[#20B2AA] to-[#3B82F6] hover:from-[#1a9994] hover:to-[#2563eb] text-white py-2.5 text-sm mt-2">
+                                    <button
+                                        type="submit"
+                                        className="w-full py-2.5 px-4 text-sm rounded-lg bg-gradient-to-r from-[#20B2AA] to-[#1a9994] hover:from-[#1a9994] hover:to-[#158783] text-white font-medium shadow-lg shadow-[#20B2AA]/20 hover:shadow-xl hover:shadow-[#20B2AA]/30 transition-all duration-200 transform hover:-translate-y-0.5"
+                                    >
                                         Send Message
-                                    </Button>
+                                    </button>
                                 </form>
                             </div>
 
-                            {/* Contact Information */}
-                            <div className="space-y-6">
+                            {/* Contact Info Cards */}
+                            <div className="grid grid-cols-1 gap-6 h-[600px] content-center">
                                 <ContactCard
-                                    icon={Mail}
+                                    icon={<Mail className="w-6 h-6 text-[#20B2AA]" />}
                                     title="Email"
                                     subtitle="For general inquiries:"
-                                    info="ratul.innovations@gmail.com"
+                                    value="ratul.innovations@gmail.com"
                                 />
                                 <ContactCard
-                                    icon={Phone}
+                                    icon={<Phone className="w-6 h-6 text-[#20B2AA]" />}
                                     title="Phone"
                                     subtitle="Available Monday-Friday:"
-                                    info="01781-935014"
+                                    value="01781-935014"
                                 />
                                 <ContactCard
-                                    icon={MapPin}
+                                    icon={<MapPin className="w-6 h-6 text-[#20B2AA]" />}
                                     title="Location"
                                     subtitle="Based in:"
-                                    info="Kushtia, Bangladesh"
+                                    value="Kushtia, Bangladesh"
                                 />
                             </div>
                         </div>
@@ -629,18 +618,18 @@ export default function Welcome() {
                 </section>
 
                 {/* Footer Section */}
-                <footer className="bg-[#0F172A] text-white py-20">
-                    <div className="max-w-7xl mx-auto px-6">
-                        <div className="grid grid-cols-2 gap-20 mb-16">
+                <footer className="bg-[#0F172A] dark:bg-gray-950 text-white py-12">
+                    <div className="max-w-7xl mx-auto px-4">
+                        <div className="grid grid-cols-2 gap-12 mb-8">
                             {/* Left Column - Logo and Description */}
                             <div>
-                                <div className="flex items-center gap-2 mb-6">
-                                    <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <div className="w-7 h-7 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold text-sm">
                                         P
                                     </div>
-                                    <span className="font-medium">Portfolio</span>
+                                    <span className="font-medium text-sm">Portfolio</span>
                                 </div>
-                                <p className="text-gray-400 max-w-md">
+                                <p className="text-gray-400 max-w-md text-sm">
                                     Creating exceptional digital experiences through innovative design and development solutions.
                                 </p>
                             </div>
@@ -657,9 +646,6 @@ export default function Welcome() {
                                     <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
                                         <Linkedin className="w-5 h-5 text-gray-400" />
                                     </a>
-                                    <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
-                                        <Settings className="w-5 h-5 text-gray-400" />
-                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -670,7 +656,7 @@ export default function Welcome() {
                         {/* Bottom Row */}
                         <div className="flex items-center justify-between">
                             <div className="text-gray-400 text-sm">
-                                © 2024 Your Portfolio. All rights reserved.
+                                © 2025 Your Portfolio. All rights reserved.
                             </div>
                             <div className="flex items-center gap-8">
                                 <a href="#" className="text-gray-400 text-sm hover:text-[#20B2AA] transition-colors">
@@ -687,6 +673,6 @@ export default function Welcome() {
                     </div>
                 </footer>
             </div>
-        </>
+        </ThemeProvider>
     );
 }

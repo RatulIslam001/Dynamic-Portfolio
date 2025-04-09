@@ -32,24 +32,28 @@ export function ProgressBar({ label, percentage }: ProgressBarProps) {
     }, []);
 
     return (
-        <div ref={progressRef}>
+        <div ref={progressRef} className="opacity-0" style={{ 
+            opacity: isVisible ? 1 : 0,
+            transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+            transition: 'all 0.6s ease-out'
+        }}>
             <div className="flex justify-between mb-2">
-                <span className="font-medium">{label}</span>
+                <span className="font-medium dark:text-white">{label}</span>
                 <span className="text-[#20B2AA]">
                     <CountUp
                         end={percentage}
                         suffix="%"
                         duration={2}
                         start={isVisible ? 0 : undefined}
+                        delay={0.5}
                     />
                 </span>
             </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
                 <div 
-                    className="h-full bg-gradient-to-r from-[#20B2AA] to-[#3B82F6] rounded-full transition-all duration-1000 ease-out"
+                    className="h-full bg-[#20B2AA] rounded-full transition-all duration-1000 ease-out"
                     style={{ 
-                        width: isVisible ? `${percentage}%` : '0%',
-                        opacity: isVisible ? 1 : 0
+                        width: isVisible ? `${percentage}%` : '0%'
                     }}
                 />
             </div>
