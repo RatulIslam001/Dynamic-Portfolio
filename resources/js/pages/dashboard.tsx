@@ -1,7 +1,8 @@
-import { Head } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { Search, Bell, Settings, Users, MessageSquare, FileText, BarChart2, Edit3, Eye, Send, Star, RefreshCw } from 'lucide-react';
+import { Search, Bell, Settings, Users, MessageSquare, FileText, BarChart2, Edit3, Eye, Send, Star, RefreshCw, MapPin, Github, Linkedin, Twitter, LogOut } from 'lucide-react';
 import { useState } from 'react';
+import AdminLayout from '@/layouts/admin-layout';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -159,38 +160,92 @@ export default function Dashboard() {
                 );
             case 'Contact Info':
                 return (
-                    <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                            <input
-                                type="email"
-                                defaultValue="contact@example.com"
-                                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA]"
-                            />
+                    <div className="space-y-5">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+                                <div className="relative">
+                                    <input
+                                        type="email"
+                                        defaultValue="contact@example.com"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        placeholder="Enter your email"
+                                    />
+                                    <MessageSquare className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
+                                <div className="relative">
+                                    <input
+                                        type="tel"
+                                        defaultValue="+1 (555) 000-0000"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        placeholder="Enter phone number"
+                                    />
+                                    <Bell className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                                </div>
+                            </div>
                         </div>
+
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                            <input
-                                type="tel"
-                                defaultValue="+1 (555) 000-0000"
-                                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA]"
-                            />
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Location</label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    defaultValue="New York, USA"
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                    placeholder="Enter your location"
+                                />
+                                <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                            </div>
                         </div>
+
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                            <input
-                                type="text"
-                                defaultValue="New York, USA"
-                                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA]"
-                            />
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Social Media Links</label>
+                            <div className="space-y-3">
+                                <div className="relative">
+                                    <input
+                                        type="url"
+                                        defaultValue="https://github.com/yourusername"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        placeholder="GitHub Profile URL"
+                                    />
+                                    <Github className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                                </div>
+                                <div className="relative">
+                                    <input
+                                        type="url"
+                                        defaultValue="https://linkedin.com/in/yourusername"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        placeholder="LinkedIn Profile URL"
+                                    />
+                                    <Linkedin className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                                </div>
+                                <div className="relative">
+                                    <input
+                                        type="url"
+                                        defaultValue="https://twitter.com/yourusername"
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        placeholder="Twitter Profile URL"
+                                    />
+                                    <Twitter className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                                </div>
+                            </div>
                         </div>
+
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Contact Form Message</label>
-                            <textarea
-                                defaultValue="Let's create something amazing together!"
-                                rows={3}
-                                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] resize-none"
-                            />
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Contact Form Message</label>
+                            <div className="relative">
+                                <textarea
+                                    defaultValue="Let's create something amazing together!"
+                                    rows={3}
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm resize-none"
+                                    placeholder="Enter your contact form message"
+                                />
+                                <MessageSquare className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
+                            </div>
+                            <p className="mt-1.5 text-xs text-gray-500">This message will be displayed in your contact form section.</p>
                         </div>
                     </div>
                 );
@@ -199,237 +254,175 @@ export default function Dashboard() {
         }
     };
 
+    const handleLogout = () => {
+        router.post('/logout', {}, {
+            onSuccess: () => {
+                // Will automatically redirect to login page
+                window.location.href = '/login';
+            },
+        });
+    };
+
     return (
-        <>
-            <Head title="Portfolio Admin Dashboard" />
+        <AdminLayout>
+            <Head title="Dashboard - Portfolio Admin" />
             
-            <div className="min-h-screen bg-gray-50">
-                {/* Sidebar */}
-                <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 z-30">
-                    <div className="flex items-center gap-2 p-5 border-b border-gray-200">
-                        <div className="w-8 h-8 bg-[#20B2AA] rounded-lg flex items-center justify-center text-white font-bold">
-                            P
+            {/* Rest of your dashboard content */}
+            <div className="space-y-6">
+                {/* Stats Grid */}
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    {[
+                        { label: 'Total Visitors', value: '1254', change: '+12%', timeframe: 'from last month' },
+                        { label: 'Messages', value: '23', change: '+5', timeframe: 'new since last week' },
+                        { label: 'Projects', value: '16', change: '2', timeframe: 'in draft mode' },
+                        { label: 'Testimonials', value: '8', change: '+2', timeframe: 'new this month' }
+                    ].map((stat) => (
+                        <motion.div
+                            key={stat.label}
+                            whileHover={{ y: -4 }}
+                            className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+                        >
+                            <p className="text-gray-500 text-sm mb-1.5">{stat.label}</p>
+                            <div className="flex items-baseline gap-2">
+                                <h3 className="text-2xl font-semibold text-gray-800">{stat.value}</h3>
+                                <span className="text-xs text-green-500">{stat.change}</span>
+                            </div>
+                            <p className="text-gray-400 text-xs mt-1">{stat.timeframe}</p>
+                        </motion.div>
+                    ))}
+                </div>
+
+                {/* Chart and Quick Actions */}
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    {/* Visitor Analytics */}
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 className="text-lg font-semibold text-gray-800">Visitor Analytics</h2>
+                                <p className="text-sm text-gray-500 mt-1">Last 7 months</p>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <select className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#20B2AA]">
+                                    <option value="7months">Last 7 Months</option>
+                                    <option value="6months">Last 6 Months</option>
+                                    <option value="3months">Last 3 Months</option>
+                                    <option value="1month">Last Month</option>
+                                </select>
+                                <button className="text-gray-400 hover:text-gray-600">
+                                    <RefreshCw className="w-5 h-5" />
+                                </button>
+                            </div>
                         </div>
-                        <span className="font-semibold text-gray-800">Portfolio Admin</span>
+                        <div className="h-[300px]">
+                            <Line data={chartData} options={chartOptions} />
+                        </div>
                     </div>
 
-                    <nav className="p-4 space-y-2">
-                        {[
-                            { name: 'Dashboard', icon: BarChart2, active: true },
-                            { name: 'Profile', icon: Users },
-                            { name: 'Services', icon: Settings },
-                            { name: 'Projects', icon: FileText },
-                            { name: 'Skills', icon: Star },
-                            { name: 'Resume', icon: FileText },
-                            { name: 'Testimonials', icon: MessageSquare },
-                            { name: 'Messages', icon: MessageSquare },
-                            { name: 'Appearance', icon: Eye },
-                            { name: 'Settings', icon: Settings },
-                        ].map((item) => (
+                    {/* Recent Activity */}
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <h2 className="text-lg font-semibold text-gray-800 mb-6">Recent Activity</h2>
+                        <div className="space-y-6">
+                            {[
+                                {
+                                    icon: MessageSquare,
+                                    color: 'bg-blue-100',
+                                    iconColor: 'text-blue-600',
+                                    title: 'New message received',
+                                    description: 'John Doe sent you a message about a potential project',
+                                    time: '5 minutes ago'
+                                },
+                                {
+                                    icon: Eye,
+                                    color: 'bg-purple-100',
+                                    iconColor: 'text-purple-600',
+                                    title: 'Project viewed',
+                                    description: 'Your E-commerce Redesign project was viewed 12 times',
+                                    time: '2 hours ago'
+                                },
+                                {
+                                    icon: Star,
+                                    color: 'bg-yellow-100',
+                                    iconColor: 'text-yellow-600',
+                                    title: 'New testimonial',
+                                    description: 'Sarah Johnson left a 5-star testimonial',
+                                    time: 'Yesterday'
+                                },
+                                {
+                                    icon: Send,
+                                    color: 'bg-green-100',
+                                    iconColor: 'text-green-600',
+                                    title: 'Contact form submission',
+                                    description: 'New inquiry from Tech Solutions Inc.',
+                                    time: '2 days ago'
+                                },
+                                {
+                                    icon: RefreshCw,
+                                    color: 'bg-teal-100',
+                                    iconColor: 'text-teal-600',
+                                    title: 'Portfolio updated',
+                                    description: 'You updated the Mobile App project details',
+                                    time: '3 days ago'
+                                }
+                            ].map((activity, index) => (
+                                <div key={index} className="flex gap-4">
+                                    <div className={`w-10 h-10 rounded-lg ${activity.color} flex items-center justify-center flex-shrink-0`}>
+                                        <activity.icon className={`w-5 h-5 ${activity.iconColor}`} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-medium text-gray-800">{activity.title}</h3>
+                                        <p className="text-sm text-gray-500">{activity.description}</p>
+                                        <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Content Editor */}
+                <div className="rounded-lg border border-gray-200 bg-white">
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-lg font-semibold text-gray-800">Quick Edit</h2>
+                        <span className="text-sm text-gray-500">Last edited 2 hours ago</span>
+                    </div>
+                    
+                    {/* Section Tabs */}
+                    <div className="flex gap-2 mb-6">
+                        {['Hero Section', 'Contact Info'].map((tab) => (
                             <button
-                                key={item.name}
-                                className={`flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm ${
-                                    item.active 
-                                        ? 'bg-[#20B2AA] text-white' 
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap ${
+                                    activeTab === tab
+                                        ? 'bg-[#20B2AA] text-white'
                                         : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                             >
-                                <item.icon className="w-5 h-5" />
-                                {item.name}
+                                {tab}
                             </button>
                         ))}
-                    </nav>
-                </aside>
-
-                {/* Main Content */}
-                <main className="ml-64 p-8">
-                    {/* Top Bar */}
-                    <div className="flex items-center justify-between mb-8">
-                        <div>
-                            <h1 className="text-xl text-gray-800 font-medium">Welcome back to your portfolio admin.</h1>
-                            <p className="text-gray-500 text-sm mt-1">Here's what's happening with your portfolio today.</p>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            {/* Search */}
-                            <div className="relative">
-                                <input 
-                                    type="text" 
-                                    placeholder="Search..." 
-                                    className="w-64 pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
-                                />
-                                <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-                            </div>
-
-                            {/* Notifications */}
-                            <button className="relative p-2 rounded-lg hover:bg-gray-100">
-                                <Bell className="w-5 h-5 text-gray-600" />
-                                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                            </button>
-
-                            {/* Profile */}
-                            <button className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100">
-                                <img src="/storage/profile.jpg" alt="Profile" className="w-8 h-8 rounded-lg object-cover" />
-                                <span className="text-sm font-medium text-gray-700">Admin</span>
-                            </button>
-                        </div>
                     </div>
 
-                    {/* Stats Cards */}
-                    <div className="grid grid-cols-4 gap-6 mb-8">
-                        {[
-                            { label: 'Total Visitors', value: '1254', change: '+12%', timeframe: 'from last month' },
-                            { label: 'Messages', value: '23', change: '+5', timeframe: 'new since last week' },
-                            { label: 'Projects', value: '16', change: '2', timeframe: 'in draft mode' },
-                            { label: 'Testimonials', value: '8', change: '+2', timeframe: 'new this month' }
-                        ].map((stat) => (
-                            <motion.div
-                                key={stat.label}
-                                whileHover={{ y: -4 }}
-                                className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+                    {/* Edit Form */}
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        {renderFormFields()}
+                        <div className="flex items-center gap-3 mt-6">
+                            <button 
+                                type="submit" 
+                                className="flex-1 py-2.5 px-4 bg-[#20B2AA] text-white text-sm font-medium rounded-lg hover:bg-[#1a9994] transition-all duration-200 focus:ring-2 focus:ring-[#20B2AA] focus:ring-offset-2 focus:outline-none"
                             >
-                                <p className="text-gray-500 text-sm mb-1.5">{stat.label}</p>
-                                <div className="flex items-baseline gap-2">
-                                    <h3 className="text-2xl font-semibold text-gray-800">{stat.value}</h3>
-                                    <span className="text-xs text-green-500">{stat.change}</span>
-                                </div>
-                                <p className="text-gray-400 text-xs mt-1">{stat.timeframe}</p>
-                            </motion.div>
-                        ))}
-                    </div>
-
-                    {/* Main Grid */}
-                    <div className="grid grid-cols-2 gap-8">
-                        {/* Visitor Analytics */}
-                        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <div className="flex items-center justify-between mb-6">
-                                <div>
-                                    <h2 className="text-lg font-semibold text-gray-800">Visitor Analytics</h2>
-                                    <p className="text-sm text-gray-500 mt-1">Last 7 months</p>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <select className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#20B2AA]">
-                                        <option value="7months">Last 7 Months</option>
-                                        <option value="6months">Last 6 Months</option>
-                                        <option value="3months">Last 3 Months</option>
-                                        <option value="1month">Last Month</option>
-                                    </select>
-                                    <button className="text-gray-400 hover:text-gray-600">
-                                        <RefreshCw className="w-5 h-5" />
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="h-[300px]">
-                                <Line data={chartData} options={chartOptions} />
-                            </div>
+                                Save Changes
+                            </button>
+                            <button 
+                                type="button" 
+                                className="py-2.5 px-6 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200"
+                            >
+                                Cancel
+                            </button>
                         </div>
-
-                        {/* Recent Activity */}
-                        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <h2 className="text-lg font-semibold text-gray-800 mb-6">Recent Activity</h2>
-                            <div className="space-y-6">
-                                {[
-                                    {
-                                        icon: MessageSquare,
-                                        color: 'bg-blue-100',
-                                        iconColor: 'text-blue-600',
-                                        title: 'New message received',
-                                        description: 'John Doe sent you a message about a potential project',
-                                        time: '5 minutes ago'
-                                    },
-                                    {
-                                        icon: Eye,
-                                        color: 'bg-purple-100',
-                                        iconColor: 'text-purple-600',
-                                        title: 'Project viewed',
-                                        description: 'Your E-commerce Redesign project was viewed 12 times',
-                                        time: '2 hours ago'
-                                    },
-                                    {
-                                        icon: Star,
-                                        color: 'bg-yellow-100',
-                                        iconColor: 'text-yellow-600',
-                                        title: 'New testimonial',
-                                        description: 'Sarah Johnson left a 5-star testimonial',
-                                        time: 'Yesterday'
-                                    },
-                                    {
-                                        icon: Send,
-                                        color: 'bg-green-100',
-                                        iconColor: 'text-green-600',
-                                        title: 'Contact form submission',
-                                        description: 'New inquiry from Tech Solutions Inc.',
-                                        time: '2 days ago'
-                                    },
-                                    {
-                                        icon: RefreshCw,
-                                        color: 'bg-teal-100',
-                                        iconColor: 'text-teal-600',
-                                        title: 'Portfolio updated',
-                                        description: 'You updated the Mobile App project details',
-                                        time: '3 days ago'
-                                    }
-                                ].map((activity, index) => (
-                                    <div key={index} className="flex gap-4">
-                                        <div className={`w-10 h-10 rounded-lg ${activity.color} flex items-center justify-center flex-shrink-0`}>
-                                            <activity.icon className={`w-5 h-5 ${activity.iconColor}`} />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-sm font-medium text-gray-800">{activity.title}</h3>
-                                            <p className="text-sm text-gray-500">{activity.description}</p>
-                                            <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Quick Edit */}
-                        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-lg font-semibold text-gray-800">Quick Edit</h2>
-                                <span className="text-sm text-gray-500">Last edited 2 hours ago</span>
-                            </div>
-                            
-                            {/* Section Tabs */}
-                            <div className="flex gap-2 mb-6">
-                                {['Hero Section', 'Contact Info'].map((tab) => (
-                                    <button
-                                        key={tab}
-                                        onClick={() => setActiveTab(tab)}
-                                        className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap ${
-                                            activeTab === tab
-                                                ? 'bg-[#20B2AA] text-white'
-                                                : 'text-gray-600 hover:bg-gray-100'
-                                        }`}
-                                    >
-                                        {tab}
-                                    </button>
-                                ))}
-                            </div>
-
-                            {/* Edit Form */}
-                            <form onSubmit={(e) => e.preventDefault()}>
-                                {renderFormFields()}
-                                <div className="flex items-center gap-3 mt-6">
-                                    <button 
-                                        type="submit" 
-                                        className="flex-1 py-2.5 px-4 bg-[#20B2AA] text-white text-sm font-medium rounded-lg hover:bg-[#1a9994] transition-all duration-200 focus:ring-2 focus:ring-[#20B2AA] focus:ring-offset-2 focus:outline-none"
-                                    >
-                                        Save Changes
-                                    </button>
-                                    <button 
-                                        type="button" 
-                                        className="py-2.5 px-6 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200"
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </main>
+                    </form>
+                </div>
             </div>
-        </>
+        </AdminLayout>
     );
 }
