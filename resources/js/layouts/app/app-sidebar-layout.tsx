@@ -11,7 +11,7 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
             <div className="flex h-screen overflow-hidden">
                 {/* Fixed Sidebar */}
                 <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200">
-                    <AppSidebar />
+            <AppSidebar />
                 </div>
 
                 {/* Main Content Area */}
@@ -19,14 +19,14 @@ export default function AppSidebarLayout({ children, breadcrumbs = [] }: PropsWi
                     {/* Fixed Header */}
                     <div className="fixed top-0 right-0 left-64 z-40 bg-white border-b border-gray-200">
                         <div className="p-4">
-                            <AppSidebarHeader breadcrumbs={breadcrumbs} />
+                <AppSidebarHeader breadcrumbs={breadcrumbs} />
                         </div>
                     </div>
 
                     {/* Scrollable Content */}
                     <div className="pt-16 px-6 pb-6 h-screen overflow-y-auto">
                         <main>
-                            {children}
+                {children}
                         </main>
                     </div>
                 </div>

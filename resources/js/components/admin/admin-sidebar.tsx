@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { LayoutGrid, User, Settings, FileText, Star, BookOpen, MessageSquare, Eye, Cog, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -16,8 +16,8 @@ const NavItem = ({ href, icon: Icon, children, isActive, method = 'get' }: NavIt
             href={href}
             method={method}
             className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900',
-                isActive && 'bg-[#20B2AA]/10 text-[#20B2AA]'
+                'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 hover:bg-[#20B2AA]/5',
+                isActive && 'bg-[#20B2AA]/10 text-[#20B2AA] hover:bg-[#20B2AA]/15'
             )}
         >
             <Icon className="h-5 w-5" />
@@ -27,7 +27,13 @@ const NavItem = ({ href, icon: Icon, children, isActive, method = 'get' }: NavIt
 };
 
 export function AdminSidebar() {
-    const currentPath = window.location.pathname;
+    const { url } = usePage();
+
+    const isActive = (path: string) => {
+        // Convert route to URL for comparison
+        const routeUrl = new URL(path, window.location.origin).pathname;
+        return url.startsWith(routeUrl);
+    };
 
     return (
         <div className="flex h-full flex-col">
@@ -46,70 +52,70 @@ export function AdminSidebar() {
                 <NavItem 
                     href={route('admin.dashboard')} 
                     icon={LayoutGrid}
-                    isActive={currentPath === route('admin.dashboard')}
+                    isActive={isActive(route('admin.dashboard'))}
                 >
                     Dashboard
                 </NavItem>
                 <NavItem 
                     href={route('admin.profile')} 
                     icon={User}
-                    isActive={currentPath === route('admin.profile')}
+                    isActive={isActive(route('admin.profile'))}
                 >
                     Profile
                 </NavItem>
                 <NavItem 
                     href={route('admin.services')} 
                     icon={Settings}
-                    isActive={currentPath === route('admin.services')}
+                    isActive={isActive(route('admin.services'))}
                 >
                     Services
                 </NavItem>
                 <NavItem 
                     href={route('admin.projects')} 
                     icon={FileText}
-                    isActive={currentPath === route('admin.projects')}
+                    isActive={isActive(route('admin.projects'))}
                 >
                     Projects
                 </NavItem>
                 <NavItem 
                     href={route('admin.skills')} 
                     icon={Star}
-                    isActive={currentPath === route('admin.skills')}
+                    isActive={isActive(route('admin.skills'))}
                 >
                     Skills
                 </NavItem>
                 <NavItem 
                     href={route('admin.resume')} 
                     icon={BookOpen}
-                    isActive={currentPath === route('admin.resume')}
+                    isActive={isActive(route('admin.resume'))}
                 >
                     Resume
                 </NavItem>
                 <NavItem 
                     href={route('admin.testimonials')} 
                     icon={MessageSquare}
-                    isActive={currentPath === route('admin.testimonials')}
+                    isActive={isActive(route('admin.testimonials'))}
                 >
                     Testimonials
                 </NavItem>
                 <NavItem 
                     href={route('admin.messages')} 
                     icon={MessageSquare}
-                    isActive={currentPath === route('admin.messages')}
+                    isActive={isActive(route('admin.messages'))}
                 >
                     Messages
                 </NavItem>
                 <NavItem 
                     href={route('admin.appearance')} 
                     icon={Eye}
-                    isActive={currentPath === route('admin.appearance')}
+                    isActive={isActive(route('admin.appearance'))}
                 >
                     Appearance
                 </NavItem>
                 <NavItem 
                     href={route('admin.settings')} 
                     icon={Cog}
-                    isActive={currentPath === route('admin.settings')}
+                    isActive={isActive(route('admin.settings'))}
                 >
                     Settings
                 </NavItem>

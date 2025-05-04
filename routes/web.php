@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\ServiceController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -24,9 +25,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         return Inertia::render('profile');
     })->name('admin.profile');
 
-    Route::get('/services', function () {
-        return Inertia::render('services');
-    })->name('admin.services');
+    // Services routes
+    Route::get('/services', [ServiceController::class, 'index'])->name('admin.services');
+    Route::post('/services', [ServiceController::class, 'store'])->name('admin.services.store');
+    Route::put('/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
+    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
+    Route::post('/services/reorder', [ServiceController::class, 'reorder'])->name('admin.services.reorder');
 
     Route::get('/projects', function () {
         return Inertia::render('projects');

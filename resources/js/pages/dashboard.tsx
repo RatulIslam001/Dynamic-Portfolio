@@ -131,56 +131,57 @@ export default function Dashboard() {
         switch (activeTab) {
             case 'Hero Section':
                 return (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Headline</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Headline</label>
                             <input
                                 type="text"
                                 defaultValue="Creative Designer & Developer"
-                                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA]"
+                                className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Subheading</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Subheading</label>
                             <input
                                 type="text"
                                 defaultValue="I create exceptional digital experiences that solve complex problems"
-                                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA]"
+                                className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">CTA Button Text</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">CTA Button Text</label>
                             <input
                                 type="text"
                                 defaultValue="View My Work"
-                                className="w-full px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA]"
+                                className="w-full px-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors"
                             />
+                            <p className="mt-2 text-xs text-gray-500">This text will appear on the main call-to-action button in your hero section.</p>
                         </div>
                     </div>
                 );
             case 'Contact Info':
                 return (
-                    <div className="space-y-5">
-                        <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-6">
+                        <div className="grid grid-cols-2 gap-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                                 <div className="relative">
                                     <input
                                         type="email"
                                         defaultValue="contact@example.com"
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        className="w-full pl-11 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors"
                                         placeholder="Enter your email"
                                     />
                                     <MessageSquare className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                                 </div>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                                 <div className="relative">
                                     <input
                                         type="tel"
                                         defaultValue="+1 (555) 000-0000"
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        className="w-full pl-11 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors"
                                         placeholder="Enter phone number"
                                     />
                                     <Bell className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -189,12 +190,12 @@ export default function Dashboard() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Location</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                             <div className="relative">
                                 <input
                                     type="text"
                                     defaultValue="New York, USA"
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                    className="w-full pl-11 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors"
                                     placeholder="Enter your location"
                                 />
                                 <MapPin className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -202,13 +203,13 @@ export default function Dashboard() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Social Media Links</label>
-                            <div className="space-y-3">
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Social Media Links</label>
+                            <div className="space-y-4">
                                 <div className="relative">
                                     <input
                                         type="url"
                                         defaultValue="https://github.com/yourusername"
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        className="w-full pl-11 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors"
                                         placeholder="GitHub Profile URL"
                                     />
                                     <Github className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -217,7 +218,7 @@ export default function Dashboard() {
                                     <input
                                         type="url"
                                         defaultValue="https://linkedin.com/in/yourusername"
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        className="w-full pl-11 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors"
                                         placeholder="LinkedIn Profile URL"
                                     />
                                     <Linkedin className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -226,7 +227,7 @@ export default function Dashboard() {
                                     <input
                                         type="url"
                                         defaultValue="https://twitter.com/yourusername"
-                                        className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm"
+                                        className="w-full pl-11 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors"
                                         placeholder="Twitter Profile URL"
                                     />
                                     <Twitter className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -235,17 +236,17 @@ export default function Dashboard() {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1.5">Contact Form Message</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Contact Form Message</label>
                             <div className="relative">
                                 <textarea
                                     defaultValue="Let's create something amazing together!"
                                     rows={3}
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:outline-none focus:border-[#20B2AA] text-sm resize-none"
+                                    className="w-full pl-11 pr-4 py-2.5 rounded-lg bg-white border border-gray-200 focus:outline-none focus:border-[#20B2AA] focus:ring-1 focus:ring-[#20B2AA] transition-colors resize-none"
                                     placeholder="Enter your contact form message"
                                 />
                                 <MessageSquare className="w-5 h-5 text-gray-400 absolute left-3 top-3" />
                             </div>
-                            <p className="mt-1.5 text-xs text-gray-500">This message will be displayed in your contact form section.</p>
+                            <p className="mt-2 text-xs text-gray-500">This message will be displayed in your contact form section.</p>
                         </div>
                     </div>
                 );
@@ -266,163 +267,182 @@ export default function Dashboard() {
     return (
         <AdminLayout>
             <Head title="Dashboard - Portfolio Admin" />
-            
-            {/* Rest of your dashboard content */}
-            <div className="space-y-6">
+
+            {/* Dashboard Header */}
+            <div className="border-b border-gray-200 bg-white">
+                <div className="px-8 py-6">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+                            <p className="mt-1 text-sm text-gray-500">Welcome back to your portfolio admin.</p>
+                        </div>
+                                <Link
+                            href={route('home')}
+                            className="inline-flex items-center justify-center px-4 py-2 bg-[#20B2AA] text-white text-sm font-medium rounded-lg hover:bg-[#1a9994] transition-colors duration-200"
+                        >
+                            View Portfolio
+                        </Link>
+                    </div>
+                        </div>
+                    </div>
+
+            <div className="p-8 space-y-8">
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {[
-                        { label: 'Total Visitors', value: '1254', change: '+12%', timeframe: 'from last month' },
-                        { label: 'Messages', value: '23', change: '+5', timeframe: 'new since last week' },
-                        { label: 'Projects', value: '16', change: '2', timeframe: 'in draft mode' },
-                        { label: 'Testimonials', value: '8', change: '+2', timeframe: 'new this month' }
-                    ].map((stat) => (
-                        <motion.div
-                            key={stat.label}
-                            whileHover={{ y: -4 }}
-                            className="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
-                        >
-                            <p className="text-gray-500 text-sm mb-1.5">{stat.label}</p>
-                            <div className="flex items-baseline gap-2">
-                                <h3 className="text-2xl font-semibold text-gray-800">{stat.value}</h3>
-                                <span className="text-xs text-green-500">{stat.change}</span>
-                            </div>
-                            <p className="text-gray-400 text-xs mt-1">{stat.timeframe}</p>
-                        </motion.div>
-                    ))}
-                </div>
-
-                {/* Chart and Quick Actions */}
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                    {/* Visitor Analytics */}
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <div className="flex items-center justify-between mb-6">
-                            <div>
-                                <h2 className="text-lg font-semibold text-gray-800">Visitor Analytics</h2>
-                                <p className="text-sm text-gray-500 mt-1">Last 7 months</p>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <select className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#20B2AA]">
-                                    <option value="7months">Last 7 Months</option>
-                                    <option value="6months">Last 6 Months</option>
-                                    <option value="3months">Last 3 Months</option>
-                                    <option value="1month">Last Month</option>
-                                </select>
-                                <button className="text-gray-400 hover:text-gray-600">
-                                    <RefreshCw className="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
-                        <div className="h-[300px]">
-                            <Line data={chartData} options={chartOptions} />
-                        </div>
-                    </div>
-
-                    {/* Recent Activity */}
-                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-6">Recent Activity</h2>
-                        <div className="space-y-6">
-                            {[
-                                {
-                                    icon: MessageSquare,
-                                    color: 'bg-blue-100',
-                                    iconColor: 'text-blue-600',
-                                    title: 'New message received',
-                                    description: 'John Doe sent you a message about a potential project',
-                                    time: '5 minutes ago'
-                                },
-                                {
-                                    icon: Eye,
-                                    color: 'bg-purple-100',
-                                    iconColor: 'text-purple-600',
-                                    title: 'Project viewed',
-                                    description: 'Your E-commerce Redesign project was viewed 12 times',
-                                    time: '2 hours ago'
-                                },
-                                {
-                                    icon: Star,
-                                    color: 'bg-yellow-100',
-                                    iconColor: 'text-yellow-600',
-                                    title: 'New testimonial',
-                                    description: 'Sarah Johnson left a 5-star testimonial',
-                                    time: 'Yesterday'
-                                },
-                                {
-                                    icon: Send,
-                                    color: 'bg-green-100',
-                                    iconColor: 'text-green-600',
-                                    title: 'Contact form submission',
-                                    description: 'New inquiry from Tech Solutions Inc.',
-                                    time: '2 days ago'
-                                },
-                                {
-                                    icon: RefreshCw,
-                                    color: 'bg-teal-100',
-                                    iconColor: 'text-teal-600',
-                                    title: 'Portfolio updated',
-                                    description: 'You updated the Mobile App project details',
-                                    time: '3 days ago'
-                                }
-                            ].map((activity, index) => (
-                                <div key={index} className="flex gap-4">
-                                    <div className={`w-10 h-10 rounded-lg ${activity.color} flex items-center justify-center flex-shrink-0`}>
-                                        <activity.icon className={`w-5 h-5 ${activity.iconColor}`} />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-sm font-medium text-gray-800">{activity.title}</h3>
-                                        <p className="text-sm text-gray-500">{activity.description}</p>
-                                        <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Content Editor */}
-                <div className="rounded-lg border border-gray-200 bg-white">
-                    <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-semibold text-gray-800">Quick Edit</h2>
-                        <span className="text-sm text-gray-500">Last edited 2 hours ago</span>
-                    </div>
-                    
-                    {/* Section Tabs */}
-                    <div className="flex gap-2 mb-6">
-                        {['Hero Section', 'Contact Info'].map((tab) => (
-                            <button
-                                key={tab}
-                                onClick={() => setActiveTab(tab)}
-                                className={`px-4 py-2 rounded-lg text-sm whitespace-nowrap ${
-                                    activeTab === tab
-                                        ? 'bg-[#20B2AA] text-white'
-                                        : 'text-gray-600 hover:bg-gray-100'
-                                }`}
+                        {[
+                            { label: 'Total Visitors', value: '1254', change: '+12%', timeframe: 'from last month' },
+                            { label: 'Messages', value: '23', change: '+5', timeframe: 'new since last week' },
+                            { label: 'Projects', value: '16', change: '2', timeframe: 'in draft mode' },
+                            { label: 'Testimonials', value: '8', change: '+2', timeframe: 'new this month' }
+                        ].map((stat) => (
+                            <motion.div
+                                key={stat.label}
+                                whileHover={{ y: -4 }}
+                            className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:border-gray-200 transition-colors duration-200"
                             >
-                                {tab}
-                            </button>
+                            <p className="text-sm font-medium text-gray-500">{stat.label}</p>
+                            <div className="flex items-baseline gap-2 mt-2">
+                                    <h3 className="text-2xl font-semibold text-gray-800">{stat.value}</h3>
+                                <span className="text-xs font-medium text-green-500">{stat.change}</span>
+                                </div>
+                            <p className="text-xs text-gray-400 mt-1">{stat.timeframe}</p>
+                            </motion.div>
                         ))}
                     </div>
 
-                    {/* Edit Form */}
-                    <form onSubmit={(e) => e.preventDefault()}>
-                        {renderFormFields()}
-                        <div className="flex items-center gap-3 mt-6">
-                            <button 
-                                type="submit" 
-                                className="flex-1 py-2.5 px-4 bg-[#20B2AA] text-white text-sm font-medium rounded-lg hover:bg-[#1a9994] transition-all duration-200 focus:ring-2 focus:ring-[#20B2AA] focus:ring-offset-2 focus:outline-none"
-                            >
-                                Save Changes
-                            </button>
-                            <button 
-                                type="button" 
-                                className="py-2.5 px-6 text-sm font-medium text-gray-700 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200"
-                            >
-                                Cancel
-                            </button>
+                {/* Chart and Quick Actions */}
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                        {/* Visitor Analytics */}
+                        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <h2 className="text-lg font-semibold text-gray-800">Visitor Analytics</h2>
+                                    <p className="text-sm text-gray-500 mt-1">Last 7 months</p>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                <select className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-[#20B2AA] focus:border-transparent">
+                                        <option value="7months">Last 7 Months</option>
+                                        <option value="6months">Last 6 Months</option>
+                                        <option value="3months">Last 3 Months</option>
+                                        <option value="1month">Last Month</option>
+                                    </select>
+                                <button className="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50">
+                                        <RefreshCw className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="h-[300px]">
+                                <Line data={chartData} options={chartOptions} />
+                            </div>
                         </div>
-                    </form>
-                </div>
-            </div>
+
+                        {/* Recent Activity */}
+                        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-lg font-semibold text-gray-800">Recent Activity</h2>
+                            <button className="text-sm text-[#20B2AA] hover:text-[#1a9994]">View All</button>
+                        </div>
+                            <div className="space-y-6">
+                                {[
+                                    {
+                                        icon: MessageSquare,
+                                        color: 'bg-blue-100',
+                                        iconColor: 'text-blue-600',
+                                        title: 'New message received',
+                                        description: 'John Doe sent you a message about a potential project',
+                                        time: '5 minutes ago'
+                                    },
+                                    {
+                                        icon: Eye,
+                                        color: 'bg-purple-100',
+                                        iconColor: 'text-purple-600',
+                                        title: 'Project viewed',
+                                        description: 'Your E-commerce Redesign project was viewed 12 times',
+                                        time: '2 hours ago'
+                                    },
+                                    {
+                                        icon: Star,
+                                        color: 'bg-yellow-100',
+                                        iconColor: 'text-yellow-600',
+                                        title: 'New testimonial',
+                                        description: 'Sarah Johnson left a 5-star testimonial',
+                                        time: 'Yesterday'
+                                    },
+                                    {
+                                        icon: Send,
+                                        color: 'bg-green-100',
+                                        iconColor: 'text-green-600',
+                                        title: 'Contact form submission',
+                                        description: 'New inquiry from Tech Solutions Inc.',
+                                        time: '2 days ago'
+                                    }
+                                ].map((activity, index) => (
+                                <div key={index} className="flex items-start gap-4 group">
+                                    <div className={`w-10 h-10 rounded-lg ${activity.color} flex items-center justify-center flex-shrink-0 transition-transform group-hover:scale-105`}>
+                                            <activity.icon className={`w-5 h-5 ${activity.iconColor}`} />
+                                        </div>
+                                    <div className="flex-1 min-w-0">
+                                            <h3 className="text-sm font-medium text-gray-800">{activity.title}</h3>
+                                        <p className="text-sm text-gray-500 mt-0.5 truncate">{activity.description}</p>
+                                            <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                            </div>
+                        </div>
+
+                {/* Content Editor */}
+                <div className="rounded-xl shadow-sm border border-gray-100 bg-white p-6">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                                <h2 className="text-lg font-semibold text-gray-800">Quick Edit</h2>
+                            <p className="text-sm text-gray-500 mt-1">Update your portfolio content quickly</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                <span className="text-sm text-gray-500">Last edited 2 hours ago</span>
+                        </div>
+                            </div>
+                            
+                            {/* Section Tabs */}
+                    <div className="flex gap-2 mb-8 border-b border-gray-100">
+                                {['Hero Section', 'Contact Info'].map((tab) => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-all ${
+                                            activeTab === tab
+                                        ? 'border-[#20B2AA] text-[#20B2AA]'
+                                        : 'border-transparent text-gray-600 hover:text-gray-900 hover:border-gray-200'
+                                        }`}
+                                    >
+                                        {tab}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Edit Form */}
+                    <form onSubmit={(e) => e.preventDefault()} className="bg-gray-50 rounded-lg p-6 border border-gray-100">
+                                {renderFormFields()}
+                        <div className="flex items-center gap-3 mt-8 pt-6 border-t border-gray-200">
+                                    <button 
+                                        type="submit" 
+                                className="flex items-center justify-center gap-2 py-2.5 px-6 bg-[#20B2AA] text-white text-sm font-medium rounded-lg hover:bg-[#1a9994] transition-all duration-200 focus:ring-2 focus:ring-[#20B2AA] focus:ring-offset-2 focus:outline-none"
+                                    >
+                                <Edit3 className="w-4 h-4" />
+                                        Save Changes
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                className="py-2.5 px-6 text-sm font-medium text-gray-700 hover:text-gray-900 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg transition-all duration-200"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
         </AdminLayout>
     );
 }
