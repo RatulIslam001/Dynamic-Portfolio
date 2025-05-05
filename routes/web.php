@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ProjectController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -32,9 +33,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
     Route::post('/services/reorder', [ServiceController::class, 'reorder'])->name('admin.services.reorder');
 
-    Route::get('/projects', function () {
-        return Inertia::render('projects');
-    })->name('admin.projects');
+    // Projects routes
+    Route::get('/projects', [ProjectController::class, 'index'])->name('admin.projects');
+    Route::post('/projects', [ProjectController::class, 'store'])->name('admin.projects.store');
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('admin.projects.update');
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('admin.projects.destroy');
+    Route::post('/projects/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('admin.projects.toggle-featured');
 
     Route::get('/skills', function () {
         return Inertia::render('skills');
