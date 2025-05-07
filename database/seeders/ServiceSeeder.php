@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Service;
 use Illuminate\Database\Seeder;
+use App\Models\Service;
 
 class ServiceSeeder extends Seeder
 {
@@ -11,46 +11,40 @@ class ServiceSeeder extends Seeder
     {
         $services = [
             [
-                'order' => 1,
                 'title' => 'Web Development',
-                'description' => 'Creating responsive, fast, and user-friendly websites using modern technologies and best practices.',
-                'icon' => 'Code',
-                'is_active' => true,
+                'description' => 'Building modern, responsive web applications using the latest technologies and best practices.',
+                'icon' => 'code',
+                'order' => 1,
             ],
             [
+                'title' => 'Mobile App Development',
+                'description' => 'Creating native and cross-platform mobile applications for iOS and Android.',
+                'icon' => 'smartphone',
                 'order' => 2,
+            ],
+            [
                 'title' => 'UI/UX Design',
-                'description' => 'Designing intuitive and beautiful user interfaces that provide exceptional user experiences.',
-                'icon' => 'Palette',
-                'is_active' => true,
-            ],
-            [
+                'description' => 'Designing beautiful and intuitive user interfaces that provide exceptional user experiences.',
+                'icon' => 'layout',
                 'order' => 3,
-                'title' => 'Mobile Development',
-                'description' => 'Building cross-platform mobile applications that work seamlessly on iOS and Android devices.',
-                'icon' => 'Smartphone',
-                'is_active' => true,
             ],
             [
+                'title' => 'API Development',
+                'description' => 'Building robust and scalable APIs that power modern web and mobile applications.',
+                'icon' => 'database',
                 'order' => 4,
-                'title' => 'SEO Optimization',
-                'description' => "Improving your website's visibility in search engines to drive more organic traffic.",
-                'icon' => 'Search',
-                'is_active' => true,
             ],
             [
+                'title' => 'Cloud Solutions',
+                'description' => 'Deploying and managing applications on cloud platforms like AWS, Google Cloud, and Azure.',
+                'icon' => 'cloud',
                 'order' => 5,
-                'title' => 'Digital Marketing',
-                'description' => 'Creating and implementing effective digital marketing strategies to grow your business.',
-                'icon' => 'BarChart',
-                'is_active' => true,
             ],
             [
+                'title' => 'Technical Consulting',
+                'description' => 'Providing expert advice on technology stack, architecture, and best practices.',
+                'icon' => 'users',
                 'order' => 6,
-                'title' => 'Content Creation',
-                'description' => 'Producing high-quality content that engages your audience and drives conversions.',
-                'icon' => 'FileText',
-                'is_active' => true,
             ],
         ];
 

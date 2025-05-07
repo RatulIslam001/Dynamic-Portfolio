@@ -23,6 +23,9 @@ return new class extends Migration
             $table->string('project_url')->nullable();
             $table->date('completion_date')->nullable();
             $table->json('technologies')->nullable();
+            $table->string('github_url')->nullable();
+            $table->string('live_url')->nullable();
+            $table->integer('order')->default(0);
             $table->timestamps();
         });
     }

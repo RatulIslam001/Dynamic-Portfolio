@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Project;
 use Illuminate\Database\Seeder;
+use App\Models\Project;
 
 class ProjectSeeder extends Seeder
 {
@@ -11,59 +11,48 @@ class ProjectSeeder extends Seeder
     {
         $projects = [
             [
-                'title' => 'E-commerce Website Redesign',
-                'description' => 'Complete redesign of an e-commerce platform focusing on user experience and conversion optimization.',
-                'category' => 'Web Design',
-                'status' => 'published',
+                'title' => 'E-commerce Platform',
+                'description' => 'A full-featured e-commerce platform built with Laravel and React. Includes features like product management, cart, checkout, and admin dashboard.',
+                'category' => 'Web Development',
+                'technologies' => json_encode(['Laravel', 'React', 'MySQL', 'Stripe']),
+                'image' => null,
+                'github_url' => 'https://github.com/johndoe/ecommerce',
+                'live_url' => 'https://ecommerce-demo.com',
+                'order' => 1,
                 'is_featured' => true,
-                'client_name' => 'Fashion Boutique Inc.',
-                'project_url' => 'https://example.com/fashion-boutique',
-                'completion_date' => '2023-10-15',
-                'technologies' => ['React', 'Node.js', 'MongoDB', 'Tailwind CSS'],
             ],
             [
-                'title' => 'Mobile Banking App',
-                'description' => 'Developed a secure and user-friendly mobile banking application with real-time transaction tracking.',
-                'category' => 'Mobile App',
-                'status' => 'published',
+                'title' => 'Task Management App',
+                'description' => 'A collaborative task management application with real-time updates, file sharing, and team management features.',
+                'category' => 'Web Application',
+                'technologies' => json_encode(['Vue.js', 'Node.js', 'MongoDB', 'Socket.io']),
+                'image' => null,
+                'github_url' => 'https://github.com/johndoe/taskmanager',
+                'live_url' => 'https://taskmanager-demo.com',
+                'order' => 2,
                 'is_featured' => true,
-                'client_name' => 'Digital Bank Ltd.',
-                'project_url' => 'https://example.com/digital-bank',
-                'completion_date' => '2023-09-22',
-                'technologies' => ['Flutter', 'Firebase', 'Node.js', 'PostgreSQL'],
             ],
             [
-                'title' => 'Healthcare Dashboard',
-                'description' => 'Built an intuitive healthcare analytics dashboard for monitoring patient data and hospital performance.',
-                'category' => 'Web App',
-                'status' => 'published',
-                'is_featured' => false,
-                'client_name' => 'City Hospital',
-                'project_url' => 'https://example.com/city-hospital',
-                'completion_date' => '2023-08-10',
-                'technologies' => ['Vue.js', 'Laravel', 'MySQL', 'D3.js'],
+                'title' => 'Fitness Tracking Mobile App',
+                'description' => 'A cross-platform mobile application for tracking workouts, nutrition, and fitness goals.',
+                'category' => 'Mobile Development',
+                'technologies' => json_encode(['React Native', 'Firebase', 'Redux']),
+                'image' => null,
+                'github_url' => 'https://github.com/johndoe/fitnessapp',
+                'live_url' => 'https://fitnessapp-demo.com',
+                'order' => 3,
+                'is_featured' => true,
             ],
             [
-                'title' => 'Restaurant Branding',
-                'description' => 'Created a complete brand identity including logo, website, and marketing materials.',
-                'category' => 'Branding',
-                'status' => 'published',
+                'title' => 'AI-Powered Chat Bot',
+                'description' => 'An intelligent chatbot built with natural language processing capabilities for customer support.',
+                'category' => 'AI/ML',
+                'technologies' => json_encode(['Python', 'TensorFlow', 'FastAPI', 'Docker']),
+                'image' => null,
+                'github_url' => 'https://github.com/johndoe/chatbot',
+                'live_url' => 'https://chatbot-demo.com',
+                'order' => 4,
                 'is_featured' => false,
-                'client_name' => 'Taste of Italy',
-                'project_url' => 'https://example.com/taste-of-italy',
-                'completion_date' => '2023-07-05',
-                'technologies' => ['Adobe Creative Suite', 'WordPress', 'HTML/CSS'],
-            ],
-            [
-                'title' => 'Fitness Tracker App',
-                'description' => 'Developing a comprehensive fitness tracking application with workout plans and progress monitoring.',
-                'category' => 'Mobile App',
-                'status' => 'draft',
-                'is_featured' => false,
-                'client_name' => 'FitLife Pro',
-                'project_url' => 'https://example.com/fitlife-pro',
-                'completion_date' => '2023-11-01',
-                'technologies' => ['React Native', 'Express.js', 'MongoDB', 'Redux'],
             ],
         ];
 

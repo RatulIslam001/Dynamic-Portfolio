@@ -82,7 +82,7 @@ class SkillController extends Controller
                 ->update(['order' => $index]);
         }
 
-        return response()->json(['success' => true]);
+        return redirect()->back();
     }
 
     public function toggleVisibility(Skill $skill)

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { Plus, Search, GripVertical, Eye, EyeOff, Edit2, Trash2, MoreHorizontal } from 'lucide-react';
+import { Plus, Search, GripVertical, Eye, EyeOff, Edit2, Trash2, MoreHorizontal, ArrowUp, ArrowDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -134,13 +134,13 @@ export default function Skills({ skills: initialSkills, progressSkillsCount, car
         });
     };
 
-    const handleDragEnd = (result: DropResult) => {
-        if (!result.destination) return;
-
+    const handleMoveUp = (index: number) => {
+        if (index === 0) return;
+        
         const items = Array.from(skills[selectedDisplayType]);
-        const [reorderedItem] = items.splice(result.source.index, 1);
-        items.splice(result.destination.index, 0, reorderedItem);
-
+        [items[index], items[index - 1]] = [items[index - 1], items[index]];
+        
+        // Optimistically update the UI
         setSkills({
             ...skills,
             [selectedDisplayType]: items,
@@ -150,6 +150,61 @@ export default function Skills({ skills: initialSkills, progressSkillsCount, car
         router.post(route('admin.skills.reorder'), {
             orderedIds: items.map(item => item.id),
             display_type: selectedDisplayType,
+        });
+    };
+
+    const handleMoveDown = (index: number) => {
+        if (index === skills[selectedDisplayType].length - 1) return;
+        
+        const items = Array.from(skills[selectedDisplayType]);
+        [items[index], items[index + 1]] = [items[index + 1], items[index]];
+        
+        // Optimistically update the UI
+        setSkills({
+            ...skills,
+            [selectedDisplayType]: items,
+        });
+
+        // Update order in backend
+        router.post(route('admin.skills.reorder'), {
+            orderedIds: items.map(item => item.id),
+            display_type: selectedDisplayType,
+        });
+    };
+
+    const handleDragEnd = (result: DropResult) => {
+        if (!result.destination) return;
+
+        const items = Array.from(skills[selectedDisplayType]);
+        const [reorderedItem] = items.splice(result.source.index, 1);
+        items.splice(result.destination.index, 0, reorderedItem);
+
+        // Optimistically update the UI
+        setSkills({
+            ...skills,
+            [selectedDisplayType]: items,
+        });
+
+        // Update order in backend
+        router.post(route('admin.skills.reorder'), {
+            orderedIds: items.map(item => item.id),
+            display_type: selectedDisplayType,
+        }, {
+            preserveState: true,
+            preserveScroll: true,
+            onSuccess: (page) => {
+                if (page.props.success) {
+                    toast.success('Order updated successfully');
+                }
+            },
+            onError: () => {
+                // Revert the optimistic update on error
+                setSkills({
+                    ...skills,
+                    [selectedDisplayType]: Array.from(skills[selectedDisplayType])
+                });
+                toast.error('Failed to update order');
+            }
         });
     };
 
@@ -355,46 +410,71 @@ export default function Skills({ skills: initialSkills, progressSkillsCount, car
                                                             </div>
                                                         </div>
 
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                                                    <span className="sr-only">Open menu</span>
-                                                                    <MoreHorizontal className="h-4 w-4" />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end" className="w-[160px]">
-                                                                <DropdownMenuItem 
-                                                                    onClick={() => toggleVisibility(skill)}
-                                                                    className="text-gray-600 hover:text-gray-900"
-                                                                >
-                                                                    {skill.is_visible ? (
-                                                                        <>
-                                                                            <EyeOff className="mr-2 h-4 w-4" />
-                                                                            Hide
-                                                                        </>
-                                                                    ) : (
-                                                                        <>
-                                                                            <Eye className="mr-2 h-4 w-4" />
-                                                                            Show
-                                                                        </>
-                                                                    )}
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem 
-                                                                    onClick={() => handleEdit(skill)}
-                                                                    className="text-gray-600 hover:text-gray-900"
-                                                                >
-                                                                    <Edit2 className="mr-2 h-4 w-4" />
-                                                                    Edit
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuItem 
-                                                                    onClick={() => confirmDelete(skill)}
-                                                                    className="text-red-600 hover:text-red-700"
-                                                                >
-                                                                    <Trash2 className="mr-2 h-4 w-4" />
-                                                                    Delete
-                                                                </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="flex items-center gap-1">
+                                                                {index !== 0 && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        className="h-8 w-8 text-gray-500 hover:text-[#20B2AA] hover:bg-[#E6F7F6]"
+                                                                        onClick={() => handleMoveUp(index)}
+                                                                    >
+                                                                        <ArrowUp className="h-4 w-4" />
+                                                                    </Button>
+                                                                )}
+                                                                {index !== filteredSkills.length - 1 && (
+                                                                    <Button
+                                                                        variant="ghost"
+                                                                        size="icon"
+                                                                        className="h-8 w-8 text-gray-500 hover:text-[#20B2AA] hover:bg-[#E6F7F6]"
+                                                                        onClick={() => handleMoveDown(index)}
+                                                                    >
+                                                                        <ArrowDown className="h-4 w-4" />
+                                                                    </Button>
+                                                                )}
+                                                            </div>
+
+                                                            <DropdownMenu>
+                                                                <DropdownMenuTrigger asChild>
+                                                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                                                        <span className="sr-only">Open menu</span>
+                                                                        <MoreHorizontal className="h-4 w-4" />
+                                                                    </Button>
+                                                                </DropdownMenuTrigger>
+                                                                <DropdownMenuContent align="end" className="w-[160px]">
+                                                                    <DropdownMenuItem 
+                                                                        onClick={() => toggleVisibility(skill)}
+                                                                        className="text-gray-600 hover:text-gray-900"
+                                                                    >
+                                                                        {skill.is_visible ? (
+                                                                            <>
+                                                                                <EyeOff className="mr-2 h-4 w-4" />
+                                                                                Hide
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                <Eye className="mr-2 h-4 w-4" />
+                                                                                Show
+                                                                            </>
+                                                                        )}
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem 
+                                                                        onClick={() => handleEdit(skill)}
+                                                                        className="text-gray-600 hover:text-gray-900"
+                                                                    >
+                                                                        <Edit2 className="mr-2 h-4 w-4" />
+                                                                        Edit
+                                                                    </DropdownMenuItem>
+                                                                    <DropdownMenuItem 
+                                                                        onClick={() => confirmDelete(skill)}
+                                                                        className="text-red-600 hover:text-red-700"
+                                                                    >
+                                                                        <Trash2 className="mr-2 h-4 w-4" />
+                                                                        Delete
+                                                                    </DropdownMenuItem>
+                                                                </DropdownMenuContent>
+                                                            </DropdownMenu>
+                                                        </div>
                                                     </motion.div>
                                                 )}
                                             </Draggable>

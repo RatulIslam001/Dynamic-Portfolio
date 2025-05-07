@@ -49,7 +49,7 @@ const dummyExperiences: Experience[] = [
     }
 ];
 
-interface FormData {
+interface FormData extends Record<string, string | boolean> {
     position: string;
     company: string;
     location: string;
@@ -368,47 +368,79 @@ export default function Experience() {
             {/* Edit Experience Dialog */}
             <Dialog open={!!editingExperience} onOpenChange={(open) => !open && setEditingExperience(null)}>
                 <DialogContent className="sm:max-w-[600px]">
-                    <DialogHeader>
+                    <DialogHeader className="space-y-4">
                         <DialogTitle className="flex items-center gap-2">
-                            <Pencil className="w-5 h-5 text-[#20B2AA]" />
+                            <div className="p-2 rounded-lg bg-[#E6F7F6]">
+                                <Pencil className="w-5 h-5 text-[#20B2AA]" />
+                            </div>
                             Edit Experience
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className="text-base">
                             Update your experience information. Make changes to the fields below.
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={handleUpdate} className="space-y-6">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="edit-position">Position</Label>
-                                <Input
-                                    id="edit-position"
-                                    value={editForm.data.position}
-                                    onChange={e => editForm.setData('position', e.target.value)}
-                                    placeholder="e.g. Senior Web Developer"
-                                />
+                    <form onSubmit={handleUpdate} className="space-y-6 mt-4">
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="col-span-2 space-y-2">
+                                <Label htmlFor="edit-position" className="text-sm font-medium">
+                                    Position
+                                    <span className="text-red-500 ml-1">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                    <Input
+                                        id="edit-position"
+                                        value={editForm.data.position}
+                                        onChange={e => editForm.setData('position', e.target.value)}
+                                        placeholder="e.g. Senior Web Developer"
+                                        className="pl-10"
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="edit-company">Company</Label>
-                                <Input
-                                    id="edit-company"
-                                    value={editForm.data.company}
-                                    onChange={e => editForm.setData('company', e.target.value)}
-                                    placeholder="e.g. Tech Solutions Inc."
-                                />
+                                <Label htmlFor="edit-company" className="text-sm font-medium">
+                                    Company
+                                    <span className="text-red-500 ml-1">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                    <Input
+                                        id="edit-company"
+                                        value={editForm.data.company}
+                                        onChange={e => editForm.setData('company', e.target.value)}
+                                        placeholder="e.g. Tech Solutions Inc."
+                                        className="pl-10"
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="edit-location">Location</Label>
-                                <Input
-                                    id="edit-location"
-                                    value={editForm.data.location}
-                                    onChange={e => editForm.setData('location', e.target.value)}
-                                    placeholder="e.g. San Francisco, CA"
-                                />
+                                <Label htmlFor="edit-location" className="text-sm font-medium">
+                                    Location
+                                    <span className="text-red-500 ml-1">*</span>
+                                </Label>
+                                <div className="relative">
+                                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                        <circle cx="12" cy="10" r="3" />
+                                    </svg>
+                                    <Input
+                                        id="edit-location"
+                                        value={editForm.data.location}
+                                        onChange={e => editForm.setData('location', e.target.value)}
+                                        placeholder="e.g. San Francisco, CA"
+                                        className="pl-10"
+                                        required
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="edit-start-date">Start Date</Label>
+                                <Label htmlFor="edit-start-date" className="text-sm font-medium">
+                                    Start Date
+                                    <span className="text-red-500 ml-1">*</span>
+                                </Label>
                                 <div className="relative">
                                     <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
@@ -427,7 +459,10 @@ export default function Experience() {
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="edit-end-date">End Date</Label>
+                                <Label htmlFor="edit-end-date" className="text-sm font-medium">
+                                    End Date
+                                    {!editForm.data.is_current && <span className="text-red-500 ml-1">*</span>}
+                                </Label>
                                 <div className="relative">
                                     <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                         <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
@@ -441,50 +476,76 @@ export default function Experience() {
                                         value={formatDateForInput(editForm.data.end_date)}
                                         onChange={e => editForm.setData('end_date', e.target.value)}
                                         className="pl-10 cursor-pointer"
+                                        required={!editForm.data.is_current}
                                         disabled={editForm.data.is_current}
                                     />
                                 </div>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="col-span-2 flex items-center space-x-2">
                                 <Switch
                                     id="edit-is-current"
                                     checked={editForm.data.is_current}
-                                    onCheckedChange={checked => {
+                                    onCheckedChange={(checked: boolean): void => {
                                         editForm.setData('is_current', checked);
                                         if (checked) {
                                             editForm.setData('end_date', '');
                                         }
                                     }}
                                 />
-                                <Label htmlFor="edit-is-current">I currently work here</Label>
+                                <Label htmlFor="edit-is-current" className="text-sm font-medium">I currently work here</Label>
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="edit-description">Description</Label>
-                            <Textarea
-                                id="edit-description"
-                                value={editForm.data.description}
-                                onChange={e => editForm.setData('description', e.target.value)}
-                                placeholder="Describe your role and achievements..."
-                                className="h-32"
-                            />
+                            <Label htmlFor="edit-description" className="text-sm font-medium">
+                                Description
+                                <span className="text-red-500 ml-1">*</span>
+                            </Label>
+                            <div className="relative">
+                                <svg className="absolute left-3 top-3 h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <line x1="21" x2="3" y1="6" y2="6" />
+                                    <line x1="15" x2="3" y1="12" y2="12" />
+                                    <line x1="17" x2="3" y1="18" y2="18" />
+                                </svg>
+                                <Textarea
+                                    id="edit-description"
+                                    value={editForm.data.description}
+                                    onChange={e => editForm.setData('description', e.target.value)}
+                                    placeholder="Describe your role, responsibilities, and key achievements..."
+                                    className="min-h-[120px] pl-10 resize-y"
+                                    required
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                                Write about your responsibilities, achievements, technologies used, and the impact of your work.
+                            </p>
                         </div>
 
-                        <DialogFooter>
+                        <DialogFooter className="gap-2 sm:gap-0">
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={() => setEditingExperience(null)}
+                                className="w-full sm:w-auto"
                             >
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
-                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white"
+                                className="w-full sm:w-auto bg-[#20B2AA] hover:bg-[#1a9994] text-white"
                                 disabled={editForm.processing}
                             >
-                                {editForm.processing ? 'Saving...' : 'Save Changes'}
+                                {editForm.processing ? (
+                                    <>
+                                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Saving...
+                                    </>
+                                ) : (
+                                    'Save Changes'
+                                )}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -611,7 +672,7 @@ export default function Experience() {
                                 <Switch
                                     id="is_current"
                                     checked={form.data.is_current}
-                                    onCheckedChange={checked => {
+                                    onCheckedChange={(checked: boolean): void => {
                                         form.setData('is_current', checked);
                                         if (checked) {
                                             form.setData('end_date', '');

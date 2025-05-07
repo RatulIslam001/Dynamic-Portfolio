@@ -10,7 +10,7 @@ class Skill extends Model
         'name',
         'proficiency',
         'category',
-        'display_type',
+        'icon',
         'order',
         'is_visible',
     ];

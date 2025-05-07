@@ -13,6 +13,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('proficiency');
             $table->string('category'); // Technical, Design, Soft Skills, Languages
+            $table->string('icon');
             $table->string('display_type')->default('progress'); // 'progress' for left side, 'card' for right side
             $table->integer('order')->default(0);
             $table->boolean('is_visible')->default(true);

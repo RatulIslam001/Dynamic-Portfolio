@@ -17,14 +17,13 @@ class Project extends Model
     protected $fillable = [
         'title',
         'description',
-        'image',
         'category',
-        'status',
-        'is_featured',
-        'client_name',
-        'project_url',
-        'completion_date',
         'technologies',
+        'image',
+        'github_url',
+        'live_url',
+        'order',
+        'is_featured',
     ];
 
     /**
@@ -33,9 +32,8 @@ class Project extends Model
      * @var array<string, string>
      */
     protected $casts = [
-        'is_featured' => 'boolean',
-        'completion_date' => 'date',
         'technologies' => 'array',
+        'is_featured' => 'boolean',
     ];
 
     /**

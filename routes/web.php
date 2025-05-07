@@ -6,6 +6,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\ExperienceController;
+use App\Http\Controllers\TestimonialController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -61,9 +62,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         return Inertia::render('resume');
     })->name('admin.resume');
 
-    Route::get('/testimonials', function () {
-        return Inertia::render('testimonials');
-    })->name('admin.testimonials');
+    // Testimonials routes
+    Route::get('/testimonials', [TestimonialController::class, 'index'])->name('admin.testimonials');
+    Route::post('/testimonials', [TestimonialController::class, 'store'])->name('admin.testimonials.store');
+    Route::put('/testimonials/{testimonial}', [TestimonialController::class, 'update'])->name('admin.testimonials.update');
+    Route::delete('/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('admin.testimonials.destroy');
+    Route::post('/testimonials/reorder', [TestimonialController::class, 'reorder'])->name('admin.testimonials.reorder');
+    Route::post('/testimonials/{testimonial}/toggle-featured', [TestimonialController::class, 'toggleFeatured'])->name('admin.testimonials.toggle-featured');
 
     Route::get('/messages', function () {
         return Inertia::render('messages');
