@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/layouts/admin-layout';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import DeleteConfirmation from '@/components/ui/delete-confirmation';
 
 const categoryOptions = [
     'Technical',
@@ -56,6 +57,8 @@ export default function Skills({ skills: initialSkills, progressSkillsCount, car
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
     const [selectedDisplayType, setSelectedDisplayType] = useState<'progress' | 'card'>('progress');
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [skillToDelete, setSkillToDelete] = useState<Skill | null>(null);
 
     const form = useForm<FormData>({
         name: '',
@@ -114,14 +117,21 @@ export default function Skills({ skills: initialSkills, progressSkillsCount, car
         });
     };
 
-    const handleDelete = (skill: Skill) => {
-        if (confirm('Are you sure you want to delete this skill?')) {
-            router.delete(route('admin.skills.destroy', { skill: skill.id }), {
-                onSuccess: () => {
-                    toast.success('Skill deleted successfully');
-                },
-            });
-        }
+    const confirmDelete = (skill: Skill) => {
+        setSkillToDelete(skill);
+        setDeleteConfirmOpen(true);
+    };
+
+    const handleDeleteConfirmed = () => {
+        if (!skillToDelete) return;
+
+        router.delete(route('admin.skills.destroy', { skill: skillToDelete.id }), {
+            onSuccess: () => {
+                toast.success('Skill deleted successfully');
+                setDeleteConfirmOpen(false);
+                setSkillToDelete(null);
+            },
+        });
     };
 
     const handleDragEnd = (result: DropResult) => {
@@ -377,7 +387,7 @@ export default function Skills({ skills: initialSkills, progressSkillsCount, car
                                                                     Edit
                                                                 </DropdownMenuItem>
                                                                 <DropdownMenuItem 
-                                                                    onClick={() => handleDelete(skill)}
+                                                                    onClick={() => confirmDelete(skill)}
                                                                     className="text-red-600 hover:text-red-700"
                                                                 >
                                                                     <Trash2 className="mr-2 h-4 w-4" />
@@ -703,6 +713,19 @@ export default function Skills({ skills: initialSkills, progressSkillsCount, car
                     </form>
                 </DialogContent>
             </Dialog>
+
+            <DeleteConfirmation 
+                isOpen={deleteConfirmOpen}
+                onClose={() => {
+                    setDeleteConfirmOpen(false);
+                    setSkillToDelete(null);
+                }}
+                onConfirm={handleDeleteConfirmed}
+                title="Delete Skill"
+                description="Are you sure you want to delete this skill? This action cannot be undone."
+                confirmText="Delete"
+                cancelText="Cancel"
+            />
         </AdminLayout>
     );
 } 

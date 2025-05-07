@@ -10,6 +10,7 @@ import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, D
 import { Code, Palette, Smartphone, Search, BarChart, FileText, Plus, X, GripVertical, ChevronUp, ChevronDown, MoreVertical, Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import DeleteConfirmation from '@/components/ui/delete-confirmation';
 
 type IconType = typeof iconOptions[number]['value'];
 
@@ -50,6 +51,8 @@ export default function Services({ services: initialServices }: Props) {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [editingService, setEditingService] = useState<Service | null>(null);
     const [isReordering, setIsReordering] = useState(false);
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [serviceToDelete, setServiceToDelete] = useState<Service | null>(null);
 
     const form = useForm<FormData>({
         title: '',
@@ -133,17 +136,28 @@ export default function Services({ services: initialServices }: Props) {
         });
     };
 
-    const handleDelete = (service: Service) => {
-        if (confirm('Are you sure you want to delete this service?')) {
-            fetch(route('admin.services.destroy', { service: service.id }), {
+    const confirmDelete = (service: Service) => {
+        setServiceToDelete(service);
+        setDeleteConfirmOpen(true);
+    };
+
+    const handleDeleteConfirmed = async () => {
+        if (!serviceToDelete) return;
+
+        try {
+            await fetch(route('admin.services.destroy', { service: serviceToDelete.id }), {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
-            }).then(() => {
-                setServices(services.filter(s => s.id !== service.id));
-                toast.success('Service deleted successfully');
             });
+            setServices(services.filter(s => s.id !== serviceToDelete.id));
+            toast.success('Service deleted successfully');
+        } catch (error) {
+            toast.error('Failed to delete service');
+        } finally {
+            setDeleteConfirmOpen(false);
+            setServiceToDelete(null);
         }
     };
 
@@ -221,7 +235,7 @@ export default function Services({ services: initialServices }: Props) {
                                                         <Button
                                                             variant="ghost"
                                                             size="sm"
-                                                            onClick={() => handleDelete(service)}
+                                                            onClick={() => confirmDelete(service)}
                                                             className="text-gray-500 hover:text-red-600 hover:bg-red-50"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
@@ -463,6 +477,19 @@ export default function Services({ services: initialServices }: Props) {
                     </form>
                 </DialogContent>
             </Dialog>
+
+            <DeleteConfirmation 
+                isOpen={deleteConfirmOpen}
+                onClose={() => {
+                    setDeleteConfirmOpen(false);
+                    setServiceToDelete(null);
+                }}
+                onConfirm={handleDeleteConfirmed}
+                title="Delete Service"
+                description="Are you sure you want to delete this service? This action cannot be undone."
+                confirmText="Delete"
+                cancelText="Cancel"
+            />
         </AdminLayout>
     );
 } 

@@ -5,6 +5,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SkillController;
+use App\Http\Controllers\ExperienceController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -48,6 +49,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::delete('/skills/{skill}', [SkillController::class, 'destroy'])->name('admin.skills.destroy');
     Route::post('/skills/reorder', [SkillController::class, 'reorder'])->name('admin.skills.reorder');
     Route::post('/skills/{skill}/toggle-visibility', [SkillController::class, 'toggleVisibility'])->name('admin.skills.toggle-visibility');
+
+    // Experience routes
+    Route::get('/experiences', [ExperienceController::class, 'index'])->name('admin.experiences.index');
+    Route::post('/experiences', [ExperienceController::class, 'store'])->name('admin.experiences.store');
+    Route::put('/experiences/{experience}', [ExperienceController::class, 'update'])->name('admin.experiences.update');
+    Route::delete('/experiences/{experience}', [ExperienceController::class, 'destroy'])->name('admin.experiences.destroy');
+    Route::post('/experiences/reorder', [ExperienceController::class, 'reorder'])->name('admin.experiences.reorder');
 
     Route::get('/resume', function () {
         return Inertia::render('resume');

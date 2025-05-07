@@ -10,6 +10,7 @@ import { Plus, Search, Star, Edit2, Trash2, Calendar, Link as LinkIcon, MoreHori
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import DeleteConfirmation from '@/components/ui/delete-confirmation';
 
 const categoryOptions = [
     'Web Design',
@@ -65,6 +66,8 @@ export default function Projects({ projects: initialProjects }: Props) {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string>('All Categories');
     const [selectedStatus, setSelectedStatus] = useState<string>('All Status');
+    const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+    const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
     const form = useForm<FormData>({
         title: '',
@@ -110,20 +113,28 @@ export default function Projects({ projects: initialProjects }: Props) {
         });
     };
 
-    const handleDelete = async (project: Project) => {
-        if (confirm('Are you sure you want to delete this project?')) {
-            try {
-                await fetch(route('admin.projects.destroy', { project: project.id }), {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                    },
-                });
-                setProjects(projects.filter(p => p.id !== project.id));
-                toast.success('Project deleted successfully');
-            } catch (error) {
-                toast.error('Failed to delete project');
-            }
+    const confirmDelete = (project: Project) => {
+        setProjectToDelete(project);
+        setDeleteConfirmOpen(true);
+    };
+
+    const handleDeleteConfirmed = async () => {
+        if (!projectToDelete) return;
+
+        try {
+            await fetch(route('admin.projects.destroy', { project: projectToDelete.id }), {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+            });
+            setProjects(projects.filter(p => p.id !== projectToDelete.id));
+            toast.success('Project deleted successfully');
+        } catch (error) {
+            toast.error('Failed to delete project');
+        } finally {
+            setDeleteConfirmOpen(false);
+            setProjectToDelete(null);
         }
     };
 
@@ -399,7 +410,7 @@ export default function Projects({ projects: initialProjects }: Props) {
                                                         Edit
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem 
-                                                        onClick={() => handleDelete(project)}
+                                                        onClick={() => confirmDelete(project)}
                                                         className="text-red-600 hover:text-red-700"
                                                     >
                                                         <Trash2 className="mr-2 h-4 w-4" />
@@ -1000,6 +1011,19 @@ export default function Projects({ projects: initialProjects }: Props) {
                     </form>
                 </DialogContent>
             </Dialog>
+
+            <DeleteConfirmation 
+                isOpen={deleteConfirmOpen}
+                onClose={() => {
+                    setDeleteConfirmOpen(false);
+                    setProjectToDelete(null);
+                }}
+                onConfirm={handleDeleteConfirmed}
+                title="Delete Project"
+                description="Are you sure you want to delete this project? This action cannot be undone."
+                confirmText="Delete"
+                cancelText="Cancel"
+            />
         </AdminLayout>
     );
 } 
