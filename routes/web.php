@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\SkillController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -40,9 +41,13 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('admin.projects.destroy');
     Route::post('/projects/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('admin.projects.toggle-featured');
 
-    Route::get('/skills', function () {
-        return Inertia::render('skills');
-    })->name('admin.skills');
+    // Skills routes
+    Route::get('/skills', [SkillController::class, 'index'])->name('admin.skills');
+    Route::post('/skills', [SkillController::class, 'store'])->name('admin.skills.store');
+    Route::put('/skills/{skill}', [SkillController::class, 'update'])->name('admin.skills.update');
+    Route::delete('/skills/{skill}', [SkillController::class, 'destroy'])->name('admin.skills.destroy');
+    Route::post('/skills/reorder', [SkillController::class, 'reorder'])->name('admin.skills.reorder');
+    Route::post('/skills/{skill}/toggle-visibility', [SkillController::class, 'toggleVisibility'])->name('admin.skills.toggle-visibility');
 
     Route::get('/resume', function () {
         return Inertia::render('resume');

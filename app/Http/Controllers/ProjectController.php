@@ -17,11 +17,15 @@ class ProjectController extends Controller
                 return [
                     'id' => $project->id,
                     'title' => $project->title,
+                    'description' => $project->description,
                     'image' => $project->image ? Storage::url($project->image) : null,
                     'category' => $project->category,
                     'status' => $project->status,
                     'is_featured' => $project->is_featured,
                     'completion_date' => $project->formatted_date,
+                    'client_name' => $project->client_name,
+                    'project_url' => $project->project_url,
+                    'technologies' => $project->technologies,
                 ];
             });
         

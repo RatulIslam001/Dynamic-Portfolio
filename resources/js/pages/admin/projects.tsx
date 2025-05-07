@@ -27,11 +27,15 @@ const statusOptions = [
 interface Project {
     id: number;
     title: string;
+    description: string;
     image: string | null;
     category: string;
     status: 'draft' | 'published';
     is_featured: boolean;
     completion_date: string;
+    client_name: string | null;
+    project_url: string | null;
+    technologies: string[];
 }
 
 interface Props {
@@ -51,7 +55,7 @@ interface FormData {
     project_url: string;
     completion_date: string;
     technologies: string[];
-    image: File | null;
+    image: File | string | null;
 }
 
 export default function Projects({ projects: initialProjects }: Props) {
@@ -63,6 +67,19 @@ export default function Projects({ projects: initialProjects }: Props) {
     const [selectedStatus, setSelectedStatus] = useState<string>('All Status');
 
     const form = useForm<FormData>({
+        title: '',
+        description: '',
+        category: '',
+        status: 'draft',
+        is_featured: false,
+        client_name: '',
+        project_url: '',
+        completion_date: '',
+        technologies: [],
+        image: null,
+    });
+
+    const editForm = useForm<FormData>({
         title: '',
         description: '',
         category: '',
@@ -125,6 +142,66 @@ export default function Projects({ projects: initialProjects }: Props) {
         } catch (error) {
             toast.error('Failed to update featured status');
         }
+    };
+
+    const handleEdit = (project: Project) => {
+        setEditingProject(project);
+        editForm.setData({
+            title: project.title,
+            description: project.description,
+            category: project.category,
+            status: project.status,
+            is_featured: project.is_featured,
+            client_name: project.client_name ?? '',
+            project_url: project.project_url ?? '',
+            completion_date: project.completion_date,
+            technologies: project.technologies,
+            image: project.image,
+        } as FormData);
+    };
+
+    const handleUpdate = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingProject) return;
+
+        const formData = new FormData();
+        Object.keys(editForm.data).forEach(key => {
+            if (editForm.data[key] !== null) {
+                if (key === 'image' && editForm.data.image instanceof File) {
+                    formData.append(key, editForm.data.image);
+                } else if (key !== 'image') {
+                    formData.append(key, String(editForm.data[key]));
+                }
+            }
+        });
+
+        editForm.post(route('admin.projects.update', { project: editingProject.id }), {
+            onSuccess: () => {
+                // Update the projects list with the edited data
+                setProjects(projects.map(p => {
+                    if (p.id === editingProject.id) {
+                        return {
+                            ...p,
+                            title: editForm.data.title,
+                            description: editForm.data.description,
+                            category: editForm.data.category,
+                            status: editForm.data.status,
+                            is_featured: editForm.data.is_featured,
+                            client_name: editForm.data.client_name,
+                            project_url: editForm.data.project_url,
+                            completion_date: editForm.data.completion_date,
+                            technologies: editForm.data.technologies,
+                            // Only update image if it's a string or null
+                            image: typeof editForm.data.image === 'string' ? editForm.data.image : p.image
+                        };
+                    }
+                    return p;
+                }));
+                setEditingProject(null);
+                editForm.reset();
+                toast.success('Project updated successfully');
+            },
+        });
     };
 
     return (
@@ -315,7 +392,7 @@ export default function Projects({ projects: initialProjects }: Props) {
                                                         View
                                                     </DropdownMenuItem>
                                                     <DropdownMenuItem 
-                                                        onClick={() => setEditingProject(project)}
+                                                        onClick={() => handleEdit(project)}
                                                         className="text-gray-600 hover:text-gray-900"
                                                     >
                                                         <Edit2 className="mr-2 h-4 w-4" />
@@ -496,41 +573,113 @@ export default function Projects({ projects: initialProjects }: Props) {
                                 <label className="text-sm font-medium text-gray-700">
                                     Project Image
                                 </label>
-                                <div className="flex items-center gap-4">
-                                    <div className="w-24 h-24 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 flex items-center justify-center">
-                                        {form.data.image ? (
-                                            <img
-                                                src={URL.createObjectURL(form.data.image)}
-                                                alt="Preview"
-                                                className="w-full h-full object-cover rounded-lg"
-                                            />
-                                        ) : (
-                                            <div className="text-gray-400">
-                                                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
+                                <div className="mt-1 flex flex-col sm:flex-row gap-4">
+                                    <div className="flex-shrink-0">
+                                        <div className="relative group">
+                                            <div className={cn(
+                                                "w-32 h-32 rounded-lg overflow-hidden border-2 border-dashed transition-all duration-200",
+                                                form.data.image 
+                                                    ? "border-[#20B2AA] bg-[#E6F7F6]" 
+                                                    : "border-gray-200 bg-gray-50 group-hover:border-gray-300"
+                                            )}>
+                                                {form.data.image && form.data.image instanceof File && (
+                                                    <>
+                                                        <img
+                                                            src={URL.createObjectURL(form.data.image)}
+                                                            alt="Preview"
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => form.setData('image', null)}
+                                                                className="text-white hover:text-red-400 transition-colors"
+                                                            >
+                                                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                )}
                                             </div>
-                                        )}
+                                        </div>
                                     </div>
-                                    <div className="flex-1">
-                                        <Input
-                                            type="file"
-                                            onChange={e => {
-                                                const file = e.target.files?.[0];
-                                                if (file) {
-                                                    form.setData('image', file);
-                                                }
-                                            }}
-                                            accept="image/*"
-                                            className="w-full"
-                                        />
-                                        <p className="mt-1 text-xs text-gray-500">
-                                            Recommended size: 1200x800px. Max size: 2MB
-                                        </p>
+                                    <div className="flex-1 space-y-4">
+                                        <div>
+                                            <label 
+                                                htmlFor="project-image-upload" 
+                                                className={cn(
+                                                    "flex flex-col items-center justify-center w-full h-24 rounded-lg cursor-pointer transition-all duration-200",
+                                                    "border-2 border-dashed",
+                                                    form.data.image 
+                                                        ? "border-[#20B2AA] bg-[#E6F7F6] hover:bg-[#d9f2f1]" 
+                                                        : "border-gray-200 bg-gray-50 hover:bg-gray-100"
+                                                )}
+                                            >
+                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <svg className={cn(
+                                                        "w-8 h-8 mb-3",
+                                                        form.data.image ? "text-[#20B2AA]" : "text-gray-400"
+                                                    )} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                    </svg>
+                                                    <p className="mb-2 text-sm text-gray-500">
+                                                        <span className="font-medium">Click to upload</span> or drag and drop
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">PNG, JPG or WEBP (MAX. 2MB)</p>
+                                                </div>
+                                                <input 
+                                                    id="project-image-upload"
+                                                    type="file"
+                                                    className="hidden"
+                                                    onChange={e => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            // Validate file type
+                                                            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                                                            if (!validTypes.includes(file.type)) {
+                                                                toast.error('Please upload a valid image file (PNG, JPG or WEBP)');
+                                                                return;
+                                                            }
+                                                            // Validate file size (2MB)
+                                                            if (file.size > 2 * 1024 * 1024) {
+                                                                toast.error('Image size should be less than 2MB');
+                                                                return;
+                                                            }
+                                                            form.setData('image', file);
+                                                        }
+                                                    }}
+                                                    accept="image/png,image/jpeg,image/webp"
+                                                />
+                                            </label>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>Recommended image specifications:</span>
+                                            </div>
+                                            <ul className="pl-5 space-y-1">
+                                                <li className="text-xs text-gray-500 flex items-center gap-1">
+                                                    <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
+                                                    Size: 1200x800px (3:2 ratio)
+                                                </li>
+                                                <li className="text-xs text-gray-500 flex items-center gap-1">
+                                                    <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
+                                                    Format: PNG, JPG or WEBP
+                                                </li>
+                                                <li className="text-xs text-gray-500 flex items-center gap-1">
+                                                    <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
+                                                    Max size: 2MB
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                                 {form.errors.image && (
-                                    <p className="text-sm text-red-500">{form.errors.image}</p>
+                                    <p className="text-sm text-red-500 mt-1">{form.errors.image}</p>
                                 )}
                             </div>
                         </div>
@@ -579,8 +728,276 @@ export default function Projects({ projects: initialProjects }: Props) {
                         </DialogDescription>
                     </DialogHeader>
 
-                    {/* Similar form structure as Add Project, but with editForm */}
-                    {/* ... */}
+                    <form onSubmit={handleUpdate} className="space-y-6">
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="col-span-2 space-y-2">
+                                <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                    Project Title
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <Input
+                                    type="text"
+                                    value={editForm.data.title}
+                                    onChange={e => editForm.setData('title', e.target.value)}
+                                    className="w-full"
+                                    placeholder="Enter project title"
+                                />
+                                {editForm.errors.title && (
+                                    <p className="text-sm text-red-500">{editForm.errors.title}</p>
+                                )}
+                            </div>
+
+                            <div className="col-span-2 space-y-2">
+                                <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                    Description
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <Textarea
+                                    value={editForm.data.description}
+                                    onChange={e => editForm.setData('description', e.target.value)}
+                                    className="w-full min-h-[100px]"
+                                    placeholder="Enter project description"
+                                />
+                                {editForm.errors.description && (
+                                    <p className="text-sm text-red-500">{editForm.errors.description}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                    Category
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <Select
+                                    value={editForm.data.category}
+                                    onValueChange={(value) => editForm.setData('category', value)}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {categoryOptions.map((category) => (
+                                            <SelectItem key={category} value={category}>
+                                                {category}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {editForm.errors.category && (
+                                    <p className="text-sm text-red-500">{editForm.errors.category}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                    Status
+                                    <span className="text-red-500">*</span>
+                                </label>
+                                <Select
+                                    value={editForm.data.status}
+                                    onValueChange={(value: 'draft' | 'published') => editForm.setData('status', value as any)}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {statusOptions.map((status) => (
+                                            <SelectItem key={status.value} value={status.value}>
+                                                {status.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {editForm.errors.status && (
+                                    <p className="text-sm text-red-500">{editForm.errors.status}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Project URL
+                                </label>
+                                <Input
+                                    type="url"
+                                    value={editForm.data.project_url}
+                                    onChange={e => editForm.setData('project_url', e.target.value)}
+                                    className="w-full"
+                                    placeholder="https://example.com"
+                                />
+                                {editForm.errors.project_url && (
+                                    <p className="text-sm text-red-500">{editForm.errors.project_url}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Completion Date
+                                </label>
+                                <Input
+                                    type="date"
+                                    value={editForm.data.completion_date}
+                                    onChange={e => editForm.setData('completion_date', e.target.value)}
+                                    className="w-full"
+                                />
+                                {editForm.errors.completion_date && (
+                                    <p className="text-sm text-red-500">{editForm.errors.completion_date}</p>
+                                )}
+                            </div>
+
+                            <div className="col-span-2 space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Project Image
+                                </label>
+                                <div className="mt-1 flex flex-col sm:flex-row gap-4">
+                                    <div className="flex-shrink-0">
+                                        <div className="relative group">
+                                            <div className={cn(
+                                                "w-32 h-32 rounded-lg overflow-hidden border-2 border-dashed transition-all duration-200",
+                                                editForm.data.image 
+                                                    ? "border-[#20B2AA] bg-[#E6F7F6]" 
+                                                    : "border-gray-200 bg-gray-50 group-hover:border-gray-300"
+                                            )}>
+                                                {editForm.data.image ? (
+                                                    <>
+                                                        <img
+                                                            src={typeof editForm.data.image === 'string' 
+                                                                ? editForm.data.image 
+                                                                : editForm.data.image instanceof File
+                                                                    ? URL.createObjectURL(editForm.data.image)
+                                                                    : ''}
+                                                            alt="Preview"
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => editForm.setData('image', null)}
+                                                                className="text-white hover:text-red-400 transition-colors"
+                                                            >
+                                                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 group-hover:text-gray-500">
+                                                        <svg className="w-8 h-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                        </svg>
+                                                        <span className="text-xs font-medium">No image</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="flex-1 space-y-4">
+                                        <div>
+                                            <label 
+                                                htmlFor="project-image-edit" 
+                                                className={cn(
+                                                    "flex flex-col items-center justify-center w-full h-24 rounded-lg cursor-pointer transition-all duration-200",
+                                                    "border-2 border-dashed",
+                                                    editForm.data.image 
+                                                        ? "border-[#20B2AA] bg-[#E6F7F6] hover:bg-[#d9f2f1]" 
+                                                        : "border-gray-200 bg-gray-50 hover:bg-gray-100"
+                                                )}
+                                            >
+                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                    <svg className={cn(
+                                                        "w-8 h-8 mb-3",
+                                                        editForm.data.image ? "text-[#20B2AA]" : "text-gray-400"
+                                                    )} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                                                    </svg>
+                                                    <p className="mb-2 text-sm text-gray-500">
+                                                        <span className="font-medium">Click to upload</span> or drag and drop
+                                                    </p>
+                                                    <p className="text-xs text-gray-500">PNG, JPG or WEBP (MAX. 2MB)</p>
+                                                </div>
+                                                <input 
+                                                    id="project-image-edit"
+                                                    type="file"
+                                                    className="hidden"
+                                                    onChange={e => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            // Validate file type
+                                                            const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+                                                            if (!validTypes.includes(file.type)) {
+                                                                toast.error('Please upload a valid image file (PNG, JPG or WEBP)');
+                                                                return;
+                                                            }
+                                                            // Validate file size (2MB)
+                                                            if (file.size > 2 * 1024 * 1024) {
+                                                                toast.error('Image size should be less than 2MB');
+                                                                return;
+                                                            }
+                                                            editForm.setData('image', file);
+                                                        }
+                                                    }}
+                                                    accept="image/png,image/jpeg,image/webp"
+                                                />
+                                            </label>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>Recommended image specifications:</span>
+                                            </div>
+                                            <ul className="pl-5 space-y-1">
+                                                <li className="text-xs text-gray-500 flex items-center gap-1">
+                                                    <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
+                                                    Size: 1200x800px (3:2 ratio)
+                                                </li>
+                                                <li className="text-xs text-gray-500 flex items-center gap-1">
+                                                    <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
+                                                    Format: PNG, JPG or WEBP
+                                                </li>
+                                                <li className="text-xs text-gray-500 flex items-center gap-1">
+                                                    <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
+                                                    Max size: 2MB
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                {editForm.errors.image && (
+                                    <p className="text-sm text-red-500 mt-1">{editForm.errors.image}</p>
+                                )}
+                            </div>
+                        </div>
+
+                        <DialogFooter>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setEditingProject(null)}
+                                className="mr-2"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white"
+                                disabled={editForm.processing}
+                            >
+                                {editForm.processing ? (
+                                    <div className="flex items-center gap-2">
+                                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                        </svg>
+                                        Updating...
+                                    </div>
+                                ) : (
+                                    'Update Project'
+                                )}
+                            </Button>
+                        </DialogFooter>
+                    </form>
                 </DialogContent>
             </Dialog>
         </AdminLayout>
