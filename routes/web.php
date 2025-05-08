@@ -7,6 +7,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SkillController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\TestimonialController;
+use App\Http\Controllers\MessageController;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
@@ -70,9 +71,14 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/testimonials/reorder', [TestimonialController::class, 'reorder'])->name('admin.testimonials.reorder');
     Route::post('/testimonials/{testimonial}/toggle-featured', [TestimonialController::class, 'toggleFeatured'])->name('admin.testimonials.toggle-featured');
 
-    Route::get('/messages', function () {
-        return Inertia::render('messages');
-    })->name('admin.messages');
+    Route::get('/messages', [MessageController::class, 'index'])->name('admin.messages');
+    Route::get('/messages/{message}', [MessageController::class, 'show'])->name('admin.messages.show');
+    Route::post('/messages/{message}/read', [MessageController::class, 'markAsRead'])->name('admin.messages.read');
+    Route::post('/messages/{message}/unread', [MessageController::class, 'markAsUnread'])->name('admin.messages.unread');
+    Route::post('/messages/{message}/reply', [MessageController::class, 'reply'])->name('admin.messages.reply');
+    Route::post('/messages/{message}/archive', [MessageController::class, 'archive'])->name('admin.messages.archive');
+    Route::post('/messages/{message}/unarchive', [MessageController::class, 'unarchive'])->name('admin.messages.unarchive');
+    Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('admin.messages.destroy');
 
     Route::get('/appearance', function () {
         return Inertia::render('appearance');

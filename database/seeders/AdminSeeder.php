@@ -10,6 +10,10 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
+        // Delete existing admin user if exists
+        User::where('email', 'admin@mail.com')->delete();
+
+        // Create new admin user
         User::create([
             'name' => 'Admin',
             'email' => 'admin@mail.com',

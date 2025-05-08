@@ -12,25 +12,25 @@ class ServiceSeeder extends Seeder
         $services = [
             [
                 'title' => 'Web Development',
-                'description' => 'Building modern, responsive web applications using the latest technologies and best practices.',
+                'description' => 'Full-stack web development using modern technologies like Laravel, React, and Vue.js',
                 'icon' => 'code',
                 'order' => 1,
             ],
             [
                 'title' => 'Mobile App Development',
-                'description' => 'Creating native and cross-platform mobile applications for iOS and Android.',
+                'description' => 'Native and cross-platform mobile app development for iOS and Android',
                 'icon' => 'smartphone',
                 'order' => 2,
             ],
             [
                 'title' => 'UI/UX Design',
-                'description' => 'Designing beautiful and intuitive user interfaces that provide exceptional user experiences.',
+                'description' => 'Creating beautiful and intuitive user interfaces with great user experience',
                 'icon' => 'layout',
                 'order' => 3,
             ],
             [
                 'title' => 'API Development',
-                'description' => 'Building robust and scalable APIs that power modern web and mobile applications.',
+                'description' => 'Building robust and scalable RESTful APIs for web and mobile applications',
                 'icon' => 'database',
                 'order' => 4,
             ],
