@@ -81,7 +81,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('admin.messages.destroy');
 
     Route::get('/appearance', function () {
-        return Inertia::render('appearance');
+        return Inertia::render('admin/appearance');
     })->name('admin.appearance');
 
     Route::get('/settings', function () {
