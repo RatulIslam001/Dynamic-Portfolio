@@ -68,7 +68,7 @@ export default function ResponsivePreview({ activeDevice, activePage = '/' }: Re
                         )}
                     >
                         <div className={cn(
-                            "relative bg-white rounded-lg shadow-[0_0_1px_rgba(0,0,0,0.05),0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-gray-200/80 transition-all duration-300",
+                            "relative bg-white/95 backdrop-blur-sm rounded-xl shadow-[0_0_1px_rgba(0,0,0,0.05),0_2px_8px_-2px_rgba(0,0,0,0.1)] border border-gray-200/80 transition-all duration-300",
                             frame.width,
                             frame.height,
                             frame.scale
@@ -77,26 +77,26 @@ export default function ResponsivePreview({ activeDevice, activePage = '/' }: Re
                                 // Mobile Layout
                                 <div className="h-full flex flex-col">
                                     {/* Status Bar */}
-                                    <div className="px-2 py-1 border-b border-gray-100/80 flex items-center justify-between">
-                                        <div className="w-4 h-4 rounded-sm bg-gray-100" />
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-2 h-2 rounded-sm bg-gray-100" />
-                                            <div className="w-2 h-2 rounded-sm bg-gray-100" />
-                                            <div className="w-2 h-2 rounded-sm bg-gray-100" />
+                                    <div className="px-2 py-1.5 border-b border-gray-100/80 flex items-center justify-between bg-gray-50/80">
+                                        <div className="w-4 h-4 rounded-md bg-gray-200/80" />
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-gray-200/80" />
+                                            <div className="w-2 h-2 rounded-full bg-gray-200/80" />
+                                            <div className="w-2 h-2 rounded-full bg-gray-200/80" />
                                         </div>
                                     </div>
 
-                                    {/* Navigation */}
-                                    <div className="px-3 py-2 border-b border-gray-100/80">
+                                    {/* Mobile Navigation */}
+                                    <div className="px-3 py-2.5 border-b border-gray-100/80 shadow-[0_1px_2px_rgba(0,0,0,0.05)] bg-white/95 backdrop-blur-sm">
                                         <div className="flex flex-wrap gap-2">
                                             {navigationItems.map((item) => (
                                                 <div
                                                     key={item.href}
                                                     className={cn(
-                                                        "text-[8px] px-1.5 py-1 rounded transition-colors",
+                                                        "text-[8px] px-2 py-1.5 rounded-md transition-all duration-200 font-medium",
                                                         activePage === item.href
-                                                            ? "bg-gray-900 text-white"
-                                                            : "text-gray-600 hover:text-gray-900"
+                                                            ? "bg-gray-900 text-white shadow-sm ring-2 ring-gray-900/5"
+                                                            : "text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:shadow-sm"
                                                     )}
                                                 >
                                                     {item.title}
@@ -131,22 +131,28 @@ export default function ResponsivePreview({ activeDevice, activePage = '/' }: Re
                                 // Tablet Layout
                                 <div className="h-full flex flex-col">
                                     {/* Header */}
-                                    <div className="px-3 py-2 border-b border-gray-100/80 flex items-center justify-between">
+                                    <div className="px-3 py-2 border-b border-gray-100/80 flex items-center justify-between shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
                                         <div className="w-5 h-5 rounded-sm bg-gray-100" />
-                                        <div className="flex items-center gap-3">
-                                            {navigationItems.map((item) => (
-                                                <div
-                                                    key={item.href}
-                                                    className={cn(
-                                                        "text-[10px] px-2 py-1 rounded-md transition-colors",
-                                                        activePage === item.href
-                                                            ? "bg-gray-900 text-white"
-                                                            : "text-gray-600 hover:text-gray-900"
-                                                    )}
-                                                >
-                                                    {item.title}
+                                        {/* Tablet Navigation */}
+                                        <div className="px-4 py-3 border-b border-gray-100/80 shadow-[0_1px_3px_rgba(0,0,0,0.08)] bg-white/95 backdrop-blur-sm">
+                                            <div className="flex items-center justify-between">
+                                                <div className="w-5 h-5 rounded-md bg-gray-200/80 shadow-sm" />
+                                                <div className="flex items-center gap-4">
+                                                    {navigationItems.map((item) => (
+                                                        <div
+                                                            key={item.href}
+                                                            className={cn(
+                                                                "text-[10px] px-2.5 py-1.5 rounded-md transition-all duration-200 font-medium",
+                                                                activePage === item.href
+                                                                    ? "bg-gray-900 text-white shadow-sm ring-2 ring-gray-900/5"
+                                                                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:shadow-sm"
+                                                            )}
+                                                        >
+                                                            {item.title}
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            ))}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -172,32 +178,31 @@ export default function ResponsivePreview({ activeDevice, activePage = '/' }: Re
                             ) : (
                                 // Desktop Layout
                                 <div className="h-full flex flex-col">
-                                    {/* Navigation */}
-                                    <div className="px-4 py-2 border-b border-gray-100/80 flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-6 h-6 rounded-sm bg-gray-100" />
-                                            <div className="flex items-center gap-4">
-                                                {navigationItems.map((item) => (
-                                                    <div
-                                                        key={item.href}
-                                                        className={cn(
-                                                            "relative text-[11px] px-2.5 py-1.5 rounded-md transition-colors",
-                                                            activePage === item.href
-                                                                ? "text-gray-900 font-medium"
-                                                                : "text-gray-600 hover:text-gray-900"
-                                                        )}
-                                                    >
-                                                        {item.title}
-                                                        {activePage === item.href && (
-                                                            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gray-900 rounded-full" />
-                                                        )}
-                                                    </div>
-                                                ))}
+                                    {/* Desktop Navigation */}
+                                    <div className="px-5 py-3 border-b border-gray-100/80 shadow-[0_1px_3px_rgba(0,0,0,0.1)] bg-white/95 backdrop-blur-sm">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-6">
+                                                <div className="w-6 h-6 rounded-md bg-gray-200/80 shadow-sm" />
+                                                <div className="flex items-center gap-5">
+                                                    {navigationItems.map((item) => (
+                                                        <div
+                                                            key={item.href}
+                                                            className={cn(
+                                                                "relative text-[11px] px-3 py-1.5 rounded-md transition-all duration-200 font-medium",
+                                                                activePage === item.href
+                                                                    ? "text-gray-900 before:absolute before:bottom-0 before:left-1/2 before:-translate-x-1/2 before:w-2/3 before:h-0.5 before:bg-gray-900 before:rounded-full"
+                                                                    : "text-gray-600 hover:text-gray-900 hover:bg-gray-50/80"
+                                                            )}
+                                                        >
+                                                            {item.title}
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-6 h-6 rounded-full bg-gray-100" />
-                                            <div className="w-6 h-6 rounded-sm bg-gray-100" />
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-6 h-6 rounded-full bg-gray-200/80 shadow-sm ring-2 ring-gray-900/5" />
+                                                <div className="w-6 h-6 rounded-md bg-gray-200/80 shadow-sm" />
+                                            </div>
                                         </div>
                                     </div>
 

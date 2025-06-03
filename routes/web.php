@@ -84,9 +84,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
         return Inertia::render('admin/appearance');
     })->name('admin.appearance');
 
-    Route::get('/settings', function () {
-        return Inertia::render('settings');
-    })->name('admin.settings');
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings');
+    Route::post('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('admin.settings.update');
+    Route::post('/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('admin.settings.clear-cache');
+    Route::post('/settings/export-data', [App\Http\Controllers\Admin\SettingsController::class, 'exportData'])->name('admin.settings.export-data');
 });
 
 require __DIR__.'/auth.php';

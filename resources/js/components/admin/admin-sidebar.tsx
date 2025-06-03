@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, User, Settings, FileText, Star, BookOpen, MessageSquare, Eye, Cog, LogOut } from 'lucide-react';
+import { LayoutGrid, User, Settings, FileText, Star, BookOpen, MessageSquare, Eye, Cog, LogOut, Briefcase, FolderKanban } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NavItemProps {
@@ -63,62 +63,83 @@ export function AdminSidebar() {
                 >
                     Profile
                 </NavItem>
-                <NavItem 
-                    href={route('admin.services')} 
-                    icon={Settings}
-                    isActive={isActive(route('admin.services'))}
-                >
-                    Services
-                </NavItem>
-                <NavItem 
-                    href={route('admin.projects')} 
-                    icon={FileText}
-                    isActive={isActive(route('admin.projects'))}
-                >
-                    Projects
-                </NavItem>
-                <NavItem 
-                    href={route('admin.skills')} 
-                    icon={Star}
-                    isActive={isActive(route('admin.skills'))}
-                >
-                    Skills
-                </NavItem>
-                <NavItem 
-                    href={route('admin.resume')} 
-                    icon={BookOpen}
-                    isActive={isActive(route('admin.resume'))}
-                >
-                    Resume
-                </NavItem>
-                <NavItem 
-                    href={route('admin.testimonials')} 
-                    icon={MessageSquare}
-                    isActive={isActive(route('admin.testimonials'))}
-                >
-                    Testimonials
-                </NavItem>
-                <NavItem 
-                    href={route('admin.messages')} 
-                    icon={MessageSquare}
-                    isActive={isActive(route('admin.messages'))}
-                >
-                    Messages
-                </NavItem>
-                <NavItem 
-                    href={route('admin.appearance')} 
-                    icon={Eye}
-                    isActive={isActive(route('admin.appearance'))}
-                >
-                    Appearance
-                </NavItem>
-                <NavItem 
-                    href={route('admin.settings')} 
-                    icon={Cog}
-                    isActive={isActive(route('admin.settings'))}
-                >
-                    Settings
-                </NavItem>
+
+                {/* Content Management Section */}
+                <div className="pt-4">
+                    <div className="px-3 mb-2">
+                        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Content Management</h2>
+                    </div>
+                    <NavItem 
+                        href={route('admin.services')} 
+                        icon={Briefcase}
+                        isActive={isActive(route('admin.services'))}
+                    >
+                        Services Management
+                    </NavItem>
+                    <NavItem 
+                        href={route('admin.projects')} 
+                        icon={FolderKanban}
+                        isActive={isActive(route('admin.projects'))}
+                    >
+                        Portfolio Management
+                    </NavItem>
+                    <NavItem 
+                        href={route('admin.skills')} 
+                        icon={Star}
+                        isActive={isActive(route('admin.skills'))}
+                    >
+                        Skills
+                    </NavItem>
+                    <NavItem 
+                        href={route('admin.resume')} 
+                        icon={BookOpen}
+                        isActive={isActive(route('admin.resume'))}
+                    >
+                        Resume
+                    </NavItem>
+                    <NavItem 
+                        href={route('admin.testimonials')} 
+                        icon={MessageSquare}
+                        isActive={isActive(route('admin.testimonials'))}
+                    >
+                        Testimonials
+                    </NavItem>
+                </div>
+
+                {/* Communication Section */}
+                <div className="pt-4">
+                    <div className="px-3 mb-2">
+                        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Communication</h2>
+                    </div>
+                    <NavItem 
+                        href={route('admin.messages')} 
+                        icon={MessageSquare}
+                        isActive={isActive(route('admin.messages'))}
+                    >
+                        Messages
+                    </NavItem>
+                </div>
+
+                {/* Settings Section */}
+                <div className="pt-4">
+                    <div className="px-3 mb-2">
+                        <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Settings</h2>
+                    </div>
+                    <NavItem 
+                        href={route('admin.appearance')} 
+                        icon={Eye}
+                        isActive={isActive(route('admin.appearance'))}
+                    >
+                        Appearance
+                    </NavItem>
+                    <NavItem 
+                        href={route('admin.settings')} 
+                        icon={Cog}
+                        isActive={isActive(route('admin.settings'))}
+                    >
+                        Settings
+                    </NavItem>
+                </div>
             </nav>
 
             {/* Footer */}
