@@ -19,6 +19,13 @@ class Service extends Model
         'description',
         'icon',
         'order',
+        'is_active',
+        'long_description',
+        'projects_count',
+        'duration',
+        'starting_price',
+        'features',
+        'technologies'
     ];
 
     /**
@@ -29,5 +36,9 @@ class Service extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'order' => 'integer',
+        'projects_count' => 'integer',
+        'starting_price' => 'decimal:2',
+        'features' => 'array',
+        'technologies' => 'array'
     ];
 } 

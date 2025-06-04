@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import DeleteConfirmation from '@/components/ui/delete-confirmation';
+import { motion } from 'framer-motion';
 
 const categoryOptions = [
     'Web Design',
@@ -220,27 +221,46 @@ export default function Projects({ projects: initialProjects }: Props) {
             <Head title="Projects - Portfolio Admin" />
 
             <div className="p-6 space-y-6">
-                <div className="flex items-center justify-between">
+                <motion.div 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-between"
+                >
                     <div className="space-y-1">
                         <div className="flex items-center gap-4">
                             <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Projects</h1>
-                            <div className="px-2.5 py-0.5 text-xs font-medium bg-green-50 text-green-700 rounded-full border border-green-100">
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.2 }}
+                                className="px-2.5 py-0.5 text-xs font-medium bg-green-50 text-green-700 rounded-full border border-green-100"
+                            >
                                 {filteredProjects.length} Total
-                            </div>
+                            </motion.div>
                         </div>
                         <p className="text-sm text-gray-500">Manage and organize your portfolio projects</p>
                     </div>
-                    <Button 
-                        onClick={() => setIsAddDialogOpen(true)} 
-                        className="bg-[#20B2AA] hover:bg-[#1a9994] text-white shadow-sm transition-colors"
+                    <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                     >
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add New Project
-                    </Button>
-                </div>
+                        <Button 
+                            onClick={() => setIsAddDialogOpen(true)} 
+                            className="bg-[#20B2AA] hover:bg-[#1a9994] text-white shadow-sm transition-all duration-300"
+                        >
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add New Project
+                        </Button>
+                    </motion.div>
+                </motion.div>
 
                 {/* Search and Filters */}
-                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm space-y-4">
+                <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.1 }}
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
+                >
                     <div className="flex items-center justify-between">
                         <h2 className="text-sm font-medium text-gray-700">Filters</h2>
                         <Button
@@ -296,10 +316,15 @@ export default function Projects({ projects: initialProjects }: Props) {
                             </SelectContent>
                         </Select>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Projects Table */}
-                <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden"
+                >
                     <div className="p-4 bg-gray-50/50 border-b border-gray-200">
                         <h2 className="text-sm font-medium text-gray-700">Project List</h2>
                     </div>
@@ -331,57 +356,73 @@ export default function Projects({ projects: initialProjects }: Props) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 bg-white">
-                                {filteredProjects.map((project) => (
-                                    <tr key={project.id} className="hover:bg-gray-50/50 transition-colors">
+                                {filteredProjects.map((project, index) => (
+                                    <motion.tr
+                                        key={project.id}
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                        className="hover:bg-gray-50/50 transition-all duration-300 group"
+                                    >
                                         <td className="py-4 px-4">
-                                            <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden ring-1 ring-gray-200">
+                                            <motion.div 
+                                                whileHover={{ scale: 1.05 }}
+                                                className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden ring-1 ring-gray-200 transition-transform duration-300"
+                                            >
                                                 {project.image ? (
                                                     <img
                                                         src={project.image}
                                                         alt={project.title}
-                                                        className="w-full h-full object-cover"
+                                                        className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
                                                     />
                                                 ) : (
                                                     <div className="w-full h-full flex items-center justify-center text-gray-400">
                                                         <LinkIcon className="w-5 h-5" />
                                                     </div>
                                                 )}
-                                            </div>
+                                            </motion.div>
                                         </td>
                                         <td className="py-4 px-4">
-                                            <div className="font-medium text-gray-900">{project.title}</div>
+                                            <motion.div 
+                                                whileHover={{ x: 5 }}
+                                                className="font-medium text-gray-900 transition-colors duration-300 group-hover:text-[#20B2AA]"
+                                            >
+                                                {project.title}
+                                            </motion.div>
                                         </td>
                                         <td className="py-4 px-4">
-                                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                            <motion.span
+                                                whileHover={{ scale: 1.05 }}
+                                                className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100 transition-all duration-300 hover:bg-blue-100"
+                                            >
                                                 {project.category}
-                                            </span>
+                                            </motion.span>
                                         </td>
                                         <td className="py-4 px-4">
-                                            <span className={cn(
-                                                "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border",
-                                                project.status === 'published'
-                                                    ? "bg-green-50 text-green-700 border-green-100"
-                                                    : "bg-gray-50 text-gray-600 border-gray-200"
-                                            )}>
-                                                {project.status === 'published' ? 'Published' : 'Draft'}
-                                            </span>
-                                        </td>
-                                        <td className="py-4 px-4">
-                                            <button
-                                                onClick={() => handleToggleFeatured(project)}
+                                            <motion.span
+                                                whileHover={{ scale: 1.05 }}
                                                 className={cn(
-                                                    "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors",
-                                                    project.is_featured
-                                                        ? "bg-amber-50 text-amber-700 border border-amber-100 hover:bg-amber-100"
-                                                        : "bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100"
+                                                    "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border transition-all duration-300",
+                                                    project.status === 'published'
+                                                        ? "bg-green-50 text-green-700 border-green-100 hover:bg-green-100"
+                                                        : "bg-yellow-50 text-yellow-700 border-yellow-100 hover:bg-yellow-100"
                                                 )}
                                             >
-                                                <Star className={cn(
-                                                    "w-3 h-3",
-                                                    project.is_featured ? "fill-amber-500" : "fill-none"
-                                                )} />
-                                                {project.is_featured ? 'Featured' : 'Not Featured'}
-                                            </button>
+                                                {project.status === 'published' ? 'Published' : 'Draft'}
+                                            </motion.span>
+                                        </td>
+                                        <td className="py-4 px-4">
+                                            <motion.button
+                                                whileHover={{ scale: 1.2, rotate: 180 }}
+                                                whileTap={{ scale: 0.9 }}
+                                                onClick={() => handleToggleFeatured(project)}
+                                                className={cn(
+                                                    "transition-colors duration-300",
+                                                    project.is_featured ? "text-yellow-400" : "text-gray-300 hover:text-gray-400"
+                                                )}
+                                            >
+                                                <Star className="w-5 h-5 fill-current" />
+                                            </motion.button>
                                         </td>
                                         <td className="py-4 px-4">
                                             <div className="flex items-center gap-2">
@@ -390,36 +431,36 @@ export default function Projects({ projects: initialProjects }: Props) {
                                             </div>
                                         </td>
                                         <td className="py-4 px-4">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                                                        <span className="sr-only">Open menu</span>
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="w-[160px]">
-                                                    <DropdownMenuItem className="text-gray-600 hover:text-gray-900">
-                                                        <Eye className="mr-2 h-4 w-4" />
-                                                        View
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem 
-                                                        onClick={() => handleEdit(project)}
-                                                        className="text-gray-600 hover:text-gray-900"
-                                                    >
-                                                        <Edit2 className="mr-2 h-4 w-4" />
-                                                        Edit
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem 
-                                                        onClick={() => confirmDelete(project)}
-                                                        className="text-red-600 hover:text-red-700"
-                                                    >
-                                                        <Trash2 className="mr-2 h-4 w-4" />
-                                                        Delete
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                            <div className="flex items-center justify-end gap-2">
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.9 }}
+                                                    className="p-1 text-gray-400 hover:text-[#20B2AA] transition-colors duration-300"
+                                                >
+                                                    <Eye className="w-4 h-4" />
+                                                </motion.button>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.9 }}
+                                                    onClick={() => handleEdit(project)}
+                                                    className="p-1 text-gray-400 hover:text-[#20B2AA] transition-colors duration-300"
+                                                >
+                                                    <Edit2 className="w-4 h-4" />
+                                                </motion.button>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1 }}
+                                                    whileTap={{ scale: 0.9 }}
+                                                    onClick={() => {
+                                                        setProjectToDelete(project);
+                                                        setDeleteConfirmOpen(true);
+                                                    }}
+                                                    className="p-1 text-gray-400 hover:text-red-500 transition-colors duration-300"
+                                                >
+                                                    <Trash2 className="w-4 h-4" />
+                                                </motion.button>
+                                            </div>
                                         </td>
-                                    </tr>
+                                    </motion.tr>
                                 ))}
                                 {filteredProjects.length === 0 && (
                                     <tr>
@@ -448,7 +489,7 @@ export default function Projects({ projects: initialProjects }: Props) {
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </motion.div>
             </div>
 
             {/* Add Project Dialog */}

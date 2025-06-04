@@ -18,6 +18,12 @@ return new class extends Migration
             $table->text('description');
             $table->string('icon')->default('Code');
             $table->boolean('is_active')->default(true);
+            $table->text('long_description')->nullable();
+            $table->integer('projects_count')->default(0);
+            $table->string('duration')->nullable();
+            $table->decimal('starting_price', 10, 2)->nullable();
+            $table->json('features')->nullable();
+            $table->json('technologies')->nullable();
             $table->timestamps();
         });
     }

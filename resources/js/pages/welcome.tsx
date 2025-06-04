@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { Download, Github, Linkedin, Twitter, Code, Smartphone, Search, BarChart3, FileText, Briefcase, GraduationCap, Mail, Phone, MapPin } from 'lucide-react';
+import { Download, Github, Linkedin, Twitter, Code, Smartphone, Search, BarChart3, FileText, Briefcase, GraduationCap, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu';
 import { ProgressBar } from '@/components/ui/progress-bar';
@@ -14,6 +14,9 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { Link } from '@inertiajs/react';
+import { ProjectCard } from '@/components/ui/project-card';
+import { ActionButton } from '@/components/ui/action-button';
 
 export default function Welcome() {
     const [activeFilter, setActiveFilter] = useState('All');
@@ -220,27 +223,17 @@ export default function Welcome() {
                                 variants={itemVariants}
                                 className="flex items-center gap-4 mb-12"
                             >
-                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <ScrollLink
-                                    to="works"
-                                    spy={true}
-                                    smooth={true}
-                                    offset={-100}
-                                    duration={500}
-                                    className="cursor-pointer"
+                                <ActionButton href="#works">
+                                    View My Work
+                                </ActionButton>
+                                <ActionButton 
+                                    variant="outline" 
+                                    icon={false}
+                                    className="group"
                                 >
-                                        <Button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-8 py-3 text-base relative overflow-hidden group">
-                                            <span className="relative z-10">View My Work</span>
-                                            <div className="absolute inset-0 bg-white/20 transform -skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
-                                    </Button>
-                                </ScrollLink>
-                                </motion.div>
-                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                    <Button variant="outline" className="border-gray-200 px-8 py-3 text-base group hover:border-[#20B2AA] transition-colors">
-                                        <Download className="w-5 h-5 mr-2 group-hover:text-[#20B2AA] transition-colors" />
+                                    <Download className="w-5 h-5 mr-2 group-hover:text-[#20B2AA] transition-colors" />
                                     Download CV
-                                </Button>
-                                </motion.div>
+                                </ActionButton>
                             </motion.div>
 
                             <motion.div 
@@ -389,7 +382,7 @@ export default function Welcome() {
                             </motion.p>
                         </motion.div>
 
-                        <div className="grid grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {[
                                 {
                                     icon: Code,
@@ -438,24 +431,25 @@ export default function Welcome() {
                                     <motion.div 
                                         whileHover={{ y: -5, scale: 1.02 }}
                                         transition={{ type: "spring", stiffness: 300 }}
-                                        className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 group relative overflow-hidden"
+                                        className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 group relative overflow-hidden h-[320px] flex flex-col"
                                     >
                                         {/* Gradient overlay on hover */}
                                         <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
                                         
-                                        <div className="relative">
-                                            <div className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                                <service.icon className="w-6 h-6 text-[#20B2AA]" />
+                                        <div className="relative flex-1">
+                                            <div className="w-14 h-14 bg-[#E6F7F6] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                                                <service.icon className="w-7 h-7 text-[#20B2AA]" />
                                 </div>
                                             <h3 className="text-xl font-semibold mb-4 group-hover:text-[#20B2AA] transition-colors duration-300">
                                                 {service.title}
                                             </h3>
-                                            <p className="text-gray-600 dark:text-gray-300 text-base mb-6">
+                                            <p className="text-gray-600 dark:text-gray-300 text-base line-clamp-3">
                                                 {service.description}
                                             </p>
+                                        </div>
                                             <motion.a 
                                                 href="#"
-                                                className="text-[#20B2AA] font-medium inline-flex items-center group/link"
+                                            className="text-[#20B2AA] font-medium inline-flex items-center group/link mt-6"
                                                 whileHover={{ x: 5 }}
                                             >
                                     Learn more
@@ -473,11 +467,25 @@ export default function Welcome() {
                                                     />
                                     </svg>
                                             </motion.a>
-                            </div>
                                     </motion.div>
                                 </motion.div>
                             ))}
                         </div>
+
+                        {/* View All Services Button */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.6 }}
+                            className="flex justify-center mt-16 mb-6"
+                        >
+                            <div className="relative after:absolute after:inset-x-0 after:-bottom-6 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent dark:after:via-gray-800">
+                                <ActionButton href="/services" variant="minimal" icon={false}>
+                                    View All Services
+                                </ActionButton>
+                            </div>
+                        </motion.div>
                     </div>
                 </section>
 
@@ -532,7 +540,7 @@ export default function Welcome() {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
+                            transition={{ duration: 0.6 }}
                             className="flex items-center justify-center gap-4 mb-12"
                         >
                             {[
@@ -566,42 +574,13 @@ export default function Welcome() {
                             className="grid grid-cols-3 gap-8"
                         >
                             {filteredProjects.map((project, index) => (
-                                <motion.div
+                                <ProjectCard
                                     key={project.title}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                                    whileHover={{ y: -10 }}
-                                    className="group relative bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl overflow-hidden aspect-video hover:shadow-2xl transition-all duration-500"
-                                >
-                                    <div className="absolute inset-0 bg-gradient-to-br from-[#20B2AA]/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                    
-                                    <div className="w-full h-full relative">
-                                        {/* Project Image */}
-                                        <div className="absolute inset-0">
-                                            <img 
-                                                src={project.image}
-                                                alt={project.title}
-                                                className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
-                                            />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                        </div>
-                                        
-                                        {/* Overlay Content */}
-                                        <div className="absolute inset-0 flex items-end justify-start p-6 translate-y-8 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
-                                            <div className="w-full">
-                                                <span className="inline-block px-3 py-1 bg-[#20B2AA]/90 text-white text-sm rounded-full mb-3">
-                                                    {project.category}
-                                                </span>
-                                                <h3 className="text-xl font-semibold text-white mb-2">{project.title}</h3>
-                                                <p className="text-gray-200 text-sm line-clamp-2 max-w-md opacity-90">
-                                                    {project.description}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                    title={project.title}
+                                    description={project.description}
+                                    category={project.category}
+                                    image={project.image}
+                                />
                             ))}
                         </motion.div>
 
@@ -611,28 +590,13 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: 0.4 }}
-                            className="flex justify-center mt-12"
+                            className="flex justify-center mt-16 mb-6"
                         >
-                            <motion.button
-                                whileHover={{ scale: 1.05, y: -2 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="px-8 py-3 rounded-full border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-all duration-300 hover:border-[#20B2AA] hover:text-[#20B2AA] group"
-                            >
-                                <span className="inline-flex items-center gap-2">
-                                View All Projects
-                                    <motion.svg 
-                                        className="w-4 h-4"
-                                        initial={{ x: 0 }}
-                                        animate={{ x: [0, 5, 0] }}
-                                        transition={{ duration: 1.5, repeat: Infinity }}
-                                        viewBox="0 0 24 24" 
-                                        fill="none" 
-                                        stroke="currentColor"
-                                    >
-                                        <path d="M5 12h14M12 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                                    </motion.svg>
-                                </span>
-                            </motion.button>
+                            <div className="relative after:absolute after:inset-x-0 after:-bottom-6 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent dark:after:via-gray-800">
+                                <ActionButton variant="minimal" icon={false}>
+                                    View All Projects
+                                </ActionButton>
+                            </div>
                         </motion.div>
                         </div>
                 </motion.section>
