@@ -17,6 +17,17 @@ class ServiceController extends Controller
         ]);
     }
 
+    public function publicIndex()
+    {
+        $services = Service::where('is_active', true)
+            ->orderBy('order')
+            ->get();
+        
+        return Inertia::render('services', [
+            'services' => $services
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([

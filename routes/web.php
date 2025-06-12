@@ -90,8 +90,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/settings/export-data', [App\Http\Controllers\Admin\SettingsController::class, 'exportData'])->name('admin.settings.export-data');
 });
 
-Route::get('/services', function () {
-    return Inertia::render('services');
-})->name('services');
+Route::get('/services', [ServiceController::class, 'publicIndex'])->name('services');
 
 require __DIR__.'/auth.php';
