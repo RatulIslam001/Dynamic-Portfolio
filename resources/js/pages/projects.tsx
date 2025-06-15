@@ -73,18 +73,20 @@ export default function Projects({ projects }: Props) {
                     transition={{ type: "spring", stiffness: 50 }}
                     className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800"
                 >
-                    <motion.div 
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-2 cursor-pointer" 
-                    >
-                        <Link href="/" className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
-                                P
-                            </div>
-                            <span className="font-medium text-base">Portfolio</span>
-                        </Link>
-                    </motion.div>
+                    <div className="flex items-center gap-4">
+                        <motion.div 
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="flex items-center gap-2 cursor-pointer" 
+                        >
+                            <Link href="/" className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
+                                    P
+                                </div>
+                                <span className="font-medium text-base">Portfolio</span>
+                            </Link>
+                        </motion.div>
+                    </div>
 
                     <NavigationMenu>
                         <NavigationMenuList className="flex gap-8">
@@ -151,6 +153,24 @@ export default function Projects({ projects }: Props) {
                 
                 {/* Content with padding to account for fixed navbar */}
                 <div className="pt-24">
+                    {/* Back to Home Button */}
+                    <div className="max-w-7xl mx-auto px-4 mb-4">
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="inline-block"
+                        >
+                            <Link 
+                                href="/" 
+                                className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] dark:hover:text-[#20B2AA] transition-colors group"
+                            >
+                                <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                                <span className="text-sm font-medium">Back to Home</span>
+                            </Link>
+                        </motion.div>
+                    </div>
+                    
                     {/* Header */}
                     <div className="bg-white dark:bg-gray-800 py-20 text-center relative overflow-hidden">
                         <div className="absolute inset-0 opacity-5 dark:opacity-10">
@@ -192,10 +212,10 @@ export default function Projects({ projects }: Props) {
                                 </div>
                                 <div className="flex items-center">
                                     <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{projectCount} Projects</p>
-                                </div>
-                            </div>
                         </div>
-                        
+                    </div>
+                </div>
+
                         <div className="flex flex-wrap gap-3 mb-6">
                             {categories.map((category) => (
                                 <button
@@ -222,77 +242,77 @@ export default function Projects({ projects }: Props) {
                                 className="w-full px-4 py-3 pl-12 rounded-xl border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:bg-gray-800 dark:text-white shadow-sm"
                             />
                             <Search className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
-                        </div>
                     </div>
+                </div>
 
-                    {/* Projects Grid */}
+                {/* Projects Grid */}
                     <div className="max-w-7xl mx-auto px-4 pb-20">
-                        {filteredProjects.length === 0 ? (
+                    {filteredProjects.length === 0 ? (
                             <div className="text-center py-16">
-                                <p className="text-gray-500 dark:text-gray-400 text-lg">No projects found matching your criteria.</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {filteredProjects.map((project) => (
-                                    <motion.div
-                                        key={project.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ duration: 0.3 }}
+                            <p className="text-gray-500 dark:text-gray-400 text-lg">No projects found matching your criteria.</p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {filteredProjects.map((project) => (
+                                <motion.div
+                                    key={project.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3 }}
                                         className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full border border-gray-100 dark:border-gray-700"
-                                    >
-                                        {/* Project Image */}
+                                >
+                                    {/* Project Image */}
                                         <div className="relative h-52 overflow-hidden">
-                                            {project.image ? (
-                                                <img 
-                                                    src={project.image} 
-                                                    alt={project.title} 
-                                                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                                                    <span className="text-gray-400 dark:text-gray-500">No image</span>
-                                                </div>
-                                            )}
-                                            
+                                        {project.image ? (
+                                            <img 
+                                                src={project.image} 
+                                                alt={project.title} 
+                                                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                                                <span className="text-gray-400 dark:text-gray-500">No image</span>
+                                            </div>
+                                        )}
+                                        
                                             {/* Year Badge */}
                                             {project.completion_date && (
                                                 <div className="absolute top-4 right-4 bg-black bg-opacity-70 text-white text-xs font-medium px-2.5 py-1.5 rounded-md backdrop-blur-sm">
                                                     {new Date(project.completion_date).getFullYear()}
-                                                </div>
-                                            )}
-                                            
-                                            {/* Category Badge */}
-                                            <div className="absolute top-4 left-4 bg-[#20B2AA] bg-opacity-90 text-white text-xs font-medium px-2.5 py-1.5 rounded-md backdrop-blur-sm">
-                                                {project.category}
                                             </div>
-                                        </div>
+                                        )}
                                         
-                                        {/* Project Content */}
-                                        <div className="p-6 flex-grow flex flex-col">
+                                        {/* Category Badge */}
+                                            <div className="absolute top-4 left-4 bg-[#20B2AA] bg-opacity-90 text-white text-xs font-medium px-2.5 py-1.5 rounded-md backdrop-blur-sm">
+                                            {project.category}
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Project Content */}
+                                    <div className="p-6 flex-grow flex flex-col">
                                             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                                                {project.title}
-                                            </h3>
-                                            
+                                            {project.title}
+                                        </h3>
+                                        
                                             <p className="text-gray-600 dark:text-gray-300 mb-5 text-sm flex-grow">
-                                                {project.description}
-                                            </p>
-                                            
-                                            {/* Technologies */}
-                                            {project.technologies && project.technologies.length > 0 && (
-                                                <div className="mb-4">
+                                            {project.description}
+                                        </p>
+                                        
+                                        {/* Technologies */}
+                                        {project.technologies && project.technologies.length > 0 && (
+                                            <div className="mb-4">
                                                     <div className="flex flex-wrap gap-1.5">
-                                                        {project.technologies.map((tech, index) => (
-                                                            <span 
-                                                                key={index} 
+                                                    {project.technologies.map((tech, index) => (
+                                                        <span 
+                                                            key={index} 
                                                                 className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2.5 py-1 rounded-md"
-                                                            >
-                                                                {tech}
-                                                            </span>
-                                                        ))}
-                                                    </div>
+                                                        >
+                                                            {tech}
+                                                        </span>
+                                                    ))}
                                                 </div>
-                                            )}
+                                            </div>
+                                        )}
                                         </div>
                                             
                                         {/* Action Buttons */}
@@ -320,12 +340,12 @@ export default function Projects({ projects }: Props) {
                                                     View Code
                                                 </a>
                                             )}
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
                     {/* CTA Section */}
                     <div className="bg-gradient-to-br from-gray-900 to-gray-800 text-white py-20 relative overflow-hidden">

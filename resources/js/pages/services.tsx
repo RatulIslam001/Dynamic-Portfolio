@@ -96,18 +96,20 @@ export default function Services({ services }: Props) {
                     transition={{ type: "spring", stiffness: 50 }}
                     className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800"
                 >
-                    <motion.div 
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-2 cursor-pointer" 
-                    >
-                        <Link href="/" className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
-                                P
-                            </div>
-                            <span className="font-medium text-base">Portfolio</span>
-                        </Link>
-                    </motion.div>
+                    <div className="flex items-center gap-4">
+                        <motion.div 
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="flex items-center gap-2 cursor-pointer" 
+                        >
+                            <Link href="/" className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
+                                    P
+                                </div>
+                                <span className="font-medium text-base">Portfolio</span>
+                            </Link>
+                        </motion.div>
+                    </div>
 
                     <NavigationMenu>
                         <NavigationMenuList className="flex gap-8">
@@ -174,6 +176,24 @@ export default function Services({ services }: Props) {
                 
                 {/* Content with padding to account for fixed navbar */}
                 <div className="pt-24">
+                    {/* Back to Home Button */}
+                    <div className="max-w-7xl mx-auto px-4 mb-4">
+                        <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.5 }}
+                            className="inline-block"
+                        >
+                            <Link 
+                                href="/" 
+                                className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] dark:hover:text-[#20B2AA] transition-colors group"
+                            >
+                                <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                                <span className="text-sm font-medium">Back to Home</span>
+                            </Link>
+                        </motion.div>
+                    </div>
+                    
                     {/* Header Section */}
                     <div className="max-w-7xl mx-auto px-4 py-12 text-center">
                         <h1 className="text-4xl font-bold mb-2 text-gray-900 dark:text-white">
@@ -197,29 +217,29 @@ export default function Services({ services }: Props) {
                             <div className="flex items-center gap-2">
                                 <Clock className="w-5 h-5 text-[#20B2AA]" />
                                 <span className="text-sm font-medium dark:text-gray-200">24/7 Support</span>
-                            </div>
                         </div>
                     </div>
+                </div>
 
                     {/* Services Grid - All services from database */}
-                    <div className="max-w-7xl mx-auto px-4 pb-16">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="max-w-7xl mx-auto px-4 pb-16">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {services.map((service) => (
                                 <div 
                                     key={service.id}
                                     className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex flex-col"
                                 >
-                                    <div className="mb-4">
+                                        <div className="mb-4">
                                         <IconComponent icon={service.icon} className="w-6 h-6 text-[#20B2AA]" />
-                                    </div>
-                                            
+                                        </div>
+                                        
                                     <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{service.title}</h2>
-                                            
-                                    <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
-                                        {service.description}
-                                    </p>
-                                            
-                                    <div className="mb-6">
+                                        
+                                        <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
+                                            {service.description}
+                                        </p>
+                                        
+                                        <div className="mb-6">
                                         <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-gray-200">Key Features:</h3>
                                         <ul className="space-y-1">
                                             {service.features.map((feature, index) => (
@@ -229,23 +249,26 @@ export default function Services({ services }: Props) {
                                                 </li>
                                             ))}
                                         </ul>
-                                    </div>
+                                            </div>
                                     
                                     <div className="flex items-center justify-between mt-auto">
-                                        <div>
+                                            <div>
                                             <p className="text-xs text-gray-500 dark:text-gray-400">Starting at</p>
                                             <p className="text-[#20B2AA] font-medium">
                                                 ${service.price.toLocaleString()}
                                             </p>
                                         </div>
-                                        <button className="px-4 py-2 bg-[#20B2AA] text-white text-sm rounded-md hover:bg-[#1a9994] transition-colors">
+                                        <Link 
+                                            href="/#contact"
+                                            className="px-4 py-2 bg-[#20B2AA] text-white text-sm rounded-md hover:bg-[#1a9994] transition-colors"
+                                        >
                                             Get Quote
-                                        </button>
+                                        </Link>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </div>
+                                        </div>
                                         
                     {/* Work Process Section */}
                     <div className="bg-[#0F172A] text-white py-16">
@@ -267,22 +290,22 @@ export default function Services({ services }: Props) {
                                 ))}
                             </div>
                         </div>
-                    </div>
+                </div>
 
                     {/* CTA Section */}
                     <div className="bg-[#20B2AA] text-white py-16">
-                        <div className="max-w-7xl mx-auto px-4 text-center">
-                            <h2 className="text-3xl font-bold mb-4">Ready to Start Your Project?</h2>
+                    <div className="max-w-7xl mx-auto px-4 text-center">
+                        <h2 className="text-3xl font-bold mb-4">Ready to Start Your Project?</h2>
                             <p className="text-white/80 max-w-2xl mx-auto mb-8">
                                 Let's discuss your requirements and create something amazing together.
                             </p>
                             <div className="flex flex-wrap justify-center gap-4">
-                                <button 
-                                    onClick={() => window.location.href = '/#contact'}
+                                <Link 
+                                    href="/#contact"
                                     className="px-6 py-3 bg-white text-[#20B2AA] font-medium rounded-md hover:bg-gray-100 transition-colors cursor-pointer"
                                 >
                                     Get Free Consultation
-                                </button>
+                                </Link>
                                 <Link 
                                     href="/projects"
                                     className="px-6 py-3 bg-transparent border border-white text-white font-medium rounded-md hover:bg-white/10 transition-colors"

@@ -92,5 +92,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 Route::get('/services', [ServiceController::class, 'publicIndex'])->name('services');
 Route::get('/projects', [ProjectController::class, 'publicIndex'])->name('projects');
 Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
+Route::post('/contact', [MessageController::class, 'store'])->name('contact.store');
 
 require __DIR__.'/auth.php';

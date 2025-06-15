@@ -223,15 +223,18 @@ export default function Welcome() {
                                 variants={itemVariants}
                                 className="flex items-center gap-4 mb-12"
                             >
-                                <ActionButton href="#works">
+                                <ActionButton 
+                                    href="#works" 
+                                    className="relative z-10 shadow-lg shadow-[#20B2AA]/15 hover:shadow-xl hover:shadow-[#20B2AA]/25 transition-all duration-300 font-medium"
+                                >
                                     View My Work
                                 </ActionButton>
                                 <ActionButton 
                                     variant="outline" 
                                     icon={false}
-                                    className="group"
+                                    className="group relative z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-[#20B2AA] shadow-sm hover:shadow-md transition-all duration-300 text-gray-800 dark:text-gray-200 hover:text-[#20B2AA] rounded-md"
                                 >
-                                    <Download className="w-5 h-5 mr-2 group-hover:text-[#20B2AA] transition-colors" />
+                                    <Download className="w-5 h-5 mr-2 text-gray-600 dark:text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
                                     Download CV
                                 </ActionButton>
                             </motion.div>
@@ -464,7 +467,7 @@ export default function Welcome() {
                                     href="/services" 
                                     variant="minimal" 
                                     icon={false}
-                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/50 px-8 py-3 rounded-full hover:bg-[#20B2AA]/5 transition-all"
+                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-3 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-lg hover:shadow-xl hover:shadow-[#20B2AA]/10 backdrop-blur-sm"
                                 >
                                     Explore All Services
                                 </ActionButton>
@@ -576,9 +579,13 @@ export default function Welcome() {
                             transition={{ duration: 0.6, delay: 0.4 }}
                             className="flex justify-center mt-16 mb-6"
                         >
-                            <div className="relative after:absolute after:inset-x-0 after:-bottom-6 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent dark:after:via-gray-800">
+                            <div className="relative">
                                 <Link href={route('projects')}>
-                                <ActionButton variant="minimal" icon={false}>
+                                <ActionButton 
+                                    variant="minimal" 
+                                    icon={false}
+                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-3 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-lg hover:shadow-xl hover:shadow-[#20B2AA]/10 backdrop-blur-sm"
+                                >
                                     View All Projects
                                 </ActionButton>
                                 </Link>
