@@ -578,9 +578,9 @@ export default function Welcome() {
                         >
                             <div className="relative after:absolute after:inset-x-0 after:-bottom-6 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent dark:after:via-gray-800">
                                 <Link href={route('projects')}>
-                                    <ActionButton variant="minimal" icon={false}>
-                                        View All Projects
-                                    </ActionButton>
+                                <ActionButton variant="minimal" icon={false}>
+                                    View All Projects
+                                </ActionButton>
                                 </Link>
                             </div>
                         </motion.div>
@@ -924,7 +924,7 @@ export default function Welcome() {
                             <motion.button
                                 whileHover={{ scale: 1.05, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-8 py-6 text-base inline-flex items-center gap-2 rounded-xl group relative overflow-hidden"
+                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-8 py-6 text-base inline-flex items-center gap-2 rounded-xl group relative overflow-hidden cursor-pointer"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
                                 <Download className="w-5 h-5" />
@@ -1253,7 +1253,7 @@ export default function Welcome() {
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         type="submit"
-                                        className="w-full py-3 px-4 bg-[#20B2AA] hover:bg-[#1a9994] text-white font-medium rounded-lg shadow-lg shadow-[#20B2AA]/20 hover:shadow-xl hover:shadow-[#20B2AA]/30 transition-all duration-200"
+                                        className="w-full py-3 px-4 bg-[#20B2AA] hover:bg-[#1a9994] text-white font-medium rounded-lg shadow-lg shadow-[#20B2AA]/20 hover:shadow-xl hover:shadow-[#20B2AA]/30 transition-all duration-200 cursor-pointer"
                                     >
                                         Send Message
                                     </motion.button>
