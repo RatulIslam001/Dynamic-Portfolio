@@ -18,14 +18,9 @@ class Service extends Model
         'title',
         'description',
         'icon',
-        'order',
-        'is_active',
-        'long_description',
-        'projects_count',
-        'duration',
-        'starting_price',
+        'price',
         'features',
-        'technologies'
+        'is_active'
     ];
 
     /**
@@ -35,10 +30,7 @@ class Service extends Model
      */
     protected $casts = [
         'is_active' => 'boolean',
-        'order' => 'integer',
-        'projects_count' => 'integer',
-        'starting_price' => 'decimal:2',
-        'features' => 'array',
-        'technologies' => 'array'
+        'price' => 'decimal:2',
+        'features' => 'array'
     ];
 } 

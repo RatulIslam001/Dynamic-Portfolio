@@ -24,6 +24,10 @@ class Project extends Model
         'live_url',
         'order',
         'is_featured',
+        'status',
+        'client_name',
+        'project_url',
+        'completion_date',
     ];
 
     /**
@@ -34,6 +38,7 @@ class Project extends Model
     protected $casts = [
         'technologies' => 'array',
         'is_featured' => 'boolean',
+        'completion_date' => 'date',
     ];
 
     /**

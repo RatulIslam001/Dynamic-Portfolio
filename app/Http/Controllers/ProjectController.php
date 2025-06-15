@@ -34,6 +34,34 @@ class ProjectController extends Controller
         ]);
     }
 
+    public function publicIndex()
+    {
+        $projects = Project::where('status', 'published')
+            ->latest('completion_date')
+            ->get()
+            ->map(function ($project) {
+                return [
+                    'id' => $project->id,
+                    'title' => $project->title,
+                    'description' => $project->description,
+                    'image' => $project->image ? Storage::url($project->image) : null,
+                    'category' => $project->category,
+                    'status' => $project->status,
+                    'is_featured' => $project->is_featured,
+                    'completion_date' => $project->formatted_date,
+                    'client_name' => $project->client_name,
+                    'project_url' => $project->project_url,
+                    'technologies' => $project->technologies,
+                    'github_url' => $project->github_url,
+                    'live_url' => $project->live_url,
+                ];
+            });
+        
+        return Inertia::render('projects', [
+            'projects' => $projects
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -104,5 +132,49 @@ class ProjectController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Project featured status updated successfully.');
+    }
+
+    public function show(Project $project)
+    {
+        // Check if the project is published
+        if ($project->status !== 'published') {
+            abort(404);
+        }
+        
+        $projectData = [
+            'id' => $project->id,
+            'title' => $project->title,
+            'description' => $project->description,
+            'image' => $project->image ? Storage::url($project->image) : null,
+            'category' => $project->category,
+            'is_featured' => $project->is_featured,
+            'completion_date' => $project->formatted_date,
+            'client_name' => $project->client_name,
+            'project_url' => $project->project_url,
+            'technologies' => $project->technologies,
+            'github_url' => $project->github_url,
+            'live_url' => $project->live_url,
+        ];
+        
+        // Get related projects (same category, excluding current)
+        $relatedProjects = Project::where('status', 'published')
+            ->where('category', $project->category)
+            ->where('id', '!=', $project->id)
+            ->limit(3)
+            ->get()
+            ->map(function ($relatedProject) {
+                return [
+                    'id' => $relatedProject->id,
+                    'title' => $relatedProject->title,
+                    'description' => $relatedProject->description,
+                    'image' => $relatedProject->image ? Storage::url($relatedProject->image) : null,
+                    'category' => $relatedProject->category,
+                ];
+            });
+        
+        return Inertia::render('project-detail', [
+            'project' => $projectData,
+            'relatedProjects' => $relatedProjects
+        ]);
     }
 } 

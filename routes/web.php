@@ -35,7 +35,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/services', [ServiceController::class, 'store'])->name('admin.services.store');
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
-    Route::post('/services/reorder', [ServiceController::class, 'reorder'])->name('admin.services.reorder');
 
     // Projects routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('admin.projects');
@@ -91,5 +90,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
 });
 
 Route::get('/services', [ServiceController::class, 'publicIndex'])->name('services');
+Route::get('/projects', [ProjectController::class, 'publicIndex'])->name('projects');
+Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
 
 require __DIR__.'/auth.php';

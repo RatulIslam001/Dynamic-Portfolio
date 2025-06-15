@@ -337,13 +337,9 @@ export default function Welcome() {
                 </motion.section>
 
                 {/* Services Section */}
-                <section className="py-32 px-4 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 relative overflow-hidden" id="services">
-                    {/* Background patterns */}
-                    <div className="absolute inset-0 opacity-30 dark:opacity-10">
-                        <div className="absolute top-10 left-10 w-20 h-20 border-2 border-[#20B2AA] rounded-lg transform rotate-45"></div>
-                        <div className="absolute bottom-10 right-10 w-32 h-32 border-4 border-purple-500 rounded-full"></div>
-                        <div className="absolute top-1/2 left-1/2 w-40 h-40 border border-gray-300 rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
-                        </div>
+                <section className="py-32 px-4 bg-white dark:bg-gray-900 relative overflow-hidden" id="services">
+                    {/* Subtle background */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800/30 dark:to-gray-900/30 opacity-50"></div>
 
                     <div className="max-w-7xl mx-auto relative">
                         <motion.div 
@@ -351,7 +347,7 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="text-center mb-16"
+                            className="text-center mb-24"
                         >
                             <motion.span 
                                 initial={{ opacity: 0, y: 10 }}
@@ -360,16 +356,16 @@ export default function Welcome() {
                                 transition={{ duration: 0.6, delay: 0.2 }}
                                 className="text-[#20B2AA] font-medium text-sm inline-block px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-4"
                             >
-                                Services
+                                Professional Services
                             </motion.span>
                             <motion.h2 
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.3 }}
-                                className="text-4xl font-bold mt-3 mb-4"
+                                className="text-4xl font-bold mt-3 mb-5"
                             >
-                                My Expertise
+                                Areas of Expertise
                             </motion.h2>
                             <motion.p 
                                 initial={{ opacity: 0, y: 10 }}
@@ -378,7 +374,7 @@ export default function Welcome() {
                                 transition={{ duration: 0.6, delay: 0.4 }}
                                 className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto"
                             >
-                                I provide high-quality services tailored to meet your specific needs and help your business grow
+                                Delivering tailored, high-quality solutions to help your business thrive in the digital landscape
                             </motion.p>
                         </motion.div>
 
@@ -388,37 +384,37 @@ export default function Welcome() {
                                     icon: Code,
                                     title: "Web Development",
                                     description: "Creating responsive, fast, and user-friendly websites using modern technologies and best practices.",
-                                    gradient: "from-[#20B2AA] to-teal-600"
+                                    color: "#20B2AA"
                                 },
                                 {
                                     icon: Search,
                                     title: "UI/UX Design",
                                     description: "Designing intuitive and beautiful user interfaces that provide exceptional user experiences.",
-                                    gradient: "from-purple-500 to-indigo-600"
+                                    color: "#8B5CF6"
                                 },
                                 {
                                     icon: Smartphone,
                                     title: "Mobile Development",
                                     description: "Building cross-platform mobile applications that work seamlessly on iOS and Android devices.",
-                                    gradient: "from-orange-500 to-pink-600"
+                                    color: "#3B82F6"
                                 },
                                 {
                                     icon: Search,
                                     title: "SEO Optimization",
                                     description: "Improving your website's visibility in search engines to drive more organic traffic.",
-                                    gradient: "from-blue-500 to-cyan-600"
+                                    color: "#10B981"
                                 },
                                 {
                                     icon: BarChart3,
                                     title: "Digital Marketing",
                                     description: "Creating and implementing effective digital marketing strategies to grow your business.",
-                                    gradient: "from-green-500 to-emerald-600"
+                                    color: "#F59E0B"
                                 },
                                 {
                                     icon: FileText,
                                     title: "Content Writing",
                                     description: "Crafting engaging and SEO-friendly content that resonates with your target audience.",
-                                    gradient: "from-red-500 to-rose-600"
+                                    color: "#EC4899"
                                 }
                             ].map((service, index) => (
                                 <motion.div
@@ -429,44 +425,27 @@ export default function Welcome() {
                                     transition={{ duration: 0.5, delay: index * 0.1 }}
                                 >
                                     <motion.div 
-                                        whileHover={{ y: -5, scale: 1.02 }}
+                                        whileHover={{ y: -5 }}
                                         transition={{ type: "spring", stiffness: 300 }}
-                                        className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 group relative overflow-hidden h-[320px] flex flex-col"
+                                        className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700 group relative overflow-hidden h-[280px] flex flex-col"
                                     >
-                                        {/* Gradient overlay on hover */}
-                                        <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-5 transition-opacity duration-300"></div>
+                                        {/* Top accent line with color */}
+                                        <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ backgroundColor: service.color }}></div>
                                         
                                         <div className="relative flex-1">
-                                            <div className="w-14 h-14 bg-[#E6F7F6] rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                                                <service.icon className="w-7 h-7 text-[#20B2AA]" />
+                                            <div 
+                                                className="w-14 h-14 rounded-full flex items-center justify-center mb-6"
+                                                style={{ backgroundColor: `${service.color}10` }}
+                                            >
+                                                <service.icon className="w-7 h-7" style={{ color: service.color }} />
                                 </div>
-                                            <h3 className="text-xl font-semibold mb-4 group-hover:text-[#20B2AA] transition-colors duration-300">
+                                            <h3 className="text-xl font-semibold mb-3 group-hover:text-[#20B2AA] transition-colors duration-300">
                                                 {service.title}
                                             </h3>
-                                            <p className="text-gray-600 dark:text-gray-300 text-base line-clamp-3">
+                                            <p className="text-gray-600 dark:text-gray-300 text-base leading-relaxed">
                                                 {service.description}
                                             </p>
                                         </div>
-                                            <motion.a 
-                                                href="#"
-                                            className="text-[#20B2AA] font-medium inline-flex items-center group/link mt-6"
-                                                whileHover={{ x: 5 }}
-                                            >
-                                    Learn more
-                                                <svg 
-                                                    className="w-4 h-4 ml-2 transform transition-transform duration-300 group-hover/link:translate-x-1" 
-                                                    viewBox="0 0 24 24" 
-                                                    fill="none"
-                                                >
-                                                    <path 
-                                                        d="M4 12h16m0 0l-6-6m6 6l-6 6" 
-                                                        stroke="currentColor" 
-                                                        strokeWidth="2" 
-                                                        strokeLinecap="round" 
-                                                        strokeLinejoin="round"
-                                                    />
-                                    </svg>
-                                            </motion.a>
                                     </motion.div>
                                 </motion.div>
                             ))}
@@ -478,11 +457,16 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: 0.6 }}
-                            className="flex justify-center mt-16 mb-6"
+                            className="flex justify-center mt-16"
                         >
-                            <div className="relative after:absolute after:inset-x-0 after:-bottom-6 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent dark:after:via-gray-800">
-                                <ActionButton href="/services" variant="minimal" icon={false}>
-                                    View All Services
+                            <div className="relative">
+                                <ActionButton 
+                                    href="/services" 
+                                    variant="minimal" 
+                                    icon={false}
+                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/50 px-8 py-3 rounded-full hover:bg-[#20B2AA]/5 transition-all"
+                                >
+                                    Explore All Services
                                 </ActionButton>
                             </div>
                         </motion.div>
@@ -593,9 +577,11 @@ export default function Welcome() {
                             className="flex justify-center mt-16 mb-6"
                         >
                             <div className="relative after:absolute after:inset-x-0 after:-bottom-6 after:h-px after:bg-gradient-to-r after:from-transparent after:via-gray-200 after:to-transparent dark:after:via-gray-800">
-                                <ActionButton variant="minimal" icon={false}>
-                                    View All Projects
-                                </ActionButton>
+                                <Link href={route('projects')}>
+                                    <ActionButton variant="minimal" icon={false}>
+                                        View All Projects
+                                    </ActionButton>
+                                </Link>
                             </div>
                         </motion.div>
                         </div>

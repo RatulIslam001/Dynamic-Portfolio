@@ -10,7 +10,7 @@ class ServiceController extends Controller
 {
     public function index()
     {
-        $services = Service::orderBy('order')->get();
+        $services = Service::all();
         
         return Inertia::render('admin/services', [
             'services' => $services
@@ -20,7 +20,6 @@ class ServiceController extends Controller
     public function publicIndex()
     {
         $services = Service::where('is_active', true)
-            ->orderBy('order')
             ->get();
         
         return Inertia::render('services', [
@@ -33,17 +32,11 @@ class ServiceController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'long_description' => 'nullable|string',
             'icon' => 'required|string|max:255',
-            'order' => 'sometimes|integer|min:0',
+            'price' => 'required|numeric|min:0',
             'is_active' => 'sometimes|boolean',
-            'projects_count' => 'nullable|integer|min:0',
-            'duration' => 'nullable|string|max:255',
-            'starting_price' => 'nullable|numeric|min:0',
-            'features' => 'nullable|array',
-            'features.*' => 'string',
-            'technologies' => 'nullable|array',
-            'technologies.*' => 'string'
+            'features' => 'required|array',
+            'features.*' => 'string'
         ]);
 
         Service::create($validated);
@@ -56,17 +49,11 @@ class ServiceController extends Controller
         $validated = $request->validate([
             'title' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
-            'long_description' => 'nullable|string',
             'icon' => 'sometimes|required|string|max:255',
-            'order' => 'sometimes|integer|min:0',
+            'price' => 'sometimes|required|numeric|min:0',
             'is_active' => 'sometimes|boolean',
-            'projects_count' => 'nullable|integer|min:0',
-            'duration' => 'nullable|string|max:255',
-            'starting_price' => 'nullable|numeric|min:0',
-            'features' => 'nullable|array',
-            'features.*' => 'string',
-            'technologies' => 'nullable|array',
-            'technologies.*' => 'string'
+            'features' => 'sometimes|required|array',
+            'features.*' => 'string'
         ]);
 
         $service->update($validated);
@@ -79,20 +66,5 @@ class ServiceController extends Controller
         $service->delete();
 
         return redirect()->back()->with('success', 'Service deleted successfully.');
-    }
-
-    public function reorder(Request $request)
-    {
-        $request->validate([
-            'services' => 'required|array',
-            'services.*.id' => 'required|exists:services,id',
-            'services.*.order' => 'required|integer|min:0'
-        ]);
-
-        foreach ($request->services as $serviceData) {
-            Service::where('id', $serviceData['id'])->update(['order' => $serviceData['order']]);
-        }
-
-        return response()->json(['message' => 'Services reordered successfully']);
     }
 } 
