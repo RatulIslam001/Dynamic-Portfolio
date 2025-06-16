@@ -47,7 +47,7 @@ export function ActionButton({
                     className
                 )}
             >
-                <span className="relative z-10 inline-flex items-center gap-2 transition-all duration-300">
+                <span className="relative z-10 inline-flex items-center gap-2 transition-all duration-300 text-center justify-center">
                     {children}
                     {icon && variant !== 'minimal' && (
                         <motion.div

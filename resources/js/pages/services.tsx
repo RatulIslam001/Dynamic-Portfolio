@@ -97,18 +97,18 @@ export default function Services({ services }: Props) {
                     className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800"
                 >
                     <div className="flex items-center gap-4">
-                        <motion.div 
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 cursor-pointer" 
-                        >
-                            <Link href="/" className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
-                                    P
-                                </div>
-                                <span className="font-medium text-base">Portfolio</span>
-                            </Link>
-                        </motion.div>
+                    <motion.div 
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                        className="flex items-center gap-2 cursor-pointer" 
+                    >
+                        <Link href="/" className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
+                                P
+                            </div>
+                            <span className="font-medium text-base">Portfolio</span>
+                        </Link>
+                    </motion.div>
                     </div>
 
                     <NavigationMenu>
@@ -185,7 +185,7 @@ export default function Services({ services }: Props) {
                             className="inline-block"
                         >
                             <Link 
-                                href="/" 
+                                href={route('home')}
                                 className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] dark:hover:text-[#20B2AA] transition-colors group"
                             >
                                 <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -311,7 +311,7 @@ export default function Services({ services }: Props) {
                                     className="px-6 py-3 bg-transparent border border-white text-white font-medium rounded-md hover:bg-white/10 transition-colors"
                                 >
                                     View Portfolio
-                                </Link>
+                            </Link>
                             </div>
                         </div>
                     </div>

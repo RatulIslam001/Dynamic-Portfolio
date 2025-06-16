@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { Download, Github, Linkedin, Twitter, Code, Smartphone, Search, BarChart3, FileText, Briefcase, GraduationCap, Mail, Phone, MapPin, ArrowRight } from 'lucide-react';
+import { Download, Github, Linkedin, Twitter, Code, Smartphone, Search, BarChart3, FileText, Briefcase, GraduationCap, Mail, Phone, MapPin, ArrowRight, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu';
 import { ProgressBar } from '@/components/ui/progress-bar';
@@ -17,9 +17,11 @@ import 'aos/dist/aos.css';
 import { Link } from '@inertiajs/react';
 import { ProjectCard } from '@/components/ui/project-card';
 import { ActionButton } from '@/components/ui/action-button';
+import { MobileMenu } from '@/components/ui/mobile-menu';
 
 export default function Welcome() {
     const [activeFilter, setActiveFilter] = useState('All');
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     
     // Project data
     const projects = [
@@ -138,7 +140,7 @@ export default function Welcome() {
                     initial={{ y: -100 }}
                     animate={{ y: 0 }}
                     transition={{ type: "spring", stiffness: 50 }}
-                    className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800"
+                    className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 md:px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800"
                 >
                     <motion.div 
                         whileHover={{ scale: 1.05 }}
@@ -152,8 +154,10 @@ export default function Welcome() {
                         <span className="font-medium text-base">Portfolio</span>
                     </motion.div>
 
+                    {/* Desktop Navigation - Hidden on mobile */}
+                    <div className="hidden md:block">
                     <NavigationMenu>
-                        <NavigationMenuList className="flex gap-8">
+                            <NavigationMenuList className="flex gap-4 lg:gap-8">
                             {['Home', 'Services', 'Works', 'Skills', 'Resume', 'Testimonials', 'Contact'].map((item, index) => (
                                 <NavigationMenuItem key={item}>
                                     <motion.div
@@ -177,9 +181,13 @@ export default function Welcome() {
                             ))}
                         </NavigationMenuList>
                     </NavigationMenu>
+                    </div>
 
                     <div className="flex items-center gap-3">
                         <ThemeToggle />
+                        
+                        {/* Desktop Hire Me Button - Hidden on mobile */}
+                        <div className="hidden md:block">
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                         <ScrollLink
                             to="contact"
@@ -194,28 +202,105 @@ export default function Welcome() {
                             </Button>
                         </ScrollLink>
                         </motion.div>
+                        </div>
+                        
+                        {/* Mobile Menu Button - Visible only on mobile */}
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setIsMenuOpen(true)}
+                            className="md:hidden p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
+                        >
+                            <Menu className="w-6 h-6" />
+                        </motion.button>
                     </div>
                 </motion.nav>
+                
+                {/* Mobile Menu */}
+                <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
                 {/* Hero Section */}
                 <motion.section 
                     variants={containerVariants}
                     initial="hidden"
                     animate="visible"
-                    className="min-h-screen flex items-center pt-20 px-4 pb-16 max-w-7xl mx-auto relative overflow-hidden"
+                    className="min-h-[100vh] flex items-center justify-center mt-16 xs:mt-20 sm:mt-20 md:mt-10 px-3 xs:px-4 pb-10 sm:pb-10 md:pb-10 max-w-7xl mx-auto relative overflow-hidden"
                     id="home"
                 >
                     {/* Background gradient effects */}
                     <div className="absolute top-0 left-0 w-full h-full">
-                        <div className="absolute top-20 left-20 w-72 h-72 bg-[#20B2AA]/10 rounded-full blur-3xl"></div>
-                        <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
+                        <div className="absolute top-20 left-10 sm:left-20 w-36 xs:w-48 sm:w-72 h-36 xs:h-48 sm:h-72 bg-[#20B2AA]/10 rounded-full blur-3xl"></div>
+                        <div className="absolute bottom-20 right-10 sm:right-20 w-40 xs:w-56 sm:w-96 h-40 xs:h-56 sm:h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-8 items-center relative">
-                        <motion.div variants={containerVariants}>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xs:gap-10 lg:gap-16 items-center relative w-full">
+                        {/* Image Content - Order 1 on mobile (appears above text) */}
+                        <div className="relative order-1 lg:order-2 w-full mt-0">
+                            <motion.div
+                                initial={{ scale: 0.5, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ duration: 0.5, delay: 0.2 }}
+                                className="w-full h-[180px] xs:h-[220px] sm:h-[350px] md:h-[450px] lg:h-[500px] bg-gradient-to-br from-[#20B2AA]/20 to-purple-500/20 rounded-2xl xs:rounded-3xl overflow-hidden relative backdrop-blur-sm border border-white/20 mx-auto max-w-sm sm:max-w-md md:max-w-lg lg:max-w-full"
+                            >
+                                {/* Profile image */}
+                                <img 
+                                    src="/storage/profile.jpg" 
+                                    alt="Profile"
+                                    className="w-full h-full object-cover object-center z-10 relative"
+                                    style={{ objectPosition: "center 30%" }}
+                                />
+                                <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                            </motion.div>
+                            
+                            {/* Stats cards - Positioned for responsive layout */}
+                            <motion.div
+                                initial={{ x: 20, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ duration: 0.5, delay: 0.4 }}
+                                className="absolute -top-0 xs:-top-2 right-0 md:-top-4 md:-right-4 bg-white dark:bg-gray-800 rounded-xl xs:rounded-2xl shadow-lg dark:shadow-gray-900/50 px-2 xs:px-3 sm:px-4 py-1.5 xs:py-2 sm:py-3 flex items-center gap-1.5 xs:gap-2 sm:gap-3 z-10 max-w-[90%] sm:max-w-[250px] border border-gray-100 dark:border-gray-700"
+                            >
+                                <div className="w-6 xs:w-8 sm:w-10 h-6 xs:h-8 sm:h-10 rounded-full bg-[#E6F7F6] dark:bg-[#20B2AA]/20 flex items-center justify-center flex-shrink-0">
+                                    <motion.span 
+                                        animate={{ scale: [1, 1.2, 1] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        className="text-[#20B2AA] text-base xs:text-lg sm:text-xl"
+                                    >
+                                        ✓
+                                    </motion.span>
+                                </div>
+                                <div className="min-w-0">
+                                    <div className="font-semibold text-sm xs:text-base sm:text-lg text-gray-900 dark:text-white truncate">50+ Projects</div>
+                                    <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">Completed</div>
+                                </div>
+                            </motion.div>
+                            
+                            <motion.div
+                                initial={{ x: -20, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ duration: 0.5, delay: 0.6 }}
+                                className="absolute -bottom-0 xs:-bottom-2 -left-0 xs:-left-2 md:-bottom-4 md:-left-4 bg-white dark:bg-gray-800 rounded-xl xs:rounded-2xl shadow-lg dark:shadow-gray-900/50 px-2 xs:px-3 sm:px-4 py-1.5 xs:py-2 sm:py-3 flex items-center gap-1.5 xs:gap-2 sm:gap-3 z-10 border border-gray-100 dark:border-gray-700"
+                            >
+                                <div className="w-6 xs:w-8 sm:w-10 h-6 xs:h-8 sm:h-10 rounded-full bg-[#E6F7F6] dark:bg-[#20B2AA]/20 flex items-center justify-center">
+                                    <motion.span 
+                                        animate={{ rotate: [0, 360] }}
+                                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                        className="text-[#20B2AA] text-base xs:text-lg sm:text-xl"
+                                    >
+                                        ★
+                                    </motion.span>
+                                </div>
+                                <div>
+                                    <div className="font-semibold text-sm xs:text-base sm:text-lg text-gray-900 dark:text-white">5 Years</div>
+                                    <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Experience</div>
+                                </div>
+                            </motion.div>
+                        </div>
+                        
+                        {/* Text Content - Order 2 on mobile (appears below image) */}
+                        <motion.div variants={containerVariants} className="lg:order-1 order-2 w-full mt-4 xs:mt-6 sm:mt-0 flex flex-col items-center lg:items-start">
                             <motion.div 
                                 variants={itemVariants}
-                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E6F7F6] text-[#20B2AA] text-sm mb-8"
+                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E6F7F6] text-[#20B2AA] text-xs xs:text-sm mb-4 xs:mb-5 sm:mb-6"
                             >
                                 <span className="w-2 h-2 rounded-full bg-[#20B2AA] animate-pulse"></span>
                                 Available for work
@@ -223,11 +308,11 @@ export default function Welcome() {
 
                             <motion.h1 
                                 variants={itemVariants}
-                                className="text-6xl font-bold leading-[1.1] tracking-tight mb-6"
+                                className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] tracking-tight mb-2 xs:mb-3 sm:mb-6 text-center lg:text-left"
                             >
                                 Creative <span className="text-[#20B2AA] relative">
                                     Designer
-                                    <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
+                                    <svg className="absolute -bottom-1 xs:-bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
                                         <path d="M0 4C50 4 150 4 200 4" stroke="#20B2AA" strokeWidth="4" strokeLinecap="round"/>
                                     </svg>
                                 </span> & Developer
@@ -235,34 +320,40 @@ export default function Welcome() {
 
                             <motion.p 
                                 variants={itemVariants}
-                                className="text-gray-600 dark:text-gray-300 text-lg mb-8 max-w-xl"
+                                className="text-gray-600 dark:text-gray-300 text-sm xs:text-base sm:text-lg mb-3 xs:mb-4 sm:mb-8 max-w-xl text-center lg:text-left mx-auto lg:mx-0"
                             >
                                 I create exceptional digital experiences that solve complex problems and connect people through elegant, user-focused design.
                             </motion.p>
 
                             <motion.div 
                                 variants={itemVariants}
-                                className="flex items-center gap-4 mb-12"
+                                className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-6 xs:mb-8 sm:mb-12 w-full max-w-xs xs:max-w-sm sm:max-w-md mx-auto lg:mx-0"
                             >
-                                <ActionButton 
-                                    href="#works" 
-                                    className="relative z-10 shadow-lg shadow-[#20B2AA]/15 hover:shadow-xl hover:shadow-[#20B2AA]/25 transition-all duration-300 font-medium"
-                                >
-                                    View My Work
-                                </ActionButton>
-                                <ActionButton 
-                                    variant="outline" 
-                                    icon={false}
-                                    className="group relative z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-[#20B2AA] shadow-sm hover:shadow-md transition-all duration-300 text-gray-800 dark:text-gray-200 hover:text-[#20B2AA] rounded-md"
-                                >
-                                    <Download className="w-5 h-5 mr-2 text-gray-600 dark:text-gray-400 group-hover:text-[#20B2AA] transition-colors" />
-                                    Download CV
-                                </ActionButton>
+                                <div className="w-full xs:w-[48%] sm:w-auto">
+                                    <ActionButton 
+                                        href="#works" 
+                                        className="relative z-10 shadow-lg shadow-[#20B2AA]/15 hover:shadow-xl hover:shadow-[#20B2AA]/25 transition-all duration-300 font-medium w-full text-center flex justify-center items-center text-sm sm:text-base py-3 px-6 sm:px-8"
+                                        fullWidth
+                                    >
+                                        <span className="block">View Work</span>
+                                    </ActionButton>
+                                </div>
+                                <div className="w-full xs:w-[48%] sm:w-auto">
+                                    <ActionButton 
+                                        variant="outline" 
+                                        icon={false}
+                                        className="group relative z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-[#20B2AA] shadow-sm hover:shadow-md transition-all duration-300 text-gray-800 dark:text-gray-200 hover:text-[#20B2AA] rounded-md w-full text-center flex justify-center items-center text-sm sm:text-base py-3 px-6 sm:px-8"
+                                        fullWidth
+                                    >
+                                        <Download className="w-4 sm:w-5 h-4 sm:h-5 mr-1.5 sm:mr-2 text-gray-600 dark:text-gray-400 group-hover:text-[#20B2AA] transition-colors flex-shrink-0" />
+                                        <span className="block">Download CV</span>
+                                    </ActionButton>
+                                </div>
                             </motion.div>
 
                             <motion.div 
                                 variants={itemVariants}
-                                className="flex items-center gap-4"
+                                className="flex items-center gap-4 justify-center mt-3 xs:mt-4"
                             >
                                 <motion.a
                                     href="https://github.com"
@@ -270,9 +361,9 @@ export default function Welcome() {
                                     rel="noopener noreferrer"
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 group"
+                                    className="w-8 xs:w-10 h-8 xs:h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 group"
                                 >
-                                    <Github className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-[#20B2AA] transition-colors duration-300" />
+                                    <Github className="w-4 xs:w-5 h-4 xs:h-5 text-gray-600 dark:text-gray-300 group-hover:text-[#20B2AA] transition-colors duration-300" />
                                 </motion.a>
                                 <motion.a
                                     href="https://twitter.com"
@@ -280,9 +371,9 @@ export default function Welcome() {
                                     rel="noopener noreferrer"
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 group"
+                                    className="w-8 xs:w-10 h-8 xs:h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 group"
                                 >
-                                    <Twitter className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-[#20B2AA] transition-colors duration-300" />
+                                    <Twitter className="w-4 xs:w-5 h-4 xs:h-5 text-gray-600 dark:text-gray-300 group-hover:text-[#20B2AA] transition-colors duration-300" />
                                 </motion.a>
                                 <motion.a
                                     href="https://linkedin.com"
@@ -290,78 +381,17 @@ export default function Welcome() {
                                     rel="noopener noreferrer"
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 group"
+                                    className="w-8 xs:w-10 h-8 xs:h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 dark:border-gray-700 group"
                                 >
-                                    <Linkedin className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-[#20B2AA] transition-colors duration-300" />
+                                    <Linkedin className="w-4 xs:w-5 h-4 xs:h-5 text-gray-600 dark:text-gray-300 group-hover:text-[#20B2AA] transition-colors duration-300" />
                                 </motion.a>
                             </motion.div>
                         </motion.div>
-
-                        <div className="relative">
-                            <motion.div
-                                initial={{ scale: 0.5, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ duration: 0.5, delay: 0.2 }}
-                                className="w-full h-[600px] bg-gradient-to-br from-[#20B2AA]/20 to-purple-500/20 rounded-3xl overflow-hidden relative backdrop-blur-sm border border-white/20"
-                            >
-                                {/* Profile image */}
-                                <img 
-                                    src="/storage/profile.jpg" 
-                                    alt="Profile"
-                                    className="w-full h-full object-cover object-center z-10 relative"
-                                    style={{ objectPosition: "center 20%" }}
-                                />
-                                <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-                            </motion.div>
-                            
-                            {/* Stats cards */}
-                            <motion.div
-                                initial={{ x: 100, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ duration: 0.5, delay: 0.4 }}
-                                className="absolute -top-4 right-0 md:-top-6 md:-right-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/50 px-4 py-3 flex items-center gap-3 z-10 max-w-[90%] sm:max-w-[250px] border border-gray-100 dark:border-gray-700"
-                            >
-                                <div className="w-10 h-10 rounded-full bg-[#E6F7F6] dark:bg-[#20B2AA]/20 flex items-center justify-center flex-shrink-0">
-                                    <motion.span 
-                                        animate={{ scale: [1, 1.2, 1] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                        className="text-[#20B2AA] text-xl"
-                                    >
-                                        ✓
-                                    </motion.span>
-                                </div>
-                                <div className="min-w-0">
-                                    <div className="font-semibold text-lg text-gray-900 dark:text-white truncate">50+ Projects</div>
-                                    <div className="text-sm text-gray-500 dark:text-gray-400 truncate">Completed</div>
-                                </div>
-                            </motion.div>
-                            
-                            <motion.div
-                                initial={{ x: -100, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ duration: 0.5, delay: 0.6 }}
-                                className="absolute -bottom-4 -left-4 md:-bottom-6 md:-left-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/50 px-4 py-3 flex items-center gap-3 z-10 border border-gray-100 dark:border-gray-700"
-                            >
-                                <div className="w-10 h-10 rounded-full bg-[#E6F7F6] dark:bg-[#20B2AA]/20 flex items-center justify-center">
-                                    <motion.span 
-                                        animate={{ rotate: [0, 360] }}
-                                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                        className="text-[#20B2AA] text-xl"
-                                    >
-                                        ★
-                                    </motion.span>
-                                </div>
-                                <div>
-                                    <div className="font-semibold text-lg text-gray-900 dark:text-white">5 Years</div>
-                                    <div className="text-sm text-gray-500 dark:text-gray-400">Experience</div>
-                                </div>
-                            </motion.div>
-                            </div>
                         </div>
                 </motion.section>
 
                 {/* Services Section */}
-                <section className="py-32 px-4 bg-white dark:bg-gray-900 relative overflow-hidden" id="services">
+                <section className="py-20 sm:py-24 md:py-32 px-4 bg-white dark:bg-gray-900 relative overflow-hidden" id="services">
                     {/* Subtle background */}
                     <div className="absolute inset-0 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800/30 dark:to-gray-900/30 opacity-50"></div>
 
@@ -371,14 +401,14 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="text-center mb-24"
+                            className="text-center mb-16 md:mb-24"
                         >
                             <motion.span 
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
-                                className="text-[#20B2AA] font-medium text-sm inline-block px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-4"
+                                className="text-[#20B2AA] font-medium text-xs sm:text-sm inline-block px-3 sm:px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-3 sm:mb-4"
                             >
                                 Professional Services
                             </motion.span>
@@ -387,7 +417,7 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.3 }}
-                                className="text-4xl font-bold mt-3 mb-5"
+                                className="text-3xl sm:text-4xl font-bold mt-2 sm:mt-3 mb-3 sm:mb-5"
                             >
                                 Areas of Expertise
                             </motion.h2>
@@ -396,13 +426,13 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
-                                className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto"
+                                className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-2xl mx-auto px-2"
                             >
                                 Delivering tailored, high-quality solutions to help your business thrive in the digital landscape
                             </motion.p>
                         </motion.div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
                             {[
                                 {
                                     icon: Code,
@@ -451,7 +481,7 @@ export default function Welcome() {
                                     <motion.div 
                                         whileHover={{ y: -5 }}
                                         transition={{ type: "spring", stiffness: 300 }}
-                                        className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700 group relative overflow-hidden h-[280px] flex flex-col"
+                                        className="bg-white dark:bg-gray-800 rounded-xl p-5 sm:p-6 md:p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700 group relative overflow-hidden h-auto sm:h-[260px] md:h-[280px] flex flex-col"
                                     >
                                         {/* Top accent line with color */}
                                         <div className="absolute top-0 left-0 right-0 h-[3px] overflow-hidden">
@@ -471,17 +501,17 @@ export default function Welcome() {
                                                 whileInView={{ scale: 1, opacity: 1 }}
                                                 viewport={{ once: true }}
                                                 transition={{ duration: 0.5, delay: index * 0.1 + 0.4 }}
-                                                className="w-14 h-14 rounded-full flex items-center justify-center mb-6"
+                                                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mb-4 sm:mb-6"
                                                 style={{ backgroundColor: `${service.color}10` }}
                                             >
-                                                <service.icon className="w-7 h-7" style={{ color: service.color }} />
+                                                <service.icon className="w-6 h-6 sm:w-7 sm:h-7" style={{ color: service.color }} />
                                             </motion.div>
                                             <motion.h3 
                                                 initial={{ x: -20, opacity: 0 }}
                                                 whileInView={{ x: 0, opacity: 1 }}
                                                 viewport={{ once: true }}
                                                 transition={{ duration: 0.5, delay: index * 0.1 + 0.5 }}
-                                                className="text-xl font-semibold mb-3 group-hover:text-[#20B2AA] transition-colors duration-300"
+                                                className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 group-hover:text-[#20B2AA] transition-colors duration-300"
                                             >
                                                 {service.title}
                                             </motion.h3>
@@ -490,7 +520,7 @@ export default function Welcome() {
                                                 whileInView={{ x: 0, opacity: 1 }}
                                                 viewport={{ once: true }}
                                                 transition={{ duration: 0.5, delay: index * 0.1 + 0.6 }}
-                                                className="text-gray-600 dark:text-gray-300 text-base leading-relaxed"
+                                                className="text-gray-600 dark:text-gray-300 text-sm sm:text-base leading-relaxed"
                                             >
                                                 {service.description}
                                             </motion.p>
@@ -506,14 +536,15 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: 0.6 }}
-                            className="flex justify-center mt-16"
+                            className="flex justify-center mt-10 sm:mt-16"
                         >
-                            <div className="relative">
+                            <div className="relative w-full sm:w-auto">
                                 <ActionButton 
                                     href="/services" 
                                     variant="minimal" 
                                     icon={false}
-                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-3 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-lg hover:shadow-xl hover:shadow-[#20B2AA]/10 backdrop-blur-sm overflow-hidden group"
+                                    className="font-medium text-[#20B2AA] bg-white dark:bg-transparent hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-2.5 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-sm hover:shadow-md backdrop-blur-sm overflow-hidden group w-full sm:w-auto text-[15px]"
+                                    fullWidth={true}
                                 >
                                     <span className="relative z-10">Explore All Services</span>
                                     <motion.span 
@@ -534,7 +565,7 @@ export default function Welcome() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="py-32 px-6 dark:bg-gray-900" 
+                    className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 dark:bg-gray-900" 
                     id="works"
                 >
                     <div className="max-w-7xl mx-auto">
@@ -543,14 +574,14 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="text-center mb-16"
+                            className="text-center mb-12 sm:mb-16"
                         >
                             <motion.span
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
-                                className="text-[#20B2AA] font-medium inline-block px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-4"
+                                className="text-[#20B2AA] font-medium inline-block px-3 sm:px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-3 sm:mb-4 text-xs sm:text-sm"
                             >
                                 Portfolio
                             </motion.span>
@@ -559,7 +590,7 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.3 }}
-                                className="text-4xl font-bold mt-4 mb-6"
+                                className="text-3xl sm:text-4xl font-bold mt-2 sm:mt-4 mb-3 sm:mb-6"
                             >
                                 Featured Projects
                             </motion.h2>
@@ -568,7 +599,7 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
-                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
+                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-base sm:text-lg px-2"
                             >
                                 Explore my latest work and see how I've helped clients achieve their goals
                             </motion.p>
@@ -580,7 +611,7 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="flex items-center justify-center gap-4 mb-12"
+                            className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mb-8 sm:mb-12"
                         >
                             {[
                                 { name: 'All', active: activeFilter === 'All' },
@@ -593,7 +624,7 @@ export default function Welcome() {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => setActiveFilter(filter.name)}
-                                    className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                                    className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                                         filter.active 
                                             ? 'bg-[#20B2AA] text-white' 
                                             : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -610,7 +641,7 @@ export default function Welcome() {
                             whileInView={{ opacity: 1 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="grid grid-cols-3 gap-8"
+                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
                         >
                             {filteredProjects.map((project, index) => (
                                 <ProjectCard
@@ -629,16 +660,17 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: 0.4 }}
-                            className="flex justify-center mt-16 mb-6"
+                            className="flex justify-center mt-10 sm:mt-16 mb-6"
                         >
-                            <div className="relative">
+                            <div className="relative w-full sm:w-auto">
                                 <Link href={route('projects')}>
                                 <ActionButton 
                                     variant="minimal" 
                                     icon={false}
-                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-3 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-lg hover:shadow-xl hover:shadow-[#20B2AA]/10 backdrop-blur-sm overflow-hidden group"
+                                    className="font-medium text-[#20B2AA] bg-white dark:bg-transparent hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-2.5 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-sm hover:shadow-md backdrop-blur-sm overflow-hidden group w-full sm:w-auto text-[15px]"
+                                    fullWidth={true}
                                 >
-                                    <span className="relative z-10">View All Projects</span>
+                                    <span className="relative z-10">Explore All Projects</span>
                                     <motion.span 
                                         initial={{ x: "-100%" }}
                                         whileHover={{ x: "0%" }}
@@ -658,7 +690,7 @@ export default function Welcome() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="py-24 px-6 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 relative overflow-hidden" 
+                    className="py-20 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 relative overflow-hidden" 
                     id="skills"
                 >
                     {/* Background Elements */}
@@ -673,7 +705,7 @@ export default function Welcome() {
                                 repeat: Infinity,
                                 ease: "linear"
                             }}
-                            className="absolute top-20 right-20 w-40 h-40 border-2 border-[#20B2AA] rounded-full"
+                            className="absolute top-20 right-20 w-24 sm:w-40 h-24 sm:h-40 border-2 border-[#20B2AA] rounded-full"
                         />
                         <motion.div
                             animate={{
@@ -685,7 +717,7 @@ export default function Welcome() {
                                 repeat: Infinity,
                                 ease: "linear"
                             }}
-                            className="absolute bottom-40 left-20 w-32 h-32 border-2 border-purple-500 rounded-lg transform rotate-45"
+                            className="absolute bottom-40 left-20 w-20 sm:w-32 h-20 sm:h-32 border-2 border-purple-500 rounded-lg transform rotate-45"
                         />
                         </div>
 
@@ -695,14 +727,14 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="text-center mb-16"
+                            className="text-center mb-12 sm:mb-16"
                         >
                             <motion.span
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
-                                className="text-[#20B2AA] font-medium inline-block px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-4"
+                                className="text-[#20B2AA] font-medium inline-block px-3 sm:px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-3 sm:mb-4 text-xs sm:text-sm"
                             >
                                 Skills
                             </motion.span>
@@ -711,7 +743,7 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.3 }}
-                                className="text-4xl font-bold mt-4 mb-6"
+                                className="text-3xl sm:text-4xl font-bold mt-2 sm:mt-4 mb-3 sm:mb-6"
                             >
                                 Technical Proficiency
                             </motion.h2>
@@ -720,20 +752,20 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
-                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
+                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-base sm:text-lg px-2"
                             >
                                 I've spent years honing my skills in various technologies and design principles
                             </motion.p>
                         </motion.div>
 
-                        <div className="grid grid-cols-2 gap-20">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
                             {/* Left Column - Skill Bars */}
                             <motion.div 
                                 initial={{ opacity: 0, x: -50 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6 }}
-                                className="space-y-8"
+                                className="space-y-6 sm:space-y-8"
                             >
                                 {[
                                     { label: "HTML/CSS", percentage: 95 },
@@ -760,7 +792,7 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6 }}
-                                className="grid grid-cols-2 gap-8"
+                                className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8 mt-4 lg:mt-0"
                             >
                                 {[
                                     { skill: "Node.js", percentage: 75 },
@@ -792,7 +824,7 @@ export default function Welcome() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="py-24 px-6 dark:bg-gray-900 relative overflow-hidden" 
+                    className="py-20 sm:py-24 px-4 sm:px-6 dark:bg-gray-900 relative overflow-hidden" 
                     id="resume"
                 >
                     {/* Background Elements */}
@@ -807,7 +839,7 @@ export default function Welcome() {
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            className="absolute top-20 left-20 w-64 h-64 bg-[#20B2AA]/5 rounded-full blur-3xl"
+                            className="absolute top-20 left-10 sm:left-20 w-48 sm:w-64 h-48 sm:h-64 bg-[#20B2AA]/5 rounded-full blur-3xl"
                         />
                         <motion.div
                             animate={{
@@ -819,7 +851,7 @@ export default function Welcome() {
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            className="absolute bottom-20 right-20 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"
+                            className="absolute bottom-20 right-10 sm:right-20 w-56 sm:w-96 h-56 sm:h-96 bg-purple-500/5 rounded-full blur-3xl"
                         />
                         </div>
 
@@ -829,14 +861,14 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="text-center mb-16"
+                            className="text-center mb-12 sm:mb-16"
                         >
                             <motion.span
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
-                                className="text-[#20B2AA] font-medium inline-block px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-4"
+                                className="text-[#20B2AA] font-medium inline-block px-3 sm:px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-3 sm:mb-4 text-xs sm:text-sm"
                             >
                                 Resume
                             </motion.span>
@@ -845,7 +877,7 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.3 }}
-                                className="text-4xl font-bold mt-4 mb-6"
+                                className="text-3xl sm:text-4xl font-bold mt-2 sm:mt-4 mb-3 sm:mb-6"
                             >
                                 Experience & Education
                             </motion.h2>
@@ -854,13 +886,13 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
-                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto"
+                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-base sm:text-lg px-2"
                             >
                                 My professional journey and academic background
                             </motion.p>
                         </motion.div>
 
-                        <div className="grid grid-cols-2 gap-20">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
                             {/* Experience Column */}
                             <motion.div
                                 initial={{ opacity: 0, x: -50 }}
@@ -873,16 +905,16 @@ export default function Welcome() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.6 }}
-                                    className="flex items-center gap-3 mb-12"
+                                    className="flex items-center gap-3 mb-8 sm:mb-12"
                                 >
                                     <motion.div 
                                         whileHover={{ scale: 1.1, rotate: 360 }}
                                         transition={{ duration: 0.6 }}
-                                        className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center"
+                                        className="w-10 h-10 sm:w-12 sm:h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center"
                                     >
-                                        <Briefcase className="w-6 h-6 text-[#20B2AA]" />
+                                        <Briefcase className="w-5 h-5 sm:w-6 sm:h-6 text-[#20B2AA]" />
                                     </motion.div>
-                                    <h3 className="text-2xl font-semibold">Experience</h3>
+                                    <h3 className="text-xl sm:text-2xl font-semibold">Experience</h3>
                                 </motion.div>
 
                                 <div className="space-y-6">
@@ -925,22 +957,23 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6 }}
+                                className="mt-8 lg:mt-0"
                             >
                                 <motion.div 
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ duration: 0.6 }}
-                                    className="flex items-center gap-3 mb-12"
+                                    className="flex items-center gap-3 mb-8 sm:mb-12"
                                 >
                                     <motion.div 
                                         whileHover={{ scale: 1.1, rotate: 360 }}
                                         transition={{ duration: 0.6 }}
-                                        className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center"
+                                        className="w-10 h-10 sm:w-12 sm:h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center"
                                     >
-                                        <GraduationCap className="w-6 h-6 text-[#20B2AA]" />
+                                        <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-[#20B2AA]" />
                                     </motion.div>
-                                    <h3 className="text-2xl font-semibold">Education</h3>
+                                    <h3 className="text-xl sm:text-2xl font-semibold">Education</h3>
                                 </motion.div>
 
                                 <div className="space-y-6">
@@ -984,15 +1017,15 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6, delay: 0.4 }}
-                            className="flex justify-center mt-16"
+                            className="flex justify-center mt-10 sm:mt-16"
                         >
                             <motion.button
                                 whileHover={{ scale: 1.05, y: -2 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-8 py-6 text-base inline-flex items-center gap-2 rounded-xl group relative overflow-hidden cursor-pointer"
+                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-6 sm:px-8 py-4 sm:py-6 text-sm sm:text-base inline-flex items-center gap-2 rounded-xl group relative overflow-hidden cursor-pointer w-full sm:w-auto justify-center sm:justify-start"
                             >
                                 <span className="relative z-10 flex items-center gap-2">
-                                <Download className="w-5 h-5" />
+                                <Download className="w-4 h-4 sm:w-5 sm:h-5" />
                                 Download Full Resume
                                 </span>
                                 <div className="absolute inset-0 bg-white/20 transform -skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-500"></div>
@@ -1007,7 +1040,7 @@ export default function Welcome() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="py-24 px-6 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 relative overflow-hidden" 
+                    className="py-20 sm:py-24 px-4 sm:px-6 bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 relative overflow-hidden" 
                     id="testimonials"
                 >
                     {/* Animated background elements */}
@@ -1022,7 +1055,7 @@ export default function Welcome() {
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            className="absolute top-20 left-20 w-96 h-96 bg-[#20B2AA]/10 rounded-full blur-3xl"
+                            className="absolute top-20 left-10 sm:left-20 w-64 sm:w-96 h-64 sm:h-96 bg-[#20B2AA]/10 rounded-full blur-3xl"
                         />
                         <motion.div
                             animate={{
@@ -1035,7 +1068,7 @@ export default function Welcome() {
                                 ease: "easeInOut",
                                 delay: 1
                             }}
-                            className="absolute bottom-20 right-20 w-[30rem] h-[30rem] bg-purple-500/10 rounded-full blur-3xl"
+                            className="absolute bottom-20 right-10 sm:right-20 w-64 sm:w-[30rem] h-64 sm:h-[30rem] bg-purple-500/10 rounded-full blur-3xl"
                         />
                         </div>
 
@@ -1045,14 +1078,14 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="text-center mb-16"
+                            className="text-center mb-12 sm:mb-16"
                         >
                             <motion.span
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
-                                className="text-[#20B2AA] font-medium inline-block px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-4"
+                                className="text-[#20B2AA] font-medium inline-block px-3 sm:px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-3 sm:mb-4 text-xs sm:text-sm"
                             >
                                 Testimonials
                             </motion.span>
@@ -1061,7 +1094,7 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.3 }}
-                                className="text-4xl font-bold mt-4 mb-6"
+                                className="text-3xl sm:text-4xl font-bold mt-2 sm:mt-4 mb-3 sm:mb-6"
                             >
                                 What Clients Say
                             </motion.h2>
@@ -1070,7 +1103,7 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
-                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg"
+                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-base sm:text-lg px-2"
                             >
                                 Feedback from clients who have experienced working with me
                             </motion.p>
@@ -1081,7 +1114,7 @@ export default function Welcome() {
                             whileInView={{ opacity: 1 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="grid grid-cols-3 gap-8"
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
                         >
                             {[
                                 {
@@ -1118,7 +1151,7 @@ export default function Welcome() {
                                     <motion.div
                                         whileHover={{ scale: 1.02 }}
                                         transition={{ type: "spring", stiffness: 300 }}
-                                        className="bg-white dark:bg-gray-900 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 relative overflow-hidden group"
+                                        className="bg-white dark:bg-gray-900 rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-800 relative overflow-hidden group h-full"
                                     >
                                         {/* Decorative elements */}
                                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#20B2AA] to-purple-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500"></div>
@@ -1128,9 +1161,9 @@ export default function Welcome() {
                                             whileInView={{ scale: 1 }}
                                             viewport={{ once: true }}
                                             transition={{ duration: 0.5, delay: testimonial.delay + 0.2 }}
-                                            className="mb-6"
+                                            className="mb-4 sm:mb-6"
                                         >
-                                            <svg className="w-10 h-10 text-[#20B2AA] opacity-80" fill="currentColor" viewBox="0 0 32 32">
+                                            <svg className="w-8 h-8 sm:w-10 sm:h-10 text-[#20B2AA] opacity-80" fill="currentColor" viewBox="0 0 32 32">
                                                 <path d="M10 8c-3.314 0-6 2.686-6 6v10h6v-4c0-2.21 1.79-4 4-4V8h-4zm12 0c-3.314 0-6 2.686-6 6v10h6v-4c0-2.21 1.79-4 4-4V8h-4z"/>
                                             </svg>
                                         </motion.div>
@@ -1140,7 +1173,7 @@ export default function Welcome() {
                                             whileInView={{ opacity: 1 }}
                                             viewport={{ once: true }}
                                             transition={{ duration: 0.5, delay: testimonial.delay + 0.4 }}
-                                            className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed"
+                                            className="text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base"
                                         >
                                             {testimonial.quote}
                                         </motion.p>
@@ -1151,10 +1184,10 @@ export default function Welcome() {
                                             viewport={{ once: true }}
                                             transition={{ duration: 0.5, delay: testimonial.delay + 0.6 }}
                                         >
-                                            <div className="font-semibold text-lg mb-1 dark:text-white">
+                                            <div className="font-semibold text-base sm:text-lg mb-1 dark:text-white">
                                                 {testimonial.name}
                         </div>
-                                            <div className="text-[#20B2AA] text-sm">
+                                            <div className="text-[#20B2AA] text-xs sm:text-sm">
                                                 {testimonial.role} at {testimonial.company}
                     </div>
                                         </motion.div>
@@ -1174,7 +1207,7 @@ export default function Welcome() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
-                    className="py-24 px-4 bg-white dark:bg-gray-900 relative overflow-hidden" 
+                    className="py-20 sm:py-24 px-4 sm:px-6 bg-white dark:bg-gray-900 relative overflow-hidden" 
                     id="contact"
                 >
                     {/* Background Elements */}
@@ -1189,7 +1222,7 @@ export default function Welcome() {
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            className="absolute top-20 left-20 w-[40rem] h-[40rem] bg-[#20B2AA]/5 rounded-full blur-3xl"
+                            className="absolute top-20 left-10 sm:left-20 w-64 md:w-[40rem] h-64 md:h-[40rem] bg-[#20B2AA]/5 rounded-full blur-3xl"
                         />
                         <motion.div
                             animate={{
@@ -1202,7 +1235,7 @@ export default function Welcome() {
                                 ease: "easeInOut",
                                 delay: 1
                             }}
-                            className="absolute bottom-20 right-20 w-[35rem] h-[35rem] bg-purple-500/5 rounded-full blur-3xl"
+                            className="absolute bottom-20 right-10 sm:right-20 w-64 md:w-[35rem] h-64 md:h-[35rem] bg-purple-500/5 rounded-full blur-3xl"
                         />
                         </div>
 
@@ -1212,14 +1245,14 @@ export default function Welcome() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.6 }}
-                            className="text-center mb-16"
+                            className="text-center mb-12 sm:mb-16"
                         >
                             <motion.span
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
-                                className="text-[#20B2AA] font-medium inline-block px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-4"
+                                className="text-[#20B2AA] font-medium inline-block px-3 sm:px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-3 sm:mb-4 text-xs sm:text-sm"
                             >
                                 Contact
                             </motion.span>
@@ -1228,7 +1261,7 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.3 }}
-                                className="text-4xl font-bold mt-4 mb-6"
+                                className="text-3xl sm:text-4xl font-bold mt-2 sm:mt-4 mb-3 sm:mb-6"
                             >
                                 Get In Touch
                             </motion.h2>
@@ -1237,31 +1270,31 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
-                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg"
+                                className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-base sm:text-lg px-2"
                             >
                                 Have a project in mind? Let's discuss how I can help bring your ideas to life.
                             </motion.p>
                         </motion.div>
 
-                        <div className="grid grid-cols-2 gap-12">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
                             {/* Contact Form */}
                             <motion.div
                                 initial={{ opacity: 0, x: -50 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6 }}
-                                className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="bg-white dark:bg-gray-800 rounded-2xl p-6 sm:p-8 shadow-lg hover:shadow-xl transition-all duration-300"
                             >
-                                <form className="space-y-6">
+                                <form className="space-y-5 sm:space-y-6">
                                     <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ duration: 0.5 }}
-                                        className="space-y-4"
+                                        className="space-y-3 sm:space-y-4"
                                     >
                                     <div>
-                                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
                                             Name
                                         </label>
                                             <motion.input
@@ -1270,11 +1303,11 @@ export default function Welcome() {
                                             id="name"
                                             name="name"
                                             placeholder="Your Name"
-                                                className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:bg-gray-900 dark:text-white"
+                                                className="w-full px-4 py-2.5 sm:py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:bg-gray-900 dark:text-white"
                                         />
                                     </div>
                                     <div>
-                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
                                             Email
                                         </label>
                                             <motion.input
@@ -1283,11 +1316,11 @@ export default function Welcome() {
                                             id="email"
                                             name="email"
                                             placeholder="Your Email"
-                                                className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:bg-gray-900 dark:text-white"
+                                                className="w-full px-4 py-2.5 sm:py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:bg-gray-900 dark:text-white"
                                         />
                                     </div>
                                     <div>
-                                            <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
                                             Subject
                                         </label>
                                             <motion.input
@@ -1296,20 +1329,20 @@ export default function Welcome() {
                                             id="subject"
                                             name="subject"
                                             placeholder="Subject"
-                                                className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:bg-gray-900 dark:text-white"
+                                                className="w-full px-4 py-2.5 sm:py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:bg-gray-900 dark:text-white"
                                         />
                                     </div>
                                     <div>
-                                            <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 sm:mb-2">
                                             Message
                                         </label>
                                             <motion.textarea
                                                 whileFocus={{ scale: 1.01 }}
                                             id="message"
                                             name="message"
-                                            rows={6}
+                                            rows={5}
                                             placeholder="Your Message"
-                                                className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 resize-none bg-white dark:bg-gray-900 dark:text-white"
+                                                className="w-full px-4 py-2.5 sm:py-3 rounded-lg border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 resize-none bg-white dark:bg-gray-900 dark:text-white"
                                         />
                                     </div>
                                     </motion.div>
@@ -1318,7 +1351,7 @@ export default function Welcome() {
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         type="submit"
-                                        className="w-full py-3 px-4 bg-[#20B2AA] hover:bg-[#1a9994] text-white font-medium rounded-lg shadow-lg shadow-[#20B2AA]/20 hover:shadow-xl hover:shadow-[#20B2AA]/30 transition-all duration-200 cursor-pointer"
+                                        className="w-full py-2.5 sm:py-3 px-4 bg-[#20B2AA] hover:bg-[#1a9994] text-white font-medium rounded-lg shadow-lg shadow-[#20B2AA]/20 hover:shadow-xl hover:shadow-[#20B2AA]/30 transition-all duration-200 cursor-pointer"
                                     >
                                         Send Message
                                     </motion.button>
@@ -1331,25 +1364,25 @@ export default function Welcome() {
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6 }}
-                                className="space-y-6"
+                                className="space-y-4 sm:space-y-6 mt-2 lg:mt-0"
                             >
                                 {[
                                     {
-                                        icon: <Mail className="w-6 h-6 text-[#20B2AA]" />,
+                                        icon: <Mail className="w-5 h-5 sm:w-6 sm:h-6 text-[#20B2AA]" />,
                                         title: "Email",
                                         subtitle: "For general inquiries:",
                                         value: "ratul.innovations@gmail.com",
                                         delay: 0
                                     },
                                     {
-                                        icon: <Phone className="w-6 h-6 text-[#20B2AA]" />,
+                                        icon: <Phone className="w-5 h-5 sm:w-6 sm:h-6 text-[#20B2AA]" />,
                                         title: "Phone",
                                         subtitle: "Available Monday-Friday:",
                                         value: "01781-935014",
                                         delay: 0.2
                                     },
                                     {
-                                        icon: <MapPin className="w-6 h-6 text-[#20B2AA]" />,
+                                        icon: <MapPin className="w-5 h-5 sm:w-6 sm:h-6 text-[#20B2AA]" />,
                                         title: "Location",
                                         subtitle: "Based in:",
                                         value: "Kushtia, Bangladesh",
@@ -1362,24 +1395,24 @@ export default function Welcome() {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ duration: 0.5, delay: item.delay }}
-                                        className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
+                                        className="bg-white dark:bg-gray-800 rounded-xl p-5 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 group"
                                     >
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-3 sm:gap-4">
                                             <motion.div
                                                 whileHover={{ scale: 1.1, rotate: 360 }}
                                                 transition={{ duration: 0.6 }}
-                                                className="w-12 h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center"
+                                                className="w-10 h-10 sm:w-12 sm:h-12 bg-[#E6F7F6] rounded-xl flex items-center justify-center"
                                             >
                                                 {item.icon}
                                             </motion.div>
                                             <div>
-                                                <h3 className="text-lg font-semibold mb-1 dark:text-white group-hover:text-[#20B2AA] transition-colors">
+                                                <h3 className="text-base sm:text-lg font-semibold mb-0.5 sm:mb-1 dark:text-white group-hover:text-[#20B2AA] transition-colors">
                                                     {item.title}
                                                 </h3>
-                                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                                                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mb-0.5 sm:mb-1">
                                                     {item.subtitle}
                                                 </p>
-                                                <p className="text-[#20B2AA] font-medium">
+                                                <p className="text-[#20B2AA] font-medium text-sm sm:text-base">
                                                     {item.value}
                                                 </p>
                             </div>
@@ -1392,54 +1425,54 @@ export default function Welcome() {
                 </motion.section>
 
                 {/* Footer Section */}
-                <footer className="bg-[#0F172A] dark:bg-gray-950 text-white py-12">
-                    <div className="max-w-7xl mx-auto px-4">
-                        <div className="grid grid-cols-2 gap-12 mb-8">
+                <footer className="bg-[#0F172A] dark:bg-gray-950 text-white py-8 sm:py-12">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-12 mb-6 sm:mb-8">
                             {/* Left Column - Logo and Description */}
                             <div>
-                                <div className="flex items-center gap-2 mb-4">
-                                    <div className="w-7 h-7 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                                    <div className="w-6 h-6 sm:w-7 sm:h-7 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold text-xs sm:text-sm">
                                         P
                                     </div>
-                                    <span className="font-medium text-sm">Portfolio</span>
+                                    <span className="font-medium text-xs sm:text-sm">Portfolio</span>
                                 </div>
-                                <p className="text-gray-400 max-w-md text-sm">
+                                <p className="text-gray-400 max-w-md text-xs sm:text-sm">
                                     Creating exceptional digital experiences through innovative design and development solutions.
                                 </p>
                             </div>
 
                             {/* Right Column - Social Links */}
-                            <div className="flex justify-end">
-                                <div className="flex items-center gap-4">
-                                    <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
-                                        <Twitter className="w-5 h-5 text-gray-400" />
+                            <div className="flex justify-start sm:justify-end mt-4 sm:mt-0">
+                                <div className="flex items-center gap-3 sm:gap-4">
+                                    <a href="#" className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+                                        <Twitter className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                                     </a>
-                                    <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
-                                        <Github className="w-5 h-5 text-gray-400" />
+                                    <a href="#" className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+                                        <Github className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                                     </a>
-                                    <a href="#" className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
-                                        <Linkedin className="w-5 h-5 text-gray-400" />
+                                    <a href="#" className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-full bg-gray-800 hover:bg-gray-700 transition-colors">
+                                        <Linkedin className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
                                     </a>
                                 </div>
                             </div>
                         </div>
 
                         {/* Divider */}
-                        <div className="h-px bg-gray-800 mb-8"></div>
+                        <div className="h-px bg-gray-800 mb-6 sm:mb-8"></div>
 
                         {/* Bottom Row */}
-                        <div className="flex items-center justify-between">
-                            <div className="text-gray-400 text-sm">
-                                © 2025 Your Portfolio. All rights reserved.
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+                            <div className="text-gray-400 text-xs sm:text-sm order-2 sm:order-1">
+                                © {new Date().getFullYear()} Your Portfolio. All rights reserved.
                             </div>
-                            <div className="flex items-center gap-8">
-                                <a href="#" className="text-gray-400 text-sm hover:text-[#20B2AA] transition-colors">
+                            <div className="flex items-center flex-wrap justify-center gap-4 sm:gap-8 order-1 sm:order-2">
+                                <a href="#" className="text-gray-400 text-xs sm:text-sm hover:text-[#20B2AA] transition-colors">
                                     Privacy Policy
                                 </a>
-                                <a href="#" className="text-gray-400 text-sm hover:text-[#20B2AA] transition-colors">
+                                <a href="#" className="text-gray-400 text-xs sm:text-sm hover:text-[#20B2AA] transition-colors">
                                     Terms of Service
                                 </a>
-                                <a href="#" className="text-gray-400 text-sm hover:text-[#20B2AA] transition-colors">
+                                <a href="#" className="text-gray-400 text-xs sm:text-sm hover:text-[#20B2AA] transition-colors">
                                     Cookie Policy
                                 </a>
                             </div>

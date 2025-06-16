@@ -74,18 +74,18 @@ export default function Projects({ projects }: Props) {
                     className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800"
                 >
                     <div className="flex items-center gap-4">
-                        <motion.div 
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2 cursor-pointer" 
-                        >
-                            <Link href="/" className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
-                                    P
-                                </div>
-                                <span className="font-medium text-base">Portfolio</span>
-                            </Link>
-                        </motion.div>
+                    <motion.div 
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                        className="flex items-center gap-2 cursor-pointer" 
+                    >
+                        <Link href="/" className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
+                                P
+                            </div>
+                            <span className="font-medium text-base">Portfolio</span>
+                        </Link>
+                    </motion.div>
                     </div>
 
                     <NavigationMenu>
@@ -162,7 +162,7 @@ export default function Projects({ projects }: Props) {
                             className="inline-block"
                         >
                             <Link 
-                                href="/" 
+                                href={route('home')}
                                 className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] dark:hover:text-[#20B2AA] transition-colors group"
                             >
                                 <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -357,8 +357,8 @@ export default function Projects({ projects }: Props) {
                             <p className="text-gray-300 mb-10 max-w-2xl mx-auto">
                                 Let's collaborate and bring your ideas to life with cutting-edge technology and innovative
                                 solutions tailored to your specific needs.
-                            </p>
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        </p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <Link
                                     href="/?section=contact"
                                     className="px-8 py-3.5 bg-[#20B2AA] hover:bg-[#1a9e98] text-white font-medium rounded-lg w-full sm:w-auto transition-all duration-300 shadow-lg shadow-[#20B2AA]/20"
