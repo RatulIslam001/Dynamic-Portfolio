@@ -259,7 +259,7 @@ export default function Services({ services }: Props) {
                                             </p>
                                         </div>
                                         <Link 
-                                            href="/#contact"
+                                            href="/?section=contact"
                                             className="px-4 py-2 bg-[#20B2AA] text-white text-sm rounded-md hover:bg-[#1a9994] transition-colors"
                                         >
                                             Get Quote
@@ -301,7 +301,7 @@ export default function Services({ services }: Props) {
                             </p>
                             <div className="flex flex-wrap justify-center gap-4">
                                 <Link 
-                                    href="/#contact"
+                                    href="/?section=contact"
                                     className="px-6 py-3 bg-white text-[#20B2AA] font-medium rounded-md hover:bg-gray-100 transition-colors cursor-pointer"
                                 >
                                     Get Free Consultation

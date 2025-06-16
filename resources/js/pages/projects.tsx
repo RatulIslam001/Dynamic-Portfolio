@@ -360,7 +360,7 @@ export default function Projects({ projects }: Props) {
                             </p>
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <Link
-                                    href="/#contact"
+                                    href="/?section=contact"
                                     className="px-8 py-3.5 bg-[#20B2AA] hover:bg-[#1a9e98] text-white font-medium rounded-lg w-full sm:w-auto transition-all duration-300 shadow-lg shadow-[#20B2AA]/20"
                                 >
                                     Start a Project

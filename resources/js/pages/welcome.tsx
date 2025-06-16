@@ -73,6 +73,27 @@ export default function Welcome() {
             easing: 'ease-out',
         });
     }, []);
+    
+    // Handle URL query parameters for section scrolling
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const section = queryParams.get('section');
+        
+        if (section) {
+            const element = document.getElementById(section);
+            if (element) {
+                scroll.scrollTo(element.offsetTop - 100, {
+                    duration: 800,
+                    smooth: true,
+                });
+                
+                // Clean the URL after scrolling (remove the query parameter)
+                setTimeout(() => {
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }, 1000);
+            }
+        }
+    }, []);
 
     const scrollToTop = () => {
         scroll.scrollToTop({
@@ -433,21 +454,46 @@ export default function Welcome() {
                                         className="bg-white dark:bg-gray-800 rounded-xl p-8 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-700 group relative overflow-hidden h-[280px] flex flex-col"
                                     >
                                         {/* Top accent line with color */}
-                                        <div className="absolute top-0 left-0 right-0 h-[3px]" style={{ backgroundColor: service.color }}></div>
+                                        <div className="absolute top-0 left-0 right-0 h-[3px] overflow-hidden">
+                                            <motion.div 
+                                                initial={{ width: "0%" }}
+                                                whileInView={{ width: "100%" }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.8, delay: index * 0.1 + 0.3, ease: "easeOut" }}
+                                                className="absolute top-0 left-0 h-full" 
+                                                style={{ backgroundColor: service.color }}
+                                            ></motion.div>
+                                        </div>
                                         
                                         <div className="relative flex-1">
-                                            <div 
+                                            <motion.div 
+                                                initial={{ scale: 0.8, opacity: 0 }}
+                                                whileInView={{ scale: 1, opacity: 1 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.5, delay: index * 0.1 + 0.4 }}
                                                 className="w-14 h-14 rounded-full flex items-center justify-center mb-6"
                                                 style={{ backgroundColor: `${service.color}10` }}
                                             >
                                                 <service.icon className="w-7 h-7" style={{ color: service.color }} />
-                                </div>
-                                            <h3 className="text-xl font-semibold mb-3 group-hover:text-[#20B2AA] transition-colors duration-300">
+                                            </motion.div>
+                                            <motion.h3 
+                                                initial={{ x: -20, opacity: 0 }}
+                                                whileInView={{ x: 0, opacity: 1 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.5, delay: index * 0.1 + 0.5 }}
+                                                className="text-xl font-semibold mb-3 group-hover:text-[#20B2AA] transition-colors duration-300"
+                                            >
                                                 {service.title}
-                                            </h3>
-                                            <p className="text-gray-600 dark:text-gray-300 text-base leading-relaxed">
+                                            </motion.h3>
+                                            <motion.p 
+                                                initial={{ x: -20, opacity: 0 }}
+                                                whileInView={{ x: 0, opacity: 1 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.5, delay: index * 0.1 + 0.6 }}
+                                                className="text-gray-600 dark:text-gray-300 text-base leading-relaxed"
+                                            >
                                                 {service.description}
-                                            </p>
+                                            </motion.p>
                                         </div>
                                     </motion.div>
                                 </motion.div>
@@ -467,9 +513,15 @@ export default function Welcome() {
                                     href="/services" 
                                     variant="minimal" 
                                     icon={false}
-                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-3 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-lg hover:shadow-xl hover:shadow-[#20B2AA]/10 backdrop-blur-sm"
+                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-3 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-lg hover:shadow-xl hover:shadow-[#20B2AA]/10 backdrop-blur-sm overflow-hidden group"
                                 >
-                                    Explore All Services
+                                    <span className="relative z-10">Explore All Services</span>
+                                    <motion.span 
+                                        initial={{ x: "-100%" }}
+                                        whileHover={{ x: "0%" }}
+                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                        className="absolute inset-0 bg-gradient-to-r from-[#E6F7F6]/80 to-transparent z-0"
+                                    ></motion.span>
                                 </ActionButton>
                             </div>
                         </motion.div>
@@ -584,9 +636,15 @@ export default function Welcome() {
                                 <ActionButton 
                                     variant="minimal" 
                                     icon={false}
-                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-3 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-lg hover:shadow-xl hover:shadow-[#20B2AA]/10 backdrop-blur-sm"
+                                    className="font-medium text-[#20B2AA] hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-3 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-lg hover:shadow-xl hover:shadow-[#20B2AA]/10 backdrop-blur-sm overflow-hidden group"
                                 >
-                                    View All Projects
+                                    <span className="relative z-10">View All Projects</span>
+                                    <motion.span 
+                                        initial={{ x: "-100%" }}
+                                        whileHover={{ x: "0%" }}
+                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                        className="absolute inset-0 bg-gradient-to-r from-[#E6F7F6]/80 to-transparent z-0"
+                                    ></motion.span>
                                 </ActionButton>
                                 </Link>
                             </div>
