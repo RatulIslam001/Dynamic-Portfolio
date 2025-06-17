@@ -11,7 +11,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Project::latest('completion_date')
+        $projects = Project::orderBy('id')
             ->get()
             ->map(function ($project) {
                 return [
@@ -37,7 +37,7 @@ class ProjectController extends Controller
     public function publicIndex()
     {
         $projects = Project::where('status', 'published')
-            ->latest('completion_date')
+            ->orderBy('id')
             ->get()
             ->map(function ($project) {
                 return [
@@ -160,6 +160,7 @@ class ProjectController extends Controller
         $relatedProjects = Project::where('status', 'published')
             ->where('category', $project->category)
             ->where('id', '!=', $project->id)
+            ->orderBy('id')
             ->limit(3)
             ->get()
             ->map(function ($relatedProject) {

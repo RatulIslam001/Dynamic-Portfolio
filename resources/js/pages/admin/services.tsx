@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided } from '@hello-pangea/dnd';
-import { Code, Palette, Smartphone, Search, BarChart, FileText, Plus, X, GripVertical, ChevronUp, ChevronDown, MoreVertical, Edit2, Trash2, Users, Activity, Star, DollarSign, Eye } from 'lucide-react';
+import { Code, Palette, Smartphone, Search, BarChart, FileText, Plus, X, GripVertical, ChevronUp, ChevronDown, MoreVertical, Edit2, Trash2, Users, Activity, Star, DollarSign, Eye, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import DeleteConfirmation from '@/components/ui/delete-confirmation';
@@ -198,17 +198,25 @@ export default function Services({ services: initialServices }: Props) {
         if (!serviceToDelete) return;
 
         try {
-            await fetch(route('admin.services.destroy', { service: serviceToDelete.id }), {
+            const response = await fetch(route('admin.services.destroy', { service: serviceToDelete.id }), {
                 method: 'DELETE',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'Accept': 'application/json',
                 },
             });
-            setServices(services.filter(s => s.id !== serviceToDelete.id));
-            toast.success('Service deleted successfully');
+            
+            const result = await response.json();
+            
+            // Show the message returned from the server
+            toast.success(result.message || 'Service deleted successfully');
+            
+            // Reload the page to get fresh data with reindexed IDs
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
         } catch (error) {
             toast.error('Failed to delete service');
-        } finally {
             setDeleteConfirmOpen(false);
             setServiceToDelete(null);
         }
@@ -333,6 +341,20 @@ export default function Services({ services: initialServices }: Props) {
                         <div>
                             <h2 className="text-xl font-semibold text-gray-900">Services</h2>
                             <p className="text-sm text-gray-500 mt-1">Manage your service offerings</p>
+                        </div>
+                        <div className="flex gap-3">
+                            <form action={route('admin.services.reset-ids')} method="POST">
+                                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
+                                <Button 
+                                    type="submit"
+                                    variant="outline"
+                                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                                    title="Reindex all service IDs to be sequential (1, 2, 3, 4...) without gaps"
+                                >
+                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                    Reindex IDs
+                                </Button>
+                            </form>
                         </div>
                     </div>
 

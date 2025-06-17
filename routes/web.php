@@ -8,10 +8,10 @@ use App\Http\Controllers\SkillController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\TestimonialController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\WelcomeController;
+use Illuminate\Support\Facades\Artisan;
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
+Route::get('/', [WelcomeController::class, 'index'])->name('home');
 
 // Guest routes
 Route::middleware('guest')->group(function () {
@@ -35,6 +35,11 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::post('/services', [ServiceController::class, 'store'])->name('admin.services.store');
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
+    Route::post('/services/reorder', [ServiceController::class, 'reorder'])->name('admin.services.reorder');
+    Route::post('/services/reset-ids', function() {
+        Artisan::call('services:reset-ids');
+        return redirect()->back()->with('success', 'Service IDs reset successfully.');
+    })->name('admin.services.reset-ids');
 
     // Projects routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('admin.projects');
@@ -42,6 +47,10 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('admin.projects.update');
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('admin.projects.destroy');
     Route::post('/projects/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('admin.projects.toggle-featured');
+    Route::post('/projects/reset-ids', function() {
+        Artisan::call('projects:reset-ids');
+        return redirect()->back()->with('success', 'Project IDs reset successfully.');
+    })->name('admin.projects.reset-ids');
 
     // Skills routes
     Route::get('/skills', [SkillController::class, 'index'])->name('admin.skills');

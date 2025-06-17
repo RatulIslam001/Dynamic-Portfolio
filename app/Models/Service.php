@@ -20,7 +20,8 @@ class Service extends Model
         'icon',
         'price',
         'features',
-        'is_active'
+        'is_active',
+        'order'
     ];
 
     /**
@@ -31,6 +32,7 @@ class Service extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'price' => 'decimal:2',
-        'features' => 'array'
+        'features' => 'array',
+        'order' => 'integer'
     ];
 } 

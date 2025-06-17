@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Artisan;
 
 class ServiceController extends Controller
 {
     public function index()
     {
-        $services = Service::all();
+        $services = Service::orderBy('order')->get();
         
         return Inertia::render('admin/services', [
             'services' => $services
@@ -20,6 +21,7 @@ class ServiceController extends Controller
     public function publicIndex()
     {
         $services = Service::where('is_active', true)
+            ->orderBy('order')
             ->get();
         
         return Inertia::render('services', [
@@ -39,6 +41,10 @@ class ServiceController extends Controller
             'features.*' => 'string'
         ]);
 
+        // Set order to be after the last service
+        $maxOrder = Service::max('order') ?? 0;
+        $validated['order'] = $maxOrder + 1;
+
         Service::create($validated);
 
         return redirect()->back()->with('success', 'Service created successfully.');
@@ -53,7 +59,8 @@ class ServiceController extends Controller
             'price' => 'sometimes|required|numeric|min:0',
             'is_active' => 'sometimes|boolean',
             'features' => 'sometimes|required|array',
-            'features.*' => 'string'
+            'features.*' => 'string',
+            'order' => 'sometimes|integer'
         ]);
 
         $service->update($validated);
@@ -63,8 +70,53 @@ class ServiceController extends Controller
 
     public function destroy(Service $service)
     {
+        // Get the ID being deleted for logging
+        $deletedId = $service->id;
+        
+        // Delete the service
         $service->delete();
 
-        return redirect()->back()->with('success', 'Service deleted successfully.');
+        // Reset service IDs to ensure sequential ordering without gaps
+        try {
+            // Run the ID reset command synchronously
+            $result = Artisan::call('services:reset-ids');
+            
+            if ($result === 0) {
+                // Successfully reset IDs
+                return response()->json([
+                    'success' => true,
+                    'message' => "Service #$deletedId deleted and IDs reset successfully."
+                ]);
+            } else {
+                // Failed to reset IDs but service was deleted
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Service deleted successfully, but ID reindexing failed. Please reindex manually.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            // Log the error but still return success for the deletion
+            \Log::error("Failed to reset service IDs: " . $e->getMessage());
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Service deleted successfully, but ID reindexing failed. Please reindex manually.'
+            ]);
+        }
+    }
+
+    public function reorder(Request $request)
+    {
+        $validated = $request->validate([
+            'services' => 'required|array',
+            'services.*.id' => 'required|exists:services,id',
+            'services.*.order' => 'required|integer|min:0',
+        ]);
+
+        foreach ($validated['services'] as $item) {
+            Service::where('id', $item['id'])->update(['order' => $item['order']]);
+        }
+
+        return response()->json(['message' => 'Services reordered successfully']);
     }
 } 

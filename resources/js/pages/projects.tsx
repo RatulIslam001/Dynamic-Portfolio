@@ -291,7 +291,9 @@ export default function Projects({ projects }: Props) {
                                     {/* Project Content */}
                                     <div className="p-6 flex-grow flex flex-col">
                                             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                                            {project.title}
+                                                <Link href={`/projects/${project.id}`} className="hover:text-[#20B2AA] transition-colors">
+                                                    {project.title}
+                                                </Link>
                                         </h3>
                                         
                                             <p className="text-gray-600 dark:text-gray-300 mb-5 text-sm flex-grow">

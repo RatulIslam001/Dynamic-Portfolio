@@ -18,50 +18,35 @@ import { Link } from '@inertiajs/react';
 import { ProjectCard } from '@/components/ui/project-card';
 import { ActionButton } from '@/components/ui/action-button';
 import { MobileMenu } from '@/components/ui/mobile-menu';
+import { IconComponent } from '@/components/IconComponent';
 
-export default function Welcome() {
+interface Service {
+    id: number;
+    title: string;
+    description: string;
+    icon: string;
+    price: number;
+    features: string[];
+    is_active: boolean;
+}
+
+interface Project {
+    id: number;
+    title: string;
+    description: string;
+    image: string | null;
+    category: string;
+    technologies: string[];
+}
+
+interface Props {
+    services: Service[];
+    projects: Project[];
+}
+
+export default function Welcome({ services, projects }: Props) {
     const [activeFilter, setActiveFilter] = useState('All');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    
-    // Project data
-    const projects = [
-        {
-            title: "Agency Website",
-            category: "Web Design",
-            description: "Modern agency website with parallax effects and interactive elements.",
-            image: "/storage/Agency Website.png"
-        },
-        {
-            title: "E-commerce Dashboard",
-            category: "Web Design",
-            description: "Modern e-commerce admin dashboard with real-time analytics and inventory management.",
-            image: "/storage/Ecommerce.png"
-        },
-        {
-            title: "Food Delivery App",
-            category: "Mobile Apps",
-            description: "Feature-rich food delivery application with real-time order tracking.",
-            image: "/storage/Food Delivery App.png"
-        },
-        {
-            title: "Portfolio Website",
-            category: "Web Design",
-            description: "Responsive portfolio website with modern animations and dark mode support.",
-            image: "/storage/Portfolio Website.png"
-        },
-        {
-            title: "Task Management System",
-            category: "Web Design",
-            description: "Collaborative task management platform with real-time updates and team features.",
-            image: "/storage/Task Management System.png"
-        },
-        {
-            title: "Travel Booking App",
-            category: "Mobile Apps",
-            description: "Cross-platform travel booking application with interactive maps and real-time availability.",
-            image: "/storage/Travel Booking App.png"
-        }
-    ];
 
     // Filter projects based on active filter
     const filteredProjects = activeFilter === 'All' 
@@ -240,16 +225,15 @@ export default function Welcome() {
                                 initial={{ scale: 0.5, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ duration: 0.5, delay: 0.2 }}
-                                className="w-full h-[180px] xs:h-[220px] sm:h-[350px] md:h-[450px] lg:h-[500px] bg-gradient-to-br from-[#20B2AA]/20 to-purple-500/20 rounded-2xl xs:rounded-3xl overflow-hidden relative backdrop-blur-sm border border-white/20 mx-auto max-w-sm sm:max-w-md md:max-w-lg lg:max-w-full"
+                                className="w-full h-[250px] xs:h-[300px] sm:h-[400px] md:h-[500px] lg:h-[550px] bg-[#7a261a] rounded-2xl xs:rounded-3xl overflow-hidden relative backdrop-blur-sm border border-orange-800/30 mx-auto max-w-sm sm:max-w-md md:max-w-lg lg:max-w-full"
                             >
                                 {/* Profile image */}
                                 <img 
-                                    src="/storage/profile.jpg" 
+                                    src="/storage/Profile.png" 
                                     alt="Profile"
-                                    className="w-full h-full object-cover object-center z-10 relative"
-                                    style={{ objectPosition: "center 30%" }}
+                                    className="w-full h-full object-contain object-center z-10 relative"
                                 />
-                                <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+                                <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
                             </motion.div>
                             
                             {/* Stats cards - Positioned for responsive layout */}
@@ -257,7 +241,7 @@ export default function Welcome() {
                                 initial={{ x: 20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ duration: 0.5, delay: 0.4 }}
-                                className="absolute -top-0 xs:-top-2 right-0 md:-top-4 md:-right-4 bg-white dark:bg-gray-800 rounded-xl xs:rounded-2xl shadow-lg dark:shadow-gray-900/50 px-2 xs:px-3 sm:px-4 py-1.5 xs:py-2 sm:py-3 flex items-center gap-1.5 xs:gap-2 sm:gap-3 z-10 max-w-[90%] sm:max-w-[250px] border border-gray-100 dark:border-gray-700"
+                                className="absolute top-5 xs:top-6 right-5 md:top-8 md:right-8 bg-white dark:bg-gray-800 rounded-xl xs:rounded-2xl shadow-lg dark:shadow-gray-900/50 px-3 xs:px-4 sm:px-5 py-2 xs:py-3 sm:py-4 flex items-center gap-2 xs:gap-3 sm:gap-4 z-20 max-w-[170px] sm:max-w-[250px] border border-gray-100 dark:border-gray-700"
                             >
                                 <div className="w-6 xs:w-8 sm:w-10 h-6 xs:h-8 sm:h-10 rounded-full bg-[#E6F7F6] dark:bg-[#20B2AA]/20 flex items-center justify-center flex-shrink-0">
                                     <motion.span 
@@ -278,7 +262,7 @@ export default function Welcome() {
                                 initial={{ x: -20, opacity: 0 }}
                                 animate={{ x: 0, opacity: 1 }}
                                 transition={{ duration: 0.5, delay: 0.6 }}
-                                className="absolute -bottom-0 xs:-bottom-2 -left-0 xs:-left-2 md:-bottom-4 md:-left-4 bg-white dark:bg-gray-800 rounded-xl xs:rounded-2xl shadow-lg dark:shadow-gray-900/50 px-2 xs:px-3 sm:px-4 py-1.5 xs:py-2 sm:py-3 flex items-center gap-1.5 xs:gap-2 sm:gap-3 z-10 border border-gray-100 dark:border-gray-700"
+                                className="absolute bottom-5 xs:bottom-6 left-5 md:bottom-8 md:left-8 bg-white dark:bg-gray-800 rounded-xl xs:rounded-2xl shadow-lg dark:shadow-gray-900/50 px-3 xs:px-4 sm:px-5 py-2 xs:py-3 sm:py-4 flex items-center gap-2 xs:gap-3 sm:gap-4 z-20 border border-gray-100 dark:border-gray-700"
                             >
                                 <div className="w-6 xs:w-8 sm:w-10 h-6 xs:h-8 sm:h-10 rounded-full bg-[#E6F7F6] dark:bg-[#20B2AA]/20 flex items-center justify-center">
                                     <motion.span 
@@ -336,18 +320,18 @@ export default function Welcome() {
                                         fullWidth
                                     >
                                         <span className="block">View Work</span>
-                                    </ActionButton>
+                                </ActionButton>
                                 </div>
                                 <div className="w-full xs:w-[48%] sm:w-auto">
-                                    <ActionButton 
-                                        variant="outline" 
-                                        icon={false}
+                                <ActionButton 
+                                    variant="outline" 
+                                    icon={false}
                                         className="group relative z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-[#20B2AA] shadow-sm hover:shadow-md transition-all duration-300 text-gray-800 dark:text-gray-200 hover:text-[#20B2AA] rounded-md w-full text-center flex justify-center items-center text-sm sm:text-base py-3 px-6 sm:px-8"
                                         fullWidth
-                                    >
+                                >
                                         <Download className="w-4 sm:w-5 h-4 sm:h-5 mr-1.5 sm:mr-2 text-gray-600 dark:text-gray-400 group-hover:text-[#20B2AA] transition-colors flex-shrink-0" />
                                         <span className="block">Download CV</span>
-                                    </ActionButton>
+                                </ActionButton>
                                 </div>
                             </motion.div>
 
@@ -433,44 +417,12 @@ export default function Welcome() {
                         </motion.div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
-                            {[
-                                {
-                                    icon: Code,
-                                    title: "Web Development",
-                                    description: "Creating responsive, fast, and user-friendly websites using modern technologies and best practices.",
-                                    color: "#20B2AA"
-                                },
-                                {
-                                    icon: Search,
-                                    title: "UI/UX Design",
-                                    description: "Designing intuitive and beautiful user interfaces that provide exceptional user experiences.",
-                                    color: "#8B5CF6"
-                                },
-                                {
-                                    icon: Smartphone,
-                                    title: "Mobile Development",
-                                    description: "Building cross-platform mobile applications that work seamlessly on iOS and Android devices.",
-                                    color: "#3B82F6"
-                                },
-                                {
-                                    icon: Search,
-                                    title: "SEO Optimization",
-                                    description: "Improving your website's visibility in search engines to drive more organic traffic.",
-                                    color: "#10B981"
-                                },
-                                {
-                                    icon: BarChart3,
-                                    title: "Digital Marketing",
-                                    description: "Creating and implementing effective digital marketing strategies to grow your business.",
-                                    color: "#F59E0B"
-                                },
-                                {
-                                    icon: FileText,
-                                    title: "Content Writing",
-                                    description: "Crafting engaging and SEO-friendly content that resonates with your target audience.",
-                                    color: "#EC4899"
-                                }
-                            ].map((service, index) => (
+                            {services.map((service, index) => {
+                                // Assign colors based on index
+                                const colors = ["#20B2AA", "#8B5CF6", "#3B82F6", "#10B981", "#F59E0B", "#EC4899"];
+                                const color = colors[index % colors.length];
+                                
+                                return (
                                 <motion.div
                                     key={service.title}
                                     initial={{ opacity: 0, y: 20 }}
@@ -491,7 +443,7 @@ export default function Welcome() {
                                                 viewport={{ once: true }}
                                                 transition={{ duration: 0.8, delay: index * 0.1 + 0.3, ease: "easeOut" }}
                                                 className="absolute top-0 left-0 h-full" 
-                                                style={{ backgroundColor: service.color }}
+                                                style={{ backgroundColor: color }}
                                             ></motion.div>
                                         </div>
                                         
@@ -502,9 +454,9 @@ export default function Welcome() {
                                                 viewport={{ once: true }}
                                                 transition={{ duration: 0.5, delay: index * 0.1 + 0.4 }}
                                                 className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center mb-4 sm:mb-6"
-                                                style={{ backgroundColor: `${service.color}10` }}
+                                                style={{ backgroundColor: `${color}10` }}
                                             >
-                                                <service.icon className="w-6 h-6 sm:w-7 sm:h-7" style={{ color: service.color }} />
+                                                <IconComponent icon={service.icon} className="w-6 h-6 sm:w-7 sm:h-7" style={{ color: color }} />
                                             </motion.div>
                                             <motion.h3 
                                                 initial={{ x: -20, opacity: 0 }}
@@ -527,7 +479,7 @@ export default function Welcome() {
                                         </div>
                                     </motion.div>
                                 </motion.div>
-                            ))}
+                            )})}
                         </div>
 
                         {/* View All Services Button */}
@@ -613,24 +565,54 @@ export default function Welcome() {
                             transition={{ duration: 0.6 }}
                             className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mb-8 sm:mb-12"
                         >
-                            {[
-                                { name: 'All', active: activeFilter === 'All' },
-                                { name: 'Web Design', active: activeFilter === 'Web Design' },
-                                { name: 'Mobile Apps', active: activeFilter === 'Mobile Apps' },
-                                { name: 'Branding', active: activeFilter === 'Branding' }
-                            ].map((filter, index) => (
+                            {/* All projects button */}
                                 <motion.button
-                                    key={filter.name}
+                                key="All"
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    onClick={() => setActiveFilter(filter.name)}
-                                    className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                                        filter.active 
+                                onClick={() => setActiveFilter('All')}
+                                className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                                    activeFilter === 'All' 
                                             ? 'bg-[#20B2AA] text-white' 
                                             : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                                     }`}
                                 >
-                                    {filter.name}
+                                All
+                            </motion.button>
+
+                            {/* Predefined categories for better UI and organization */}
+                            {['Web Development', 'E-commerce', 'Mobile App', 'UI/UX Design', 'Branding'].map((category) => (
+                                <motion.button
+                                    key={category}
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={() => setActiveFilter(category)}
+                                    className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                                        activeFilter === category 
+                                            ? 'bg-[#20B2AA] text-white' 
+                                            : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                    }`}
+                                >
+                                    {category}
+                                </motion.button>
+                            ))}
+                            
+                            {/* Show any additional unique categories from database that aren't in the predefined list */}
+                            {[...new Set(projects.map(project => project.category))]
+                                .filter(category => !['Web Development', 'E-commerce', 'Mobile App', 'UI/UX Design', 'Branding'].includes(category))
+                                .map((category) => (
+                                    <motion.button
+                                        key={category}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={() => setActiveFilter(category)}
+                                        className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                                            activeFilter === category 
+                                                ? 'bg-[#20B2AA] text-white' 
+                                                : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                        }`}
+                                    >
+                                        {category}
                                 </motion.button>
                             ))}
                         </motion.div>
@@ -643,9 +625,10 @@ export default function Welcome() {
                             transition={{ duration: 0.6 }}
                             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
                         >
-                            {filteredProjects.map((project, index) => (
+                            {filteredProjects.map((project) => (
                                 <ProjectCard
-                                    key={project.title}
+                                    key={project.id}
+                                    id={project.id}
                                     title={project.title}
                                     description={project.description}
                                     category={project.category}
