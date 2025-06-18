@@ -22,6 +22,8 @@ class ProfileSeeder extends Seeder
             'github_url' => 'https://github.com/johndoe',
             'linkedin_url' => 'https://linkedin.com/in/johndoe',
             'twitter_url' => 'https://twitter.com/johndoe',
+            'years_experience' => 5,
+            'projects_completed' => 50,
         ]);
     }
 } 

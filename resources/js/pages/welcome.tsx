@@ -39,14 +39,25 @@ interface Project {
     technologies: string[];
 }
 
+interface ProfileData {
+    years_experience: number;
+    projects_completed: number;
+    avatar: string;
+}
+
 interface Props {
     services: Service[];
     projects: Project[];
+    profile: ProfileData | null;
 }
 
-export default function Welcome({ services, projects }: Props) {
+export default function Welcome({ services, projects, profile }: Props) {
     const [activeFilter, setActiveFilter] = useState('All');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    // Default values in case profile data is not available
+    const yearsExperience = profile?.years_experience ?? 5;
+    const projectsCompleted = profile?.projects_completed ?? 50;
 
     // Filter projects based on active filter
     const filteredProjects = activeFilter === 'All' 
@@ -229,7 +240,7 @@ export default function Welcome({ services, projects }: Props) {
                             >
                                 {/* Profile image */}
                                 <img 
-                                    src="/storage/Profile.png" 
+                                    src="/images/Profile.png" 
                                     alt="Profile"
                                     className="w-full h-full object-contain object-center z-10 relative"
                                 />
@@ -253,7 +264,7 @@ export default function Welcome({ services, projects }: Props) {
                                     </motion.span>
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="font-semibold text-sm xs:text-base sm:text-lg text-gray-900 dark:text-white truncate">50+ Projects</div>
+                                    <div className="font-semibold text-sm xs:text-base sm:text-lg text-gray-900 dark:text-white truncate">{projectsCompleted}+ Projects</div>
                                     <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">Completed</div>
                                 </div>
                             </motion.div>
@@ -274,7 +285,7 @@ export default function Welcome({ services, projects }: Props) {
                                     </motion.span>
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-sm xs:text-base sm:text-lg text-gray-900 dark:text-white">5 Years</div>
+                                    <div className="font-semibold text-sm xs:text-base sm:text-lg text-gray-900 dark:text-white">{yearsExperience} Years</div>
                                     <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Experience</div>
                                 </div>
                             </motion.div>

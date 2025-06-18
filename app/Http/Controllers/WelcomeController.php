@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Service;
 use App\Models\Project;
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -34,9 +35,16 @@ class WelcomeController extends Controller
                 ];
             });
         
+        $profile = Profile::first();
+        
         return Inertia::render('welcome', [
             'services' => $services,
-            'projects' => $projects
+            'projects' => $projects,
+            'profile' => $profile ? [
+                'years_experience' => $profile->years_experience,
+                'projects_completed' => $profile->projects_completed,
+                'avatar' => '/images/Profile.png',
+            ] : null
         ]);
     }
 } 
