@@ -85,7 +85,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             initial="closed"
             animate="open"
             exit="closed"
-            className="fixed top-0 right-0 bottom-0 w-[280px] bg-white dark:bg-gray-900 z-50 shadow-2xl flex flex-col"
+            className="fixed top-0 right-0 bottom-0 w-[280px] bg-white dark:bg-gray-900 z-50 shadow-2xl flex flex-col overflow-y-auto"
           >
             {/* Close button */}
             <div className="flex justify-end p-6">
@@ -132,7 +132,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               <motion.div
                 variants={itemVariants}
                 custom={menuItems.length}
-                className="mt-auto"
+                className="mt-auto mb-6"
               >
                 <ScrollLink
                   to="contact"
@@ -143,7 +143,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                   className="cursor-pointer block"
                   onClick={onClose}
                 >
-                  <button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white w-full py-3 rounded-md text-base font-medium">
+                  <button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white w-full py-3 rounded-md text-base font-medium transition-colors duration-300 shadow-md hover:shadow-lg">
                     Hire Me
                   </button>
                 </ScrollLink>

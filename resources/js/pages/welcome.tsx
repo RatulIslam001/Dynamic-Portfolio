@@ -40,9 +40,27 @@ interface Project {
 }
 
 interface ProfileData {
+    full_name: string;
+    title: string;
+    about: string;
     years_experience: number;
     projects_completed: number;
+    is_available: boolean;
+    cta_text: string;
+    cta_secondary_text: string;
+    cta_url: string;
+    cta_secondary_url: string;
     avatar: string;
+    social: {
+        github: string | null;
+        twitter: string | null;
+        linkedin: string | null;
+    };
+    contact: {
+        email: string;
+        phone: string;
+        location: string;
+    };
 }
 
 interface Props {
@@ -56,8 +74,27 @@ export default function Welcome({ services, projects, profile }: Props) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // Default values in case profile data is not available
+    const defaultTitle = 'Creative Designer & Developer';
+    const defaultAbout = 'I create exceptional digital experiences that solve complex problems and connect people through elegant, user-focused design.';
+    const defaultCtaText = 'View Work';
+    const defaultCtaSecondaryText = 'Download CV';
+    const defaultCtaUrl = '#works';
+    const defaultCtaSecondaryUrl = '#';
+    const defaultIsAvailable = true;
+    
     const yearsExperience = profile?.years_experience ?? 5;
     const projectsCompleted = profile?.projects_completed ?? 50;
+    const isAvailable = profile?.is_available ?? defaultIsAvailable;
+    const title = profile?.title ?? defaultTitle;
+    const about = profile?.about ?? defaultAbout;
+    const ctaText = profile?.cta_text ?? defaultCtaText;
+    const ctaSecondaryText = profile?.cta_secondary_text ?? defaultCtaSecondaryText;
+    const ctaUrl = profile?.cta_url ?? defaultCtaUrl;
+    const ctaSecondaryUrl = profile?.cta_secondary_url ?? defaultCtaSecondaryUrl;
+    const avatarUrl = profile?.avatar ?? '/images/Profile.png';
+    const githubUrl = profile?.social?.github ?? 'https://github.com';
+    const twitterUrl = profile?.social?.twitter ?? 'https://twitter.com';
+    const linkedinUrl = profile?.social?.linkedin ?? 'https://linkedin.com';
 
     // Filter projects based on active filter
     const filteredProjects = activeFilter === 'All' 
@@ -240,7 +277,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                             >
                                 {/* Profile image */}
                                 <img 
-                                    src="/images/Profile.png" 
+                                    src={avatarUrl} 
                                     alt="Profile"
                                     className="w-full h-full object-contain object-center z-10 relative"
                                 />
@@ -295,7 +332,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                         <motion.div variants={containerVariants} className="lg:order-1 order-2 w-full mt-4 xs:mt-6 sm:mt-0 flex flex-col items-center lg:items-start">
                             <motion.div 
                                 variants={itemVariants}
-                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E6F7F6] text-[#20B2AA] text-xs xs:text-sm mb-4 xs:mb-5 sm:mb-6"
+                                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#E6F7F6] text-[#20B2AA] text-xs xs:text-sm mb-4 xs:mb-5 sm:mb-6 ${!isAvailable ? 'opacity-0' : ''}`}
                             >
                                 <span className="w-2 h-2 rounded-full bg-[#20B2AA] animate-pulse"></span>
                                 Available for work
@@ -304,20 +341,14 @@ export default function Welcome({ services, projects, profile }: Props) {
                             <motion.h1 
                                 variants={itemVariants}
                                 className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.1] tracking-tight mb-2 xs:mb-3 sm:mb-6 text-center lg:text-left"
-                            >
-                                Creative <span className="text-[#20B2AA] relative">
-                                    Designer
-                                    <svg className="absolute -bottom-1 xs:-bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
-                                        <path d="M0 4C50 4 150 4 200 4" stroke="#20B2AA" strokeWidth="4" strokeLinecap="round"/>
-                                    </svg>
-                                </span> & Developer
-                            </motion.h1>
+                                dangerouslySetInnerHTML={{ __html: formatTitle(title) }}
+                            />
 
                             <motion.p 
                                 variants={itemVariants}
                                 className="text-gray-600 dark:text-gray-300 text-sm xs:text-base sm:text-lg mb-3 xs:mb-4 sm:mb-8 max-w-xl text-center lg:text-left mx-auto lg:mx-0"
                             >
-                                I create exceptional digital experiences that solve complex problems and connect people through elegant, user-focused design.
+                                {about}
                             </motion.p>
 
                             <motion.div 
@@ -326,22 +357,23 @@ export default function Welcome({ services, projects, profile }: Props) {
                             >
                                 <div className="w-full xs:w-[48%] sm:w-auto">
                                     <ActionButton 
-                                        href="#works" 
+                                        href={ctaUrl} 
                                         className="relative z-10 shadow-lg shadow-[#20B2AA]/15 hover:shadow-xl hover:shadow-[#20B2AA]/25 transition-all duration-300 font-medium w-full text-center flex justify-center items-center text-sm sm:text-base py-3 px-6 sm:px-8"
                                         fullWidth
                                     >
-                                        <span className="block">View Work</span>
+                                        <span className="block">{ctaText}</span>
                                 </ActionButton>
                                 </div>
                                 <div className="w-full xs:w-[48%] sm:w-auto">
                                 <ActionButton 
                                     variant="outline" 
                                     icon={false}
+                                    href={ctaSecondaryUrl}
                                         className="group relative z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-[#20B2AA] shadow-sm hover:shadow-md transition-all duration-300 text-gray-800 dark:text-gray-200 hover:text-[#20B2AA] rounded-md w-full text-center flex justify-center items-center text-sm sm:text-base py-3 px-6 sm:px-8"
                                         fullWidth
                                 >
                                         <Download className="w-4 sm:w-5 h-4 sm:h-5 mr-1.5 sm:mr-2 text-gray-600 dark:text-gray-400 group-hover:text-[#20B2AA] transition-colors flex-shrink-0" />
-                                        <span className="block">Download CV</span>
+                                        <span className="block">{ctaSecondaryText}</span>
                                 </ActionButton>
                                 </div>
                             </motion.div>
@@ -351,7 +383,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                 className="flex items-center gap-4 justify-center mt-3 xs:mt-4"
                             >
                                 <motion.a
-                                    href="https://github.com"
+                                    href={githubUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     whileHover={{ scale: 1.1 }}
@@ -361,7 +393,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                     <Github className="w-4 xs:w-5 h-4 xs:h-5 text-gray-600 dark:text-gray-300 group-hover:text-[#20B2AA] transition-colors duration-300" />
                                 </motion.a>
                                 <motion.a
-                                    href="https://twitter.com"
+                                    href={twitterUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     whileHover={{ scale: 1.1 }}
@@ -371,7 +403,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                     <Twitter className="w-4 xs:w-5 h-4 xs:h-5 text-gray-600 dark:text-gray-300 group-hover:text-[#20B2AA] transition-colors duration-300" />
                                 </motion.a>
                                 <motion.a
-                                    href="https://linkedin.com"
+                                    href={linkedinUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     whileHover={{ scale: 1.1 }}
@@ -1476,4 +1508,37 @@ export default function Welcome({ services, projects, profile }: Props) {
             </div>
         </ThemeProvider>
     );
+}
+
+function formatTitle(title: string): string {
+    // Check if the title has the default format
+    if (title === 'Creative Designer & Developer') {
+        return `Creative <span class="text-[#20B2AA] relative">
+            Designer
+            <svg class="absolute -bottom-1 xs:-bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
+                <path d="M0 4C50 4 150 4 200 4" stroke="#20B2AA" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+        </span> & Developer`;
+    }
+    
+    // If it's a custom title, look for keywords to highlight
+    const keywords = ['Designer', 'Developer', 'Engineer', 'Programmer', 'Creative', 'UX/UI', 'Architect'];
+    let formattedTitle = title;
+    
+    for (const keyword of keywords) {
+        if (title.includes(keyword)) {
+            formattedTitle = title.replace(
+                keyword, 
+                `<span class="text-[#20B2AA] relative">
+                    ${keyword}
+                    <svg class="absolute -bottom-1 xs:-bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
+                        <path d="M0 4C50 4 150 4 200 4" stroke="#20B2AA" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                </span>`
+            );
+            break;
+        }
+    }
+    
+    return formattedTitle;
 }

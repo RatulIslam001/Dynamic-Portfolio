@@ -41,9 +41,27 @@ class WelcomeController extends Controller
             'services' => $services,
             'projects' => $projects,
             'profile' => $profile ? [
+                'full_name' => $profile->full_name,
+                'title' => $profile->title,
+                'about' => $profile->about,
                 'years_experience' => $profile->years_experience,
                 'projects_completed' => $profile->projects_completed,
-                'avatar' => '/images/Profile.png',
+                'is_available' => $profile->is_available,
+                'cta_text' => $profile->cta_text,
+                'cta_secondary_text' => $profile->cta_secondary_text,
+                'cta_url' => $profile->cta_url,
+                'cta_secondary_url' => $profile->cta_secondary_url,
+                'avatar' => $profile->avatar ? Storage::url($profile->avatar) : '/images/Profile.png',
+                'social' => [
+                    'github' => $profile->github_url,
+                    'twitter' => $profile->twitter_url,
+                    'linkedin' => $profile->linkedin_url,
+                ],
+                'contact' => [
+                    'email' => $profile->email,
+                    'phone' => $profile->phone,
+                    'location' => $profile->location,
+                ],
             ] : null
         ]);
     }

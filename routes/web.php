@@ -21,81 +21,82 @@ Route::middleware('guest')->group(function () {
 });
 
 // Admin routes
-Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return Inertia::render('dashboard');
-    })->name('admin.dashboard');
-
-    Route::get('/profile', function () {
-        return Inertia::render('profile');
-    })->name('admin.profile');
-
+    })->name('dashboard');
+    
+    // Profile routes
+    Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
+    Route::post('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/hero', [App\Http\Controllers\Admin\ProfileController::class, 'updateHeroSection'])->name('profile.hero.update');
+    
     // Services routes
-    Route::get('/services', [ServiceController::class, 'index'])->name('admin.services');
-    Route::post('/services', [ServiceController::class, 'store'])->name('admin.services.store');
-    Route::put('/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
-    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
-    Route::post('/services/reorder', [ServiceController::class, 'reorder'])->name('admin.services.reorder');
+    Route::get('/services', [ServiceController::class, 'index'])->name('services');
+    Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
+    Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
+    Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+    Route::post('/services/reorder', [ServiceController::class, 'reorder'])->name('services.reorder');
     Route::post('/services/reset-ids', function() {
         Artisan::call('services:reset-ids');
         return redirect()->back()->with('success', 'Service IDs reset successfully.');
-    })->name('admin.services.reset-ids');
+    })->name('services.reset-ids');
 
     // Projects routes
-    Route::get('/projects', [ProjectController::class, 'index'])->name('admin.projects');
-    Route::post('/projects', [ProjectController::class, 'store'])->name('admin.projects.store');
-    Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('admin.projects.update');
-    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('admin.projects.destroy');
-    Route::post('/projects/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('admin.projects.toggle-featured');
+    Route::get('/projects', [ProjectController::class, 'index'])->name('projects');
+    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
+    Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
+    Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+    Route::post('/projects/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('projects.toggle-featured');
     Route::post('/projects/reset-ids', function() {
         Artisan::call('projects:reset-ids');
         return redirect()->back()->with('success', 'Project IDs reset successfully.');
-    })->name('admin.projects.reset-ids');
+    })->name('projects.reset-ids');
 
     // Skills routes
-    Route::get('/skills', [SkillController::class, 'index'])->name('admin.skills');
-    Route::post('/skills', [SkillController::class, 'store'])->name('admin.skills.store');
-    Route::put('/skills/{skill}', [SkillController::class, 'update'])->name('admin.skills.update');
-    Route::delete('/skills/{skill}', [SkillController::class, 'destroy'])->name('admin.skills.destroy');
-    Route::post('/skills/reorder', [SkillController::class, 'reorder'])->name('admin.skills.reorder');
-    Route::post('/skills/{skill}/toggle-visibility', [SkillController::class, 'toggleVisibility'])->name('admin.skills.toggle-visibility');
+    Route::get('/skills', [SkillController::class, 'index'])->name('skills');
+    Route::post('/skills', [SkillController::class, 'store'])->name('skills.store');
+    Route::put('/skills/{skill}', [SkillController::class, 'update'])->name('skills.update');
+    Route::delete('/skills/{skill}', [SkillController::class, 'destroy'])->name('skills.destroy');
+    Route::post('/skills/reorder', [SkillController::class, 'reorder'])->name('skills.reorder');
+    Route::post('/skills/{skill}/toggle-visibility', [SkillController::class, 'toggleVisibility'])->name('skills.toggle-visibility');
 
     // Experience routes
-    Route::get('/experiences', [ExperienceController::class, 'index'])->name('admin.experiences.index');
-    Route::post('/experiences', [ExperienceController::class, 'store'])->name('admin.experiences.store');
-    Route::put('/experiences/{experience}', [ExperienceController::class, 'update'])->name('admin.experiences.update');
-    Route::delete('/experiences/{experience}', [ExperienceController::class, 'destroy'])->name('admin.experiences.destroy');
-    Route::post('/experiences/reorder', [ExperienceController::class, 'reorder'])->name('admin.experiences.reorder');
+    Route::get('/experiences', [ExperienceController::class, 'index'])->name('experiences.index');
+    Route::post('/experiences', [ExperienceController::class, 'store'])->name('experiences.store');
+    Route::put('/experiences/{experience}', [ExperienceController::class, 'update'])->name('experiences.update');
+    Route::delete('/experiences/{experience}', [ExperienceController::class, 'destroy'])->name('experiences.destroy');
+    Route::post('/experiences/reorder', [ExperienceController::class, 'reorder'])->name('experiences.reorder');
 
     Route::get('/resume', function () {
         return Inertia::render('resume');
-    })->name('admin.resume');
+    })->name('resume');
 
     // Testimonials routes
-    Route::get('/testimonials', [TestimonialController::class, 'index'])->name('admin.testimonials');
-    Route::post('/testimonials', [TestimonialController::class, 'store'])->name('admin.testimonials.store');
-    Route::put('/testimonials/{testimonial}', [TestimonialController::class, 'update'])->name('admin.testimonials.update');
-    Route::delete('/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('admin.testimonials.destroy');
-    Route::post('/testimonials/reorder', [TestimonialController::class, 'reorder'])->name('admin.testimonials.reorder');
-    Route::post('/testimonials/{testimonial}/toggle-featured', [TestimonialController::class, 'toggleFeatured'])->name('admin.testimonials.toggle-featured');
+    Route::get('/testimonials', [TestimonialController::class, 'index'])->name('testimonials');
+    Route::post('/testimonials', [TestimonialController::class, 'store'])->name('testimonials.store');
+    Route::put('/testimonials/{testimonial}', [TestimonialController::class, 'update'])->name('testimonials.update');
+    Route::delete('/testimonials/{testimonial}', [TestimonialController::class, 'destroy'])->name('testimonials.destroy');
+    Route::post('/testimonials/reorder', [TestimonialController::class, 'reorder'])->name('testimonials.reorder');
+    Route::post('/testimonials/{testimonial}/toggle-featured', [TestimonialController::class, 'toggleFeatured'])->name('testimonials.toggle-featured');
 
-    Route::get('/messages', [MessageController::class, 'index'])->name('admin.messages');
-    Route::get('/messages/{message}', [MessageController::class, 'show'])->name('admin.messages.show');
-    Route::post('/messages/{message}/read', [MessageController::class, 'markAsRead'])->name('admin.messages.read');
-    Route::post('/messages/{message}/unread', [MessageController::class, 'markAsUnread'])->name('admin.messages.unread');
-    Route::post('/messages/{message}/reply', [MessageController::class, 'reply'])->name('admin.messages.reply');
-    Route::post('/messages/{message}/archive', [MessageController::class, 'archive'])->name('admin.messages.archive');
-    Route::post('/messages/{message}/unarchive', [MessageController::class, 'unarchive'])->name('admin.messages.unarchive');
-    Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('admin.messages.destroy');
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages');
+    Route::get('/messages/{message}', [MessageController::class, 'show'])->name('messages.show');
+    Route::post('/messages/{message}/read', [MessageController::class, 'markAsRead'])->name('messages.read');
+    Route::post('/messages/{message}/unread', [MessageController::class, 'markAsUnread'])->name('messages.unread');
+    Route::post('/messages/{message}/reply', [MessageController::class, 'reply'])->name('messages.reply');
+    Route::post('/messages/{message}/archive', [MessageController::class, 'archive'])->name('messages.archive');
+    Route::post('/messages/{message}/unarchive', [MessageController::class, 'unarchive'])->name('messages.unarchive');
+    Route::delete('/messages/{message}', [MessageController::class, 'destroy'])->name('messages.destroy');
 
     Route::get('/appearance', function () {
         return Inertia::render('admin/appearance');
-    })->name('admin.appearance');
+    })->name('appearance');
 
-    Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings');
-    Route::post('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('admin.settings.update');
-    Route::post('/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('admin.settings.clear-cache');
-    Route::post('/settings/export-data', [App\Http\Controllers\Admin\SettingsController::class, 'exportData'])->name('admin.settings.export-data');
+    Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings');
+    Route::post('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
+    Route::post('/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('settings.clear-cache');
+    Route::post('/settings/export-data', [App\Http\Controllers\Admin\SettingsController::class, 'exportData'])->name('settings.export-data');
 });
 
 Route::get('/services', [ServiceController::class, 'publicIndex'])->name('services');
