@@ -2,13 +2,42 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { Link as ScrollLink } from 'react-scroll';
+import { DynamicLogo } from './dynamic-logo';
+
+interface NavItem {
+  title: string;
+  href: string;
+}
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  navItems?: NavItem[];
+  logoText?: string;
+  logoType?: 'text_only' | 'icon_only' | 'text_with_icon';
+  logoIcon?: string;
+  logoIconType?: 'letter' | 'svg' | 'image';
+  logoColor?: string;
 }
 
-export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+export function MobileMenu({ 
+  isOpen, 
+  onClose, 
+  navItems = [
+    { title: 'Home', href: 'home' },
+    { title: 'Services', href: 'services' },
+    { title: 'Works', href: 'works' },
+    { title: 'Skills', href: 'skills' },
+    { title: 'Resume', href: 'resume' },
+    { title: 'Testimonials', href: 'testimonials' },
+    { title: 'Contact', href: 'contact' }
+  ],
+  logoText = 'Portfolio',
+  logoType = 'text_with_icon',
+  logoIcon = 'P',
+  logoIconType = 'letter',
+  logoColor = '#20B2AA'
+}: MobileMenuProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -27,8 +56,6 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       document.body.style.overflow = 'auto';
     };
   }, [isOpen]);
-
-  const menuItems = ['Home', 'Services', 'Works', 'Skills', 'Resume', 'Testimonials', 'Contact'];
 
   const menuVariants = {
     closed: {
@@ -95,25 +122,28 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             </div>
 
             {/* Logo */}
-            <div className="px-8 mb-6 flex items-center">
-              <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
-                P
-              </div>
-              <span className="font-medium text-base ml-2 text-gray-900 dark:text-white">Portfolio</span>
+            <div className="px-8 mb-6">
+              <DynamicLogo
+                logoText={logoText}
+                logoType={logoType}
+                logoIcon={logoIcon}
+                logoIconType={logoIconType}
+                logoColor={logoColor}
+              />
             </div>
 
             {/* Menu items */}
             <div className="flex-1 flex flex-col px-8">
               <nav className="flex flex-col space-y-6 mb-12">
-                {menuItems.map((item, i) => (
+                {navItems.map((item, i) => (
                   <motion.div
-                    key={item}
+                    key={item.title}
                     custom={i}
                     variants={itemVariants}
                     className="border-b border-gray-100 dark:border-gray-800 pb-4"
                   >
                     <ScrollLink
-                      to={item.toLowerCase()}
+                      to={item.href}
                       spy={true}
                       smooth={true}
                       offset={-80}
@@ -122,7 +152,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                       activeClass="!text-[#20B2AA]"
                       onClick={onClose}
                     >
-                      {item}
+                      {item.title}
                     </ScrollLink>
                   </motion.div>
                 ))}
@@ -131,7 +161,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
               {/* CTA Button */}
               <motion.div
                 variants={itemVariants}
-                custom={menuItems.length}
+                custom={navItems.length}
                 className="mt-auto mb-6"
               >
                 <ScrollLink
@@ -152,7 +182,7 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
             {/* Footer */}
             <div className="p-8 text-center text-gray-500 dark:text-gray-400 text-sm">
-              &copy; {new Date().getFullYear()} Portfolio. All rights reserved.
+              &copy; {new Date().getFullYear()} {logoText}. All rights reserved.
             </div>
           </motion.div>
         </>

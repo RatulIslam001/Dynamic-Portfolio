@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Settings, FileText, Star, BookOpen, MessageSquare, Eye, Cog, LogOut, User, Briefcase, FileBarChart } from 'lucide-react';
+import { LayoutGrid, Settings, FileText, Star, BookOpen, MessageSquare, Eye, Cog, LogOut, User, Briefcase, FileBarChart, Menu } from 'lucide-react';
 
 const mainNavItems: NavItem[] = [
     {
@@ -56,6 +56,11 @@ const communicationItems: NavItem[] = [
 ];
 
 const settingsItems: NavItem[] = [
+    {
+        title: 'Navbar & Logo',
+        href: route('admin.navbar'),
+        icon: Menu,
+    },
     {
         title: 'Appearance',
         href: route('admin.appearance'),

@@ -30,6 +30,12 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
     Route::post('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/hero', [App\Http\Controllers\Admin\ProfileController::class, 'updateHeroSection'])->name('profile.hero.update');
+    Route::post('/profile/social', [App\Http\Controllers\Admin\ProfileController::class, 'updateSocialLinks'])->name('profile.social.update');
+    
+    // Navbar settings routes
+    Route::get('/navbar', [App\Http\Controllers\Admin\NavbarController::class, 'index'])->name('navbar');
+    Route::post('/navbar/logo', [App\Http\Controllers\Admin\NavbarController::class, 'updateLogo'])->name('navbar.logo.update');
+    Route::post('/navbar/items', [App\Http\Controllers\Admin\NavbarController::class, 'updateNavbarItems'])->name('navbar.items.update');
     
     // Services routes
     Route::get('/services', [ServiceController::class, 'index'])->name('services');

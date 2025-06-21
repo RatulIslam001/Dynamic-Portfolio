@@ -19,6 +19,7 @@ import { ProjectCard } from '@/components/ui/project-card';
 import { ActionButton } from '@/components/ui/action-button';
 import { MobileMenu } from '@/components/ui/mobile-menu';
 import { IconComponent } from '@/components/IconComponent';
+import { DynamicLogo } from '@/components/ui/dynamic-logo';
 
 interface Service {
     id: number;
@@ -51,6 +52,17 @@ interface ProfileData {
     cta_url: string;
     cta_secondary_url: string;
     avatar: string;
+    logo: {
+        text: string;
+        type: string;
+        icon: string;
+        icon_type: string;
+        color: string;
+    };
+    navbar_items: Array<{
+        title: string;
+        href: string;
+    }>;
     social: {
         github: string | null;
         twitter: string | null;
@@ -81,6 +93,15 @@ export default function Welcome({ services, projects, profile }: Props) {
     const defaultCtaUrl = '#works';
     const defaultCtaSecondaryUrl = '#';
     const defaultIsAvailable = true;
+    const defaultNavItems = [
+        { title: 'Home', href: 'home' },
+        { title: 'Services', href: 'services' },
+        { title: 'Works', href: 'works' },
+        { title: 'Skills', href: 'skills' },
+        { title: 'Resume', href: 'resume' },
+        { title: 'Testimonials', href: 'testimonials' },
+        { title: 'Contact', href: 'contact' }
+    ];
     
     const yearsExperience = profile?.years_experience ?? 5;
     const projectsCompleted = profile?.projects_completed ?? 50;
@@ -95,6 +116,14 @@ export default function Welcome({ services, projects, profile }: Props) {
     const githubUrl = profile?.social?.github ?? 'https://github.com';
     const twitterUrl = profile?.social?.twitter ?? 'https://twitter.com';
     const linkedinUrl = profile?.social?.linkedin ?? 'https://linkedin.com';
+    const navItems = profile?.navbar_items ?? defaultNavItems;
+    
+    // Logo settings
+    const logoText = profile?.logo?.text ?? 'Portfolio';
+    const logoType = profile?.logo?.type ?? 'text_with_icon';
+    const logoIcon = profile?.logo?.icon ?? 'P';
+    const logoIconType = profile?.logo?.icon_type ?? 'letter';
+    const logoColor = profile?.logo?.color ?? '#20B2AA';
 
     // Filter projects based on active filter
     const filteredProjects = activeFilter === 'All' 
@@ -178,79 +207,82 @@ export default function Welcome({ services, projects, profile }: Props) {
                     <motion.div 
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-2 cursor-pointer" 
                         onClick={scrollToTop}
                     >
-                        <div className="w-8 h-8 bg-[#20B2AA] rounded-full flex items-center justify-center text-white font-bold">
-                            P
-                        </div>
-                        <span className="font-medium text-base">Portfolio</span>
+                        <DynamicLogo 
+                            logoText={logoText}
+                            logoType={logoType as 'text_only' | 'icon_only' | 'text_with_icon'}
+                            logoIcon={logoIcon}
+                            logoIconType={logoIconType as 'letter' | 'svg' | 'image'}
+                            logoColor={logoColor}
+                        />
                     </motion.div>
 
                     {/* Desktop Navigation - Hidden on mobile */}
                     <div className="hidden md:block">
                     <NavigationMenu>
                             <NavigationMenuList className="flex gap-4 lg:gap-8">
-                            {['Home', 'Services', 'Works', 'Skills', 'Resume', 'Testimonials', 'Contact'].map((item, index) => (
-                                <NavigationMenuItem key={item}>
+                            {navItems.map((item, index) => (
+                                <NavigationMenuItem key={item.title}>
                                     <motion.div
                                         initial={{ opacity: 0, y: -20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
                                     >
-                                    <ScrollLink
-                                        to={item.toLowerCase()}
-                                        spy={true}
-                                        smooth={true}
-                                        offset={-100}
-                                        duration={500}
-                                        className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
-                                        activeClass="!text-[#20B2AA] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#20B2AA] after:rounded-full"
-                                    >
-                                        {item}
-                                    </ScrollLink>
+                                        <ScrollLink
+                                            to={item.href}
+                                            spy={true}
+                                            smooth={true}
+                                            offset={-100}
+                                            duration={500}
+                                            className="text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] dark:hover:text-[#20B2AA] cursor-pointer font-medium text-sm transition-colors"
+                                            activeClass="text-[#20B2AA] font-semibold"
+                                        >
+                                            {item.title}
+                                        </ScrollLink>
                                     </motion.div>
                                 </NavigationMenuItem>
                             ))}
-                        </NavigationMenuList>
-                    </NavigationMenu>
+                            </NavigationMenuList>
+                        </NavigationMenu>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center space-x-2">
                         <ThemeToggle />
-                        
-                        {/* Desktop Hire Me Button - Hidden on mobile */}
-                        <div className="hidden md:block">
-                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                        <ScrollLink
-                            to="contact"
-                            spy={true}
-                            smooth={true}
-                            offset={-100}
-                            duration={500}
-                            className="cursor-pointer"
-                        >
-                            <Button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-6 py-2.5 text-sm">
-                                Hire Me
-                            </Button>
-                        </ScrollLink>
-                        </motion.div>
-                        </div>
-                        
-                        {/* Mobile Menu Button - Visible only on mobile */}
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="md:hidden"
                             onClick={() => setIsMenuOpen(true)}
-                            className="md:hidden p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
                         >
-                            <Menu className="w-6 h-6" />
-                        </motion.button>
+                            <Menu className="h-6 w-6" />
+                        </Button>
+                        <Button className="hidden md:inline-flex bg-[#20B2AA] hover:bg-[#1a9994]">
+                            <ScrollLink
+                                to="contact"
+                                spy={true}
+                                smooth={true}
+                                offset={-100}
+                                duration={500}
+                                className="cursor-pointer"
+                            >
+                                Hire Me
+                            </ScrollLink>
+                        </Button>
                     </div>
                 </motion.nav>
-                
+
                 {/* Mobile Menu */}
-                <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+                <MobileMenu 
+                    isOpen={isMenuOpen} 
+                    onClose={() => setIsMenuOpen(false)} 
+                    navItems={navItems}
+                    logoText={logoText}
+                    logoType={logoType as 'text_only' | 'icon_only' | 'text_with_icon'}
+                    logoIcon={logoIcon}
+                    logoIconType={logoIconType as 'letter' | 'svg' | 'image'}
+                    logoColor={logoColor}
+                />
 
                 {/* Hero Section */}
                 <motion.section 

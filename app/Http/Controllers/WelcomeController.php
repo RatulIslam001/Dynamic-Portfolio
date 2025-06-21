@@ -37,6 +37,17 @@ class WelcomeController extends Controller
         
         $profile = Profile::first();
         
+        // Default navbar items if not set in database
+        $defaultNavbarItems = [
+            ['title' => 'Home', 'href' => 'home'],
+            ['title' => 'Services', 'href' => 'services'],
+            ['title' => 'Works', 'href' => 'works'],
+            ['title' => 'Skills', 'href' => 'skills'],
+            ['title' => 'Resume', 'href' => 'resume'],
+            ['title' => 'Testimonials', 'href' => 'testimonials'],
+            ['title' => 'Contact', 'href' => 'contact']
+        ];
+        
         return Inertia::render('welcome', [
             'services' => $services,
             'projects' => $projects,
@@ -52,15 +63,23 @@ class WelcomeController extends Controller
                 'cta_url' => $profile->cta_url,
                 'cta_secondary_url' => $profile->cta_secondary_url,
                 'avatar' => $profile->avatar ? Storage::url($profile->avatar) : '/images/Profile.png',
+                'logo' => [
+                    'text' => $profile->logo_text,
+                    'type' => $profile->logo_type,
+                    'icon' => $profile->logo_icon,
+                    'icon_type' => $profile->logo_icon_type,
+                    'color' => $profile->logo_color,
+                ],
+                'navbar_items' => $profile->navbar_items ?? $defaultNavbarItems,
                 'social' => [
                     'github' => $profile->github_url,
                     'twitter' => $profile->twitter_url,
                     'linkedin' => $profile->linkedin_url,
                 ],
                 'contact' => [
-                    'email' => $profile->email,
-                    'phone' => $profile->phone,
-                    'location' => $profile->location,
+                    'email' => 'contact@example.com',
+                    'phone' => '+1(123) 456-7890',
+                    'location' => 'San Francisco, CA, USA',
                 ],
             ] : null
         ]);
