@@ -2,7 +2,7 @@ import { Head } from '@inertiajs/react';
 import { 
   Code, Layout, Smartphone, Database, ShoppingBag, Search, 
   Zap, CheckCircle, Clock, BarChart, Shield, Headphones,
-  Activity, ArrowLeft, Download
+  Activity, ArrowLeft, Download, FileText, Palette
 } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -16,10 +16,17 @@ interface Service {
   id: number;
   title: string;
   description: string;
+  long_description?: string;
   icon: string;
-    is_active: boolean;
-    price: number;
-    features: string[];
+  is_active: boolean;
+  is_featured?: boolean;
+  price: number;
+  duration?: string;
+  projects_count?: number;
+  features: string[];
+  technologies?: string[];
+  image_url?: string;
+  starting_price?: number;
 }
 
 // Define the props type
@@ -35,11 +42,14 @@ const IconComponent = ({ icon, className = "w-6 h-6 text-[#20B2AA]" }: { icon: s
             return <Code className={className} />;
         case 'layout':
             return <Layout className={className} />;
+        case 'palette':
+            return <Palette className={className} />;
         case 'smartphone':
             return <Smartphone className={className} />;
         case 'database':
             return <Database className={className} />;
         case 'shopping-bag':
+        case 'shoppingbag':
             return <ShoppingBag className={className} />;
         case 'search':
             return <Search className={className} />;
@@ -49,6 +59,12 @@ const IconComponent = ({ icon, className = "w-6 h-6 text-[#20B2AA]" }: { icon: s
             return <Shield className={className} />;
         case 'headphones':
             return <Headphones className={className} />;
+        case 'file-text':
+        case 'filetext':
+            return <FileText className={className} />;
+        case 'bar-chart':
+        case 'barchart':
+            return <BarChart className={className} />;
         default:
             return <Code className={className} />;
     }
@@ -224,52 +240,54 @@ export default function Services({ services }: Props) {
                     {/* Services Grid - All services from database */}
                 <div className="max-w-7xl mx-auto px-4 pb-16">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {services.map((service) => (
-                                <div 
-                                    key={service.id}
-                                    className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-6 flex flex-col"
-                                >
-                                        <div className="mb-4">
-                                        <IconComponent icon={service.icon} className="w-6 h-6 text-[#20B2AA]" />
-                                        </div>
-                                        
-                                    <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{service.title}</h2>
-                                        
-                                        <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
-                                            {service.description}
-                                        </p>
-                                        
-                                        <div className="mb-6">
-                                        <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-gray-200">Key Features:</h3>
-                                        <ul className="space-y-1">
-                                            {service.features.map((feature, index) => (
-                                                <li key={index} className="flex items-start">
-                                                    <span className="text-[#20B2AA] mr-2">•</span>
-                                                    <span className="text-gray-700 dark:text-gray-300 text-sm">{feature}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                            </div>
-                                    
-                                    <div className="flex items-center justify-between mt-auto">
-                                            <div>
-                                            <p className="text-xs text-gray-500 dark:text-gray-400">Starting at</p>
-                                            <p className="text-[#20B2AA] font-medium">
-                                                ${service.price.toLocaleString()}
-                                            </p>
-                                        </div>
-                                        <Link 
-                                            href="/?section=contact"
-                                            className="px-4 py-2 bg-[#20B2AA] text-white text-sm rounded-md hover:bg-[#1a9994] transition-colors"
-                                        >
-                                            Get Quote
-                                        </Link>
+                        {services.map((service) => (
+                            <div 
+                                key={service.id}
+                                className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col h-full"
+                            >
+                                <div className="mb-4">
+                                    <div className="inline-flex p-2 rounded-md bg-teal-50 dark:bg-teal-900/20">
+                                        <IconComponent icon={service.icon} className="w-5 h-5 text-[#20B2AA]" />
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                                        </div>
-                                        
+                                
+                                <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{service.title}</h2>
+                                
+                                <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
+                                    {service.description}
+                                </p>
+                                
+                                <div className="mb-6 flex-grow">
+                                    <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-gray-200">Key Features:</h3>
+                                    <ul className="space-y-2">
+                                        {service.features.slice(0, 5).map((feature, index) => (
+                                            <li key={index} className="flex items-start">
+                                                <span className="text-[#20B2AA] mr-2 text-lg leading-none">•</span>
+                                                <span className="text-gray-700 dark:text-gray-300 text-sm">{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                
+                                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+                                    <div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">Starting at</p>
+                                        <p className="text-[#20B2AA] font-medium">
+                                            ${(service.starting_price || service.price).toLocaleString()}
+                                        </p>
+                                    </div>
+                                    <Link 
+                                        href="/?section=contact"
+                                        className="px-4 py-2 bg-[#20B2AA] text-white text-sm rounded-md hover:bg-[#1a9994] transition-colors"
+                                    >
+                                        Get Quote
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
                     {/* Work Process Section */}
                     <div className="bg-[#0F172A] text-white py-16">
                         <div className="max-w-7xl mx-auto px-4">

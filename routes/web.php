@@ -25,7 +25,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
-    
+
     // Profile routes
     Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile');
     Route::post('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
@@ -36,17 +36,14 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::get('/navbar', [App\Http\Controllers\Admin\NavbarController::class, 'index'])->name('navbar');
     Route::post('/navbar/logo', [App\Http\Controllers\Admin\NavbarController::class, 'updateLogo'])->name('navbar.logo.update');
     Route::post('/navbar/items', [App\Http\Controllers\Admin\NavbarController::class, 'updateNavbarItems'])->name('navbar.items.update');
-    
+
     // Services routes
     Route::get('/services', [ServiceController::class, 'index'])->name('services');
     Route::post('/services', [ServiceController::class, 'store'])->name('services.store');
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
     Route::post('/services/reorder', [ServiceController::class, 'reorder'])->name('services.reorder');
-    Route::post('/services/reset-ids', function() {
-        Artisan::call('services:reset-ids');
-        return redirect()->back()->with('success', 'Service IDs reset successfully.');
-    })->name('services.reset-ids');
+    // Route::post('/services/reset-ids', [ServiceController::class, 'resetIds'])->name('services.reset-ids');
 
     // Projects routes
     Route::get('/projects', [ProjectController::class, 'index'])->name('projects');

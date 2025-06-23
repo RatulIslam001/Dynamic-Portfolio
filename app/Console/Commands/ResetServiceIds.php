@@ -50,10 +50,17 @@ class ResetServiceIds extends Command
                 $serviceData[] = [
                     'title' => $service->title,
                     'description' => $service->description,
+                    'long_description' => $service->long_description,
                     'icon' => $service->icon,
                     'price' => $service->price,
+                    'starting_price' => $service->starting_price,
+                    'duration' => $service->duration,
+                    'projects_count' => $service->projects_count,
                     'features' => json_encode($service->features),
+                    'technologies' => json_encode($service->technologies),
+                    'image_url' => $service->image_url,
                     'is_active' => $service->is_active,
+                    'is_featured' => $service->is_featured,
                     'order' => $service->order,
                     'created_at' => $service->created_at,
                     'updated_at' => $service->updated_at

@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
-import { motion } from 'framer-motion';
-import { Download, Github, Linkedin, Twitter, Code, Smartphone, Search, BarChart3, FileText, Briefcase, GraduationCap, Mail, Phone, MapPin, ArrowRight, Menu } from 'lucide-react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { Download, Github, Linkedin, Twitter, Code, Smartphone, Search, BarChart3, FileText, Briefcase, GraduationCap, Mail, Phone, MapPin, ArrowRight, Menu, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from '@/components/ui/navigation-menu';
 import { ProgressBar } from '@/components/ui/progress-bar';
@@ -84,6 +84,32 @@ interface Props {
 export default function Welcome({ services, projects, profile }: Props) {
     const [activeFilter, setActiveFilter] = useState('All');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState('home');
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    
+    // Scroll animation hooks
+    const { scrollY } = useScroll();
+    const navbarBackground = useTransform(
+        scrollY, 
+        [0, 100], 
+        ["rgba(255, 255, 255, 0.8)", "rgba(255, 255, 255, 0.95)"]
+    );
+    const navbarBackgroundDark = useTransform(
+        scrollY, 
+        [0, 100], 
+        ["rgba(17, 24, 39, 0.8)", "rgba(17, 24, 39, 0.95)"]
+    );
+    const navbarHeight = useTransform(scrollY, [0, 100], ["80px", "64px"]);
+    const navbarShadow = useTransform(
+        scrollY, 
+        [0, 100], 
+        ["0 0 0 rgba(0, 0, 0, 0)", "0 4px 20px rgba(0, 0, 0, 0.1)"]
+    );
+    const navbarShadowDark = useTransform(
+        scrollY, 
+        [0, 100], 
+        ["0 0 0 rgba(0, 0, 0, 0)", "0 4px 20px rgba(0, 0, 0, 0.2)"]
+    );
 
     // Default values in case profile data is not available
     const defaultTitle = 'Creative Designer & Developer';
@@ -189,6 +215,41 @@ export default function Welcome({ services, projects, profile }: Props) {
         }
     };
 
+    // Handle active section tracking
+    useEffect(() => {
+        const handleScroll = () => {
+            const sections = navItems.map(item => item.href);
+            const currentSection = sections.find(section => {
+                const element = document.getElementById(section);
+                if (!element) return false;
+                
+                const rect = element.getBoundingClientRect();
+                return rect.top <= 150 && rect.bottom >= 150;
+            });
+            
+            if (currentSection) {
+                setActiveSection(currentSection);
+            }
+        };
+        
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [navItems]);
+
+    // Show/hide scroll to top button
+    useEffect(() => {
+        const handleScrollVisibility = () => {
+            if (window.scrollY > 500) {
+                setShowScrollTop(true);
+            } else {
+                setShowScrollTop(false);
+            }
+        };
+        
+        window.addEventListener('scroll', handleScrollVisibility);
+        return () => window.removeEventListener('scroll', handleScrollVisibility);
+    }, []);
+
     return (
         <ThemeProvider defaultTheme="light" storageKey="portfolio-theme">
             <Head title="Portfolio - Creative Designer & Developer">
@@ -199,15 +260,29 @@ export default function Welcome({ services, projects, profile }: Props) {
             <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
                 {/* Navigation */}
                 <motion.nav 
-                    initial={{ y: -100 }}
-                    animate={{ y: 0 }}
-                    transition={{ type: "spring", stiffness: 50 }}
-                    className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 md:px-8 py-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800"
+                    style={{
+                        backgroundColor: navbarBackground,
+                        height: navbarHeight,
+                        boxShadow: navbarShadow,
+                    }}
+                    className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-6 md:px-8 py-4 backdrop-blur-sm border-b border-gray-100 dark:border-gray-800 transition-all duration-300 dark:bg-transparent"
                 >
                     <motion.div 
+                        className="absolute inset-0 z-[-1] dark:bg-gray-900/95 backdrop-blur-sm"
+                        style={{
+                            backgroundColor: "transparent",
+                            boxShadow: navbarShadowDark
+                        }}
+                    />
+
+                    <motion.div 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5 }}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={scrollToTop}
+                        className="cursor-pointer"
                     >
                         <DynamicLogo 
                             logoText={logoText}
@@ -220,7 +295,7 @@ export default function Welcome({ services, projects, profile }: Props) {
 
                     {/* Desktop Navigation - Hidden on mobile */}
                     <div className="hidden md:block">
-                    <NavigationMenu>
+                        <NavigationMenu>
                             <NavigationMenuList className="flex gap-4 lg:gap-8">
                             {navItems.map((item, index) => (
                                 <NavigationMenuItem key={item.title}>
@@ -228,18 +303,30 @@ export default function Welcome({ services, projects, profile }: Props) {
                                         initial={{ opacity: 0, y: -20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
+                                        className="relative"
                                     >
-                                        <ScrollLink
-                                            to={item.href}
-                                            spy={true}
-                                            smooth={true}
-                                            offset={-100}
-                                            duration={500}
-                                            className="text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] dark:hover:text-[#20B2AA] cursor-pointer font-medium text-sm transition-colors"
-                                            activeClass="text-[#20B2AA] font-semibold"
-                                        >
-                                            {item.title}
-                                        </ScrollLink>
+                                        <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400 }}>
+                                            <ScrollLink
+                                                to={item.href}
+                                                spy={true}
+                                                smooth={true}
+                                                offset={-100}
+                                                duration={500}
+                                                className="text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] dark:hover:text-[#20B2AA] cursor-pointer font-medium text-sm transition-colors px-2 py-1.5 block"
+                                                activeClass="text-[#20B2AA] font-semibold"
+                                            >
+                                                {item.title}
+                                            </ScrollLink>
+                                        </motion.div>
+                                        {activeSection === item.href && (
+                                            <motion.div
+                                                layoutId="activeIndicator"
+                                                className="absolute bottom-[-3px] left-0 right-0 h-[2px] bg-[#20B2AA]"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                transition={{ duration: 0.3 }}
+                                            />
+                                        )}
                                     </motion.div>
                                 </NavigationMenuItem>
                             ))}
@@ -247,7 +334,12 @@ export default function Welcome({ services, projects, profile }: Props) {
                         </NavigationMenu>
                     </div>
 
-                    <div className="flex items-center space-x-2">
+                    <motion.div 
+                        className="flex items-center space-x-2"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
                         <ThemeToggle />
                         <Button 
                             variant="ghost" 
@@ -257,19 +349,24 @@ export default function Welcome({ services, projects, profile }: Props) {
                         >
                             <Menu className="h-6 w-6" />
                         </Button>
-                        <Button className="hidden md:inline-flex bg-[#20B2AA] hover:bg-[#1a9994]">
-                            <ScrollLink
-                                to="contact"
-                                spy={true}
-                                smooth={true}
-                                offset={-100}
-                                duration={500}
-                                className="cursor-pointer"
-                            >
-                                Hire Me
-                            </ScrollLink>
-                        </Button>
-                    </div>
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Button className="hidden md:inline-flex bg-[#20B2AA] hover:bg-[#1a9994] shadow-md shadow-[#20B2AA]/20 hover:shadow-lg hover:shadow-[#20B2AA]/30 transition-all duration-300">
+                                <ScrollLink
+                                    to="contact"
+                                    spy={true}
+                                    smooth={true}
+                                    offset={-100}
+                                    duration={500}
+                                    className="cursor-pointer"
+                                >
+                                    Hire Me
+                                </ScrollLink>
+                            </Button>
+                        </motion.div>
+                    </motion.div>
                 </motion.nav>
 
                 {/* Mobile Menu */}
@@ -1537,6 +1634,24 @@ export default function Welcome({ services, projects, profile }: Props) {
                         </div>
                     </div>
                 </footer>
+
+                {/* Scroll to top button */}
+                <AnimatePresence>
+                    {showScrollTop && (
+                        <motion.button
+                            initial={{ opacity: 0, scale: 0.5 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.5 }}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={scrollToTop}
+                            className="fixed bottom-6 right-6 z-40 w-10 h-10 rounded-full bg-[#20B2AA] text-white flex items-center justify-center shadow-lg shadow-[#20B2AA]/20 hover:shadow-xl hover:shadow-[#20B2AA]/30 transition-all duration-300"
+                            aria-label="Scroll to top"
+                        >
+                            <ChevronUp className="w-5 h-5" />
+                        </motion.button>
+                    )}
+                </AnimatePresence>
             </div>
         </ThemeProvider>
     );

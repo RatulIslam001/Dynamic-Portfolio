@@ -17,10 +17,17 @@ class Service extends Model
     protected $fillable = [
         'title',
         'description',
+        'long_description',
         'icon',
         'price',
+        'starting_price',
+        'duration',
+        'projects_count',
         'features',
+        'technologies',
+        'image_url',
         'is_active',
+        'is_featured',
         'order'
     ];
 
@@ -31,8 +38,11 @@ class Service extends Model
      */
     protected $casts = [
         'is_active' => 'boolean',
+        'is_featured' => 'boolean',
         'price' => 'decimal:2',
         'features' => 'array',
+        'technologies' => 'array',
+        'projects_count' => 'integer',
         'order' => 'integer'
     ];
 } 

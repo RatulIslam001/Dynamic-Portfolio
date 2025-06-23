@@ -13,13 +13,13 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminSeeder::class,
-            ServiceSeeder::class,
+            ServicesTableSeeder::class,
             ProjectSeeder::class,
             SkillSeeder::class,
             ExperienceSeeder::class,
             TestimonialSeeder::class,
             EducationSeeder::class,
-            DummyProjectsSeeder::class,
+            ProfileSeeder::class,
         ]);
     }
 }

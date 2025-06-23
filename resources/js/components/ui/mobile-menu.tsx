@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, ChevronRight } from 'lucide-react';
 import { Link as ScrollLink } from 'react-scroll';
 import { DynamicLogo } from './dynamic-logo';
 
@@ -39,10 +39,30 @@ export function MobileMenu({
   logoColor = '#20B2AA'
 }: MobileMenuProps) {
   const [isMounted, setIsMounted] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    
+    // Set active section based on current scroll position
+    const handleScroll = () => {
+      const sections = navItems.map(item => item.href);
+      const currentSection = sections.find(section => {
+        const element = document.getElementById(section);
+        if (!element) return false;
+        
+        const rect = element.getBoundingClientRect();
+        return rect.top <= 150 && rect.bottom >= 150;
+      });
+      
+      if (currentSection) {
+        setActiveSection(currentSection);
+      }
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [navItems]);
 
   // Prevent scroll when menu is open
   useEffect(() => {
@@ -64,7 +84,9 @@ export function MobileMenu({
       transition: {
         type: "spring",
         stiffness: 400,
-        damping: 40
+        damping: 40,
+        staggerChildren: 0.05,
+        staggerDirection: -1
       }
     },
     open: {
@@ -73,7 +95,9 @@ export function MobileMenu({
       transition: {
         type: "spring",
         stiffness: 300,
-        damping: 30
+        damping: 30,
+        staggerChildren: 0.1,
+        delayChildren: 0.2
       }
     }
   };
@@ -91,6 +115,14 @@ export function MobileMenu({
     })
   };
 
+  const overlayVariants = {
+    closed: { opacity: 0 },
+    open: { 
+      opacity: 0.6,
+      transition: { duration: 0.3 }
+    }
+  };
+
   if (!isMounted) return null;
 
   return (
@@ -99,9 +131,10 @@ export function MobileMenu({
         <>
           {/* Overlay */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            exit={{ opacity: 0 }}
+            variants={overlayVariants}
+            initial="closed"
+            animate="open"
+            exit="closed"
             className="fixed inset-0 bg-black z-40"
             onClick={onClose}
           />
@@ -114,33 +147,41 @@ export function MobileMenu({
             exit="closed"
             className="fixed top-0 right-0 bottom-0 w-[280px] bg-white dark:bg-gray-900 z-50 shadow-2xl flex flex-col overflow-y-auto"
           >
-            {/* Close button */}
-            <div className="flex justify-end p-6">
-              <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full">
-                <X className="w-6 h-6 text-gray-900 dark:text-white" />
-              </button>
-            </div>
-
-            {/* Logo */}
-            <div className="px-8 mb-6">
+            {/* Header with close button */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex justify-between items-center p-6 border-b border-gray-100 dark:border-gray-800"
+            >
+              {/* Logo */}
               <DynamicLogo
                 logoText={logoText}
                 logoType={logoType}
                 logoIcon={logoIcon}
                 logoIconType={logoIconType}
                 logoColor={logoColor}
+                className="scale-90"
               />
-            </div>
+              
+              <motion.button 
+                onClick={onClose} 
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <X className="w-5 h-5 text-gray-900 dark:text-white" />
+              </motion.button>
+            </motion.div>
 
             {/* Menu items */}
-            <div className="flex-1 flex flex-col px-8">
-              <nav className="flex flex-col space-y-6 mb-12">
+            <div className="flex-1 flex flex-col px-6 py-8">
+              <nav className="flex flex-col space-y-1 mb-12">
                 {navItems.map((item, i) => (
                   <motion.div
                     key={item.title}
                     custom={i}
                     variants={itemVariants}
-                    className="border-b border-gray-100 dark:border-gray-800 pb-4"
                   >
                     <ScrollLink
                       to={item.href}
@@ -148,11 +189,24 @@ export function MobileMenu({
                       smooth={true}
                       offset={-80}
                       duration={500}
-                      className="text-base font-medium cursor-pointer text-gray-800 dark:text-gray-200 hover:text-[#20B2AA] transition-colors block"
-                      activeClass="!text-[#20B2AA]"
+                      className={`flex items-center justify-between text-base font-medium cursor-pointer py-3 px-4 rounded-lg transition-all duration-300 ${
+                        activeSection === item.href 
+                          ? 'text-[#20B2AA] bg-[#E6F7F6] dark:bg-[#20B2AA]/10' 
+                          : 'text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
+                      }`}
                       onClick={onClose}
                     >
-                      {item.title}
+                      <span>{item.title}</span>
+                      <motion.div
+                        animate={activeSection === item.href ? { x: 0 } : { x: -5 }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                      >
+                        <ChevronRight className={`w-4 h-4 ${
+                          activeSection === item.href 
+                            ? 'opacity-100 text-[#20B2AA]' 
+                            : 'opacity-50'
+                        }`} />
+                      </motion.div>
                     </ScrollLink>
                   </motion.div>
                 ))}
@@ -162,7 +216,7 @@ export function MobileMenu({
               <motion.div
                 variants={itemVariants}
                 custom={navItems.length}
-                className="mt-auto mb-6"
+                className="mt-auto"
               >
                 <ScrollLink
                   to="contact"
@@ -173,17 +227,25 @@ export function MobileMenu({
                   className="cursor-pointer block"
                   onClick={onClose}
                 >
-                  <button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white w-full py-3 rounded-md text-base font-medium transition-colors duration-300 shadow-md hover:shadow-lg">
+                  <motion.button 
+                    className="bg-[#20B2AA] hover:bg-[#1a9994] text-white w-full py-3.5 rounded-lg text-base font-medium transition-colors duration-300 shadow-md hover:shadow-lg shadow-[#20B2AA]/20 hover:shadow-[#20B2AA]/30"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
                     Hire Me
-                  </button>
+                  </motion.button>
                 </ScrollLink>
               </motion.div>
             </div>
 
             {/* Footer */}
-            <div className="p-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+            <motion.div 
+              variants={itemVariants}
+              custom={navItems.length + 1}
+              className="p-6 text-center text-gray-500 dark:text-gray-400 text-sm border-t border-gray-100 dark:border-gray-800"
+            >
               &copy; {new Date().getFullYear()} {logoText}. All rights reserved.
-            </div>
+            </motion.div>
           </motion.div>
         </>
       )}

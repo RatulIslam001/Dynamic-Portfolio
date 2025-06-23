@@ -6,12 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Search, Star, Edit2, Trash2, Calendar, Link as LinkIcon, MoreHorizontal, Eye } from 'lucide-react';
+import { Plus, Search, Star, Edit2, Trash2, Calendar, Link as LinkIcon, MoreHorizontal, Eye, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import DeleteConfirmation from '@/components/ui/delete-confirmation';
 import { motion } from 'framer-motion';
+import { useRouter } from 'react';
 
 const categoryOptions = [
     'Web Design',
@@ -69,6 +70,7 @@ export default function Projects({ projects: initialProjects }: Props) {
     const [selectedStatus, setSelectedStatus] = useState<string>('All Status');
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+    const router = useRouter();
 
     const form = useForm<FormData>({
         title: '',
@@ -156,6 +158,21 @@ export default function Projects({ projects: initialProjects }: Props) {
         }
     };
 
+    const handleReindexIds = () => {
+        router.post(route('admin.projects.reset-ids'), {}, {
+            onSuccess: () => {
+                toast.success('Project IDs reset successfully.');
+                // Reload the page to get fresh data with reindexed IDs
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            },
+            onError: () => {
+                toast.error('Failed to reset project IDs. Please try again.');
+            }
+        });
+    };
+
     const handleEdit = (project: Project) => {
         setEditingProject(project);
         editForm.setData({
@@ -240,18 +257,24 @@ export default function Projects({ projects: initialProjects }: Props) {
                         </div>
                         <p className="text-sm text-gray-500">Manage and organize your portfolio projects</p>
                     </div>
-                    <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                    >
+                    <div className="flex gap-3">
+                        <Button 
+                            onClick={handleReindexIds}
+                            variant="outline"
+                            className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                            title="Reindex all project IDs to be sequential (1, 2, 3, 4...) without gaps"
+                        >
+                            <RefreshCw className="w-4 h-4 mr-2" />
+                            Reindex IDs
+                        </Button>
                         <Button 
                             onClick={() => setIsAddDialogOpen(true)} 
-                            className="bg-[#20B2AA] hover:bg-[#1a9994] text-white shadow-sm transition-all duration-300"
+                            className="bg-[#20B2AA] hover:bg-[#1a9994] text-white"
                         >
                             <Plus className="w-4 h-4 mr-2" />
-                            Add New Project
+                            Add Project
                         </Button>
-                    </motion.div>
+                    </div>
                 </motion.div>
 
                 {/* Search and Filters */}

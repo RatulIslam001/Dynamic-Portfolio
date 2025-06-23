@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AdminLayout from '@/layouts/admin-layout';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,8 @@ const iconOptions = [
     { value: 'Search', label: 'SEO', icon: Search },
     { value: 'BarChart', label: 'Marketing', icon: BarChart },
     { value: 'FileText', label: 'Content', icon: FileText },
+    { value: 'Database', label: 'Database', icon: FileText }, // Using FileText as a fallback icon
+    { value: 'ShoppingBag', label: 'E-commerce', icon: FileText }, // Using FileText as a fallback icon
 ] as const;
 
 // Define the type for icon values
@@ -53,6 +55,7 @@ interface Service {
     is_featured?: boolean;
     duration?: string;
     starting_price?: number;
+    price?: number; // Added for backward compatibility
     projects_count?: number;
     features?: string[];
     technologies?: string[];
@@ -140,16 +143,60 @@ export default function Services({ services: initialServices }: Props) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         
-        post(route('admin.services.store'), {
-            ...data,
-            _method: 'POST',
-        }, {
+        // Map the form data to match the controller's expected field names
+        const formData = new FormData();
+        
+        formData.append('title', data.title);
+        formData.append('description', data.description);
+        formData.append('long_description', data.long_description || '');
+        formData.append('icon', data.icon);
+        formData.append('price', data.starting_price.toString());
+        formData.append('duration', data.duration || '');
+        formData.append('projects_count', data.projects_count?.toString() || '0');
+        formData.append('is_active', data.is_active ? '1' : '0');
+        formData.append('is_featured', data.is_featured ? '1' : '0');
+        
+        // Add features as JSON string
+        if (data.features && data.features.length > 0) {
+            formData.append('features', JSON.stringify(data.features));
+        } else {
+            // Provide an empty array if no features
+            formData.append('features', JSON.stringify([]));
+        }
+        
+        // Add technologies as JSON string
+        if (data.technologies && data.technologies.length > 0) {
+            formData.append('technologies', JSON.stringify(data.technologies));
+        } else {
+            // Provide an empty array if no technologies
+            formData.append('technologies', JSON.stringify([]));
+        }
+        
+        // Add image if present
+        if (data.image) {
+            formData.append('image', data.image);
+        }
+        
+        // Debug log
+        console.log('Creating new service');
+        
+        // Use Inertia router for proper CSRF handling
+        router.post(route('admin.services.store'), formData, {
+            forceFormData: true,
             onSuccess: () => {
                 setIsAddDialogOpen(false);
                 reset();
                 toast.success('Service created successfully');
+                
+                // Reload the page to get fresh data
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             },
-            forceFormData: true,
+            onError: (errors) => {
+                console.error('Create error:', errors);
+                toast.error('Failed to create service. Please check the form for errors.');
+            }
         });
     };
 
@@ -176,16 +223,65 @@ export default function Services({ services: initialServices }: Props) {
         e.preventDefault();
         if (!editingService) return;
         
-        post(route('admin.services.update', { service: editingService.id }), {
-            ...editData,
-            _method: 'PUT',
-        }, {
+        // Map the form data to match the controller's expected field names
+        const formData = new FormData();
+        
+        formData.append('title', editData.title);
+        formData.append('description', editData.description);
+        formData.append('long_description', editData.long_description || '');
+        formData.append('icon', editData.icon);
+        formData.append('price', editData.starting_price.toString());
+        formData.append('duration', editData.duration || '');
+        formData.append('projects_count', editData.projects_count?.toString() || '0');
+        formData.append('is_active', editData.is_active ? '1' : '0');
+        formData.append('is_featured', editData.is_featured ? '1' : '0');
+        
+        // Add features as JSON string
+        if (editData.features && editData.features.length > 0) {
+            formData.append('features', JSON.stringify(editData.features));
+        } else {
+            // Provide an empty array if no features
+            formData.append('features', JSON.stringify([]));
+        }
+        
+        // Add technologies as JSON string
+        if (editData.technologies && editData.technologies.length > 0) {
+            formData.append('technologies', JSON.stringify(editData.technologies));
+        } else {
+            // Provide an empty array if no technologies
+            formData.append('technologies', JSON.stringify([]));
+        }
+        
+        // Add image if present
+        if (editData.image) {
+            formData.append('image', editData.image);
+        }
+        
+        // Debug log
+        console.log('Updating service with ID:', editingService.id);
+        
+        // Use Inertia router for proper CSRF handling
+        router.post(route('admin.services.update', { service: editingService.id }), formData, {
+            forceFormData: true,
+            onBefore: () => {
+                // Add the _method field to make Laravel recognize this as a PUT request
+                formData.append('_method', 'PUT');
+                return true;
+            },
             onSuccess: () => {
                 setEditingService(null);
                 resetEdit();
                 toast.success('Service updated successfully');
+                
+                // Reload the page to get fresh data
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             },
-            forceFormData: true,
+            onError: (errors) => {
+                console.error('Update error:', errors);
+                toast.error('Failed to update service. Please check the form for errors.');
+            }
         });
     };
 
@@ -194,32 +290,29 @@ export default function Services({ services: initialServices }: Props) {
         setDeleteConfirmOpen(true);
     };
 
-    const handleDeleteConfirmed = async () => {
+    const handleDeleteConfirmed = () => {
         if (!serviceToDelete) return;
-
-        try {
-            const response = await fetch(route('admin.services.destroy', { service: serviceToDelete.id }), {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
-                    'Accept': 'application/json',
-                },
-            });
-            
-            const result = await response.json();
-            
-            // Show the message returned from the server
-            toast.success(result.message || 'Service deleted successfully');
-            
-            // Reload the page to get fresh data with reindexed IDs
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
-        } catch (error) {
-            toast.error('Failed to delete service');
-            setDeleteConfirmOpen(false);
-            setServiceToDelete(null);
-        }
+        
+        router.delete(route('admin.services.destroy', { service: serviceToDelete.id }), {
+            onSuccess: () => {
+                // Show success message
+                toast.success('Service deleted successfully');
+                
+                // Close the delete confirmation dialog
+                setDeleteConfirmOpen(false);
+                setServiceToDelete(null);
+                
+                // Reload the page to get fresh data with reindexed IDs
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            },
+            onError: () => {
+                toast.error('Failed to delete service');
+                setDeleteConfirmOpen(false);
+                setServiceToDelete(null);
+            }
+        });
     };
 
     const IconComponent = ({ iconName }: { iconName: IconType }) => {
@@ -252,6 +345,8 @@ export default function Services({ services: initialServices }: Props) {
             case 'Search': return 'SEO';
             case 'BarChart': return 'Marketing';
             case 'FileText': return 'Content';
+            case 'Database': return 'Database';
+            case 'ShoppingBag': return 'E-commerce';
             default: return 'Other';
         }
     };
@@ -342,25 +437,12 @@ export default function Services({ services: initialServices }: Props) {
                             <h2 className="text-xl font-semibold text-gray-900">Services</h2>
                             <p className="text-sm text-gray-500 mt-1">Manage your service offerings</p>
                         </div>
-                        <div className="flex gap-3">
-                            <form action={route('admin.services.reset-ids')} method="POST">
-                                <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''} />
-                                <Button 
-                                    type="submit"
-                                    variant="outline"
-                                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                                    title="Reindex all service IDs to be sequential (1, 2, 3, 4...) without gaps"
-                                >
-                                    <RefreshCw className="w-4 h-4 mr-2" />
-                                    Reindex IDs
-                                </Button>
-                            </form>
-                        </div>
                     </div>
 
                     {/* Service Cards */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">{services.map((service) => (
-                            <div key={service.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {services.map((service) => (
+                            <div key={service.id} className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                                 {/* Service status badge */}
                                 <div className="relative">
                                     {/* Service Image or Icon Header */}
@@ -381,6 +463,8 @@ export default function Services({ services: initialServices }: Props) {
                                             service.icon === 'Search' && "bg-green-50",
                                             service.icon === 'BarChart' && "bg-orange-50",
                                             service.icon === 'FileText' && "bg-yellow-50",
+                                            service.icon === 'Database' && "bg-cyan-50",
+                                            service.icon === 'ShoppingBag' && "bg-amber-50",
                                         )}>
                                             <div className={cn(
                                                 "p-4 rounded-full",
@@ -390,6 +474,8 @@ export default function Services({ services: initialServices }: Props) {
                                                 service.icon === 'Search' && "bg-green-100",
                                                 service.icon === 'BarChart' && "bg-orange-100",
                                                 service.icon === 'FileText' && "bg-yellow-100",
+                                                service.icon === 'Database' && "bg-cyan-100",
+                                                service.icon === 'ShoppingBag' && "bg-amber-100",
                                             )}>
                                                 <IconComponent iconName={service.icon} />
                                             </div>
@@ -416,15 +502,33 @@ export default function Services({ services: initialServices }: Props) {
                                     <h3 className="text-lg font-semibold text-gray-900 mb-2">{service.title}</h3>
                                     <p className="text-sm text-gray-600 mb-4 line-clamp-2">{service.description}</p>
                                     
+                                    {/* Service features */}
+                                    {service.features && service.features.length > 0 && (
+                                        <div className="mb-4">
+                                            <h4 className="text-xs font-semibold text-gray-700 mb-2">Key Features:</h4>
+                                            <ul className="space-y-1">
+                                                {service.features.slice(0, 3).map((feature, idx) => (
+                                                    <li key={idx} className="flex items-start text-xs">
+                                                        <span className="text-teal-500 mr-1">•</span>
+                                                        <span className="text-gray-600">{feature}</span>
+                                                    </li>
+                                                ))}
+                                                {service.features.length > 3 && (
+                                                    <li className="text-xs text-gray-500">+{service.features.length - 3} more</li>
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
+                                    
                                     {/* Service metadata */}
                                     <div className="space-y-2 mb-4">
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-500">Price:</span>
-                                            <span className="font-medium text-gray-900">{formatCurrency(service.starting_price || 0)}</span>
+                                            <span className="font-medium text-gray-900">{formatCurrency(service.starting_price || service.price || 0)}</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-500">Duration:</span>
-                                            <span className="text-gray-900">{service.duration}</span>
+                                            <span className="text-gray-900">{service.duration || 'Not specified'}</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-500">Category:</span>
