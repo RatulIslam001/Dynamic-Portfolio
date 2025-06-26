@@ -47,7 +47,19 @@ class ServiceController extends Controller
                 'technologies' => 'nullable|string',
                 'image' => 'nullable|image|max:10240',
             ]);
-            
+
+            // Ensure long_description is not null - set to empty string if null
+            if (!isset($validated['long_description']) || $validated['long_description'] === null) {
+                $validated['long_description'] = '';
+            }
+
+            // Convert boolean values properly
+            $validated['is_active'] = $request->has('is_active') ? (bool)$request->input('is_active') : true;
+            $validated['is_featured'] = $request->has('is_featured') ? (bool)$request->input('is_featured') : false;
+
+            // Debug log the validated data
+            \Log::info('Service creation validated data:', $validated);
+
             // Process features and technologies JSON strings
             if (isset($validated['features']) && is_string($validated['features'])) {
                 $features = json_decode($validated['features'], true);
@@ -143,6 +155,22 @@ class ServiceController extends Controller
                 'order' => 'sometimes|integer'
             ]);
 
+            // Ensure long_description is not null - set to empty string if null
+            if (!isset($validated['long_description']) || $validated['long_description'] === null) {
+                $validated['long_description'] = '';
+            }
+
+            // Convert boolean values properly
+            if (isset($validated['is_active'])) {
+                $validated['is_active'] = (bool)$validated['is_active'];
+            }
+            if (isset($validated['is_featured'])) {
+                $validated['is_featured'] = (bool)$validated['is_featured'];
+            }
+
+            // Debug log the validated data
+            \Log::info('Service update validated data:', $validated);
+
             // Process features and technologies JSON strings
             if (isset($validated['features']) && is_string($validated['features'])) {
                 $features = json_decode($validated['features'], true);
@@ -222,22 +250,16 @@ class ServiceController extends Controller
 
     public function destroy(Service $service)
     {
-        // Get the ID being deleted for logging
-        $deletedId = $service->id;
-        
         // Delete image if exists
         if ($service->image_url && Storage::exists(str_replace('/storage', 'public', $service->image_url))) {
             Storage::delete(str_replace('/storage', 'public', $service->image_url));
         }
-        
+
         // Delete the service
         $service->delete();
 
-        // Return success response
-        return response()->json([
-            'success' => true,
-            'message' => "Service #$deletedId deleted successfully."
-        ]);
+        // Return Inertia redirect response
+        return redirect()->back();
     }
 
     public function reorder(Request $request)

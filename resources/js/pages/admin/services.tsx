@@ -11,6 +11,7 @@ import { Code, Palette, Smartphone, Search, BarChart, FileText, Plus, X, GripVer
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import DeleteConfirmation from '@/components/ui/delete-confirmation';
+import TagInput from '@/components/ui/tag-input';
 
 // Define the allowed icon values
 const iconOptions = [
@@ -578,218 +579,247 @@ export default function Services({ services: initialServices }: Props) {
 
             {/* Add Service Dialog */}
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogContent className="sm:max-w-[650px]">
-                    <DialogHeader className="mb-5">
-                        <DialogTitle className="text-xl font-semibold">Add New Service</DialogTitle>
-                        <DialogDescription>
-                            Create a new service offering for your portfolio
+                <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+                    <DialogHeader className="pb-6 border-b border-gray-100">
+                        <DialogTitle className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+                            <Plus className="w-6 h-6 text-teal-600" />
+                            Add New Service
+                        </DialogTitle>
+                        <DialogDescription className="text-gray-600 mt-2">
+                            Create a new service offering for your portfolio. Fill in the details below to showcase your expertise.
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Service Title</label>
-                                <Input
-                                    type="text"
-                                    value={data.title}
-                                    onChange={e => setData('title', e.target.value)}
-                                    placeholder="e.g., Web Development"
-                                    className={cn("h-10", errors.title && "border-red-500 focus-visible:ring-red-500")}
-                                />
-                                {errors.title && (
-                                    <p className="text-sm text-red-500">{errors.title}</p>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Category</label>
-                                <Select
-                                    value={data.icon}
-                                    onValueChange={(value: IconType) => setData('icon', value)}
-                                >
-                                    <SelectTrigger className="h-10">
-                                        <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {iconOptions.map((option) => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                <div className="flex items-center gap-2">
-                                                    <option.icon className="w-4 h-4 text-gray-500" />
-                                                    <span>{option.label}</span>
-                                                </div>
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {errors.icon && (
-                                    <p className="text-sm text-red-500">{errors.icon}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Description</label>
-                            <Textarea
-                                value={data.description}
-                                onChange={e => setData('description', e.target.value)}
-                                placeholder="Describe your service..."
-                                rows={3}
-                                className={cn(errors.description && "border-red-500 focus-visible:ring-red-500")}
-                            />
-                            {errors.description && (
-                                <p className="text-sm text-red-500">{errors.description}</p>
-                            )}
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Price ($)</label>
-                                <div className="relative">
-                                    <Input
-                                        type="number"
-                                        value={data.starting_price}
-                                        onChange={e => setData('starting_price', e.target.value)}
-                                        placeholder="2500"
-                                        min="0"
-                                        className={cn("h-10 pl-7", errors.starting_price && "border-red-500 focus-visible:ring-red-500")}
-                                    />
-                                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
-                                </div>
-                                {errors.starting_price && (
-                                    <p className="text-sm text-red-500">{errors.starting_price}</p>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium text-gray-700">Duration</label>
-                                <Input
-                                    type="text"
-                                    value={data.duration}
-                                    onChange={e => setData('duration', e.target.value)}
-                                    placeholder="4-6 weeks"
-                                    className={cn("h-10", errors.duration && "border-red-500 focus-visible:ring-red-500")}
-                                />
-                                {errors.duration && (
-                                    <p className="text-sm text-red-500">{errors.duration}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Service Image</label>
-                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                <div className="space-y-1 text-center">
-                                    <svg
-                                        className="mx-auto h-12 w-12 text-gray-400"
-                                        stroke="currentColor"
-                                        fill="none"
-                                        viewBox="0 0 48 48"
-                                        aria-hidden="true"
-                                    >
-                                        <path
-                                            d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                            strokeWidth={2}
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
-                                    <div className="flex text-sm text-gray-600">
-                                        <label
-                                            htmlFor="file-upload"
-                                            className="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500"
-                                        >
-                                            <span>Upload a file</span>
-                                            <input
-                                                id="file-upload"
-                                                name="file-upload"
-                                                type="file"
-                                                className="sr-only"
-                                                accept="image/*"
-                                                onChange={(e) => {
-                                                    const file = e.target.files?.[0] || null;
-                                                    setData('image', file);
-                                                }}
-                                            />
+                    <form onSubmit={handleSubmit} className="pt-6">
+                        {/* Basic Information Section */}
+                        <div className="space-y-6">
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Basic Information</h3>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                            Service Title
+                                            <span className="text-red-500">*</span>
                                         </label>
-                                        <p className="pl-1">or drag and drop</p>
+                                        <Input
+                                            type="text"
+                                            value={data.title}
+                                            onChange={e => setData('title', e.target.value)}
+                                            placeholder="e.g., Web Development"
+                                            className={cn("h-11 transition-colors", errors.title && "border-red-500 focus-visible:ring-red-500")}
+                                        />
+                                        {errors.title && (
+                                            <p className="text-sm text-red-500 flex items-center gap-1">
+                                                <X className="w-3 h-3" />
+                                                {errors.title}
+                                            </p>
+                                        )}
                                     </div>
-                                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                                    {data.image && (
-                                        <p className="text-sm text-teal-600 mt-2">
-                                            Selected: {data.image.name}
-                                        </p>
-                                    )}
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                            Category
+                                            <span className="text-red-500">*</span>
+                                        </label>
+                                        <Select
+                                            value={data.icon}
+                                            onValueChange={(value: IconType) => setData('icon', value)}
+                                        >
+                                            <SelectTrigger className="h-11">
+                                                <SelectValue placeholder="Select category" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {iconOptions.map((option) => (
+                                                    <SelectItem key={option.value} value={option.value}>
+                                                        <div className="flex items-center gap-2">
+                                                            <option.icon className="w-4 h-4 text-gray-500" />
+                                                            <span>{option.label}</span>
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {errors.icon && (
+                                            <p className="text-sm text-red-500 flex items-center gap-1">
+                                                <X className="w-3 h-3" />
+                                                {errors.icon}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Description Section */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Description</h3>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                            Short Description
+                                            <span className="text-red-500">*</span>
+                                        </label>
+                                        <Textarea
+                                            value={data.description}
+                                            onChange={e => setData('description', e.target.value)}
+                                            placeholder="Brief description of your service (1-2 sentences)"
+                                            rows={3}
+                                            className={cn("transition-colors resize-none", errors.description && "border-red-500 focus-visible:ring-red-500")}
+                                        />
+                                        {errors.description && (
+                                            <p className="text-sm text-red-500 flex items-center gap-1">
+                                                <X className="w-3 h-3" />
+                                                {errors.description}
+                                            </p>
+                                        )}
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                            {/* Pricing & Timeline Section */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Pricing & Timeline</h3>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                            Starting Price
+                                            <span className="text-red-500">*</span>
+                                        </label>
+                                        <div className="relative">
+                                            <Input
+                                                type="number"
+                                                value={data.starting_price}
+                                                onChange={e => setData('starting_price', e.target.value)}
+                                                placeholder="2500"
+                                                min="0"
+                                                className={cn("h-11 pl-8 transition-colors", errors.starting_price && "border-red-500 focus-visible:ring-red-500")}
+                                            />
+                                            <DollarSign className="absolute left-2.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                        </div>
+                                        {errors.starting_price && (
+                                            <p className="text-sm text-red-500 flex items-center gap-1">
+                                                <X className="w-3 h-3" />
+                                                {errors.starting_price}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700">Estimated Duration</label>
+                                        <Input
+                                            type="text"
+                                            value={data.duration}
+                                            onChange={e => setData('duration', e.target.value)}
+                                            placeholder="e.g., 4-6 weeks"
+                                            className={cn("h-11 transition-colors", errors.duration && "border-red-500 focus-visible:ring-red-500")}
+                                        />
+                                        {errors.duration && (
+                                            <p className="text-sm text-red-500 flex items-center gap-1">
+                                                <X className="w-3 h-3" />
+                                                {errors.duration}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            {/* Features & Technologies Section */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Features & Technologies</h3>
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                                            Key Features
+                                            <span className="text-red-500">*</span>
+                                        </label>
+                                        <TagInput
+                                            value={data.features || []}
+                                            onChange={(tags) => setData('features', tags)}
+                                            placeholder="Type a feature and press Enter (e.g., Responsive Design)"
+                                            error={errors.features}
+                                            maxTags={10}
+                                        />
+                                        <p className="text-xs text-gray-500">Add key features that highlight the value of your service</p>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-sm font-medium text-gray-700">Technologies Used</label>
+                                        <TagInput
+                                            value={data.technologies || []}
+                                            onChange={(tags) => setData('technologies', tags)}
+                                            placeholder="Type a technology and press Enter (e.g., React)"
+                                            error={errors.technologies}
+                                            maxTags={15}
+                                        />
+                                        <p className="text-xs text-gray-500">List the main technologies and tools you'll use</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Service Settings Section */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-medium text-gray-900 border-b border-gray-200 pb-2">Service Settings</h3>
+                                <div className="grid grid-cols-2 gap-6">
+                                    <div className="flex items-start space-x-3">
+                                        <input
+                                            type="checkbox"
+                                            id="is_active"
+                                            checked={data.is_active}
+                                            onChange={e => setData('is_active', e.target.checked)}
+                                            className="mt-1 rounded border-gray-300 text-teal-600 focus:ring-teal-500 focus:ring-offset-0"
+                                        />
+                                        <div className="flex-1">
+                                            <label htmlFor="is_active" className="text-sm font-medium text-gray-700">Active Service</label>
+                                            <p className="text-xs text-gray-500 mt-1">Make this service visible to clients</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-start space-x-3">
+                                        <input
+                                            type="checkbox"
+                                            id="is_featured"
+                                            checked={data.is_featured}
+                                            onChange={e => setData('is_featured', e.target.checked)}
+                                            className="mt-1 rounded border-gray-300 text-teal-600 focus:ring-teal-500 focus:ring-offset-0"
+                                        />
+                                        <div className="flex-1">
+                                            <label htmlFor="is_featured" className="text-sm font-medium text-gray-700">Featured Service</label>
+                                            <p className="text-xs text-gray-500 mt-1">Highlight this service on your portfolio</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Features (comma-separated)</label>
-                            <Textarea
-                                value={data.features?.join(', ')}
-                                onChange={e => setData('features', e.target.value.split(',').map(item => item.trim()).filter(Boolean))}
-                                placeholder="Responsive Design, SEO Optimized, Performance Optimized"
-                                rows={2}
-                                className={cn(errors.features && "border-red-500 focus-visible:ring-red-500")}
-                            />
-                            {errors.features && (
-                                <p className="text-sm text-red-500">{errors.features}</p>
-                            )}
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Technologies (comma-separated)</label>
-                            <Textarea
-                                value={data.technologies?.join(', ')}
-                                onChange={e => setData('technologies', e.target.value.split(',').map(item => item.trim()).filter(Boolean))}
-                                placeholder="React, Next.js, TypeScript"
-                                rows={2}
-                                className={cn(errors.technologies && "border-red-500 focus-visible:ring-red-500")}
-                            />
-                            {errors.technologies && (
-                                <p className="text-sm text-red-500">{errors.technologies}</p>
-                            )}
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4 pt-2">
-                            <div className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id="is_active"
-                                    checked={data.is_active}
-                                    onChange={e => setData('is_active', e.target.checked)}
-                                    className="rounded border-gray-300 text-teal-600 focus:ring-teal-500 mr-2"
-                                />
-                                <label htmlFor="is_active" className="text-sm text-gray-700">Active Service</label>
-                            </div>
-                            
-                            <div className="flex items-center">
-                                <input
-                                    type="checkbox"
-                                    id="is_featured"
-                                    checked={data.is_featured}
-                                    onChange={e => setData('is_featured', e.target.checked)}
-                                    className="rounded border-gray-300 text-teal-600 focus:ring-teal-500 mr-2"
-                                />
-                                <label htmlFor="is_featured" className="text-sm text-gray-700">Featured Service</label>
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-3 pt-5 border-t border-gray-100 mt-5">
+                        {/* Action Buttons */}
+                        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200 mt-8">
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={() => setIsAddDialogOpen(false)}
+                                className="px-6 py-2.5"
                             >
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
-                                className="bg-teal-600 hover:bg-teal-700 text-white"
+                                className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 flex items-center gap-2"
                                 disabled={processing}
                             >
-                                {processing ? "Creating..." : "Create Service"}
+                                {processing ? (
+                                    <>
+                                        <RefreshCw className="w-4 h-4 animate-spin" />
+                                        Creating...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Plus className="w-4 h-4" />
+                                        Create Service
+                                    </>
+                                )}
                             </Button>
                         </div>
                     </form>
@@ -798,11 +828,14 @@ export default function Services({ services: initialServices }: Props) {
 
             {/* Edit Service Dialog */}
             <Dialog open={!!editingService} onOpenChange={(open) => !open && setEditingService(null)}>
-                <DialogContent className="sm:max-w-[650px]">
-                    <DialogHeader className="mb-5">
-                        <DialogTitle className="text-xl font-semibold">Edit Service</DialogTitle>
-                        <DialogDescription>
-                            Update the details of your service
+                <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+                    <DialogHeader className="pb-6 border-b border-gray-100">
+                        <DialogTitle className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+                            <Edit2 className="w-6 h-6 text-teal-600" />
+                            Edit Service
+                        </DialogTitle>
+                        <DialogDescription className="text-gray-600 mt-2">
+                            Update the details of your service. Make changes to improve your service offering.
                         </DialogDescription>
                     </DialogHeader>
 
@@ -862,6 +895,8 @@ export default function Services({ services: initialServices }: Props) {
                             )}
                         </div>
 
+
+
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">Price ($)</label>
@@ -896,91 +931,28 @@ export default function Services({ services: initialServices }: Props) {
                             </div>
                         </div>
 
+
+
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Service Image</label>
-                            <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
-                                <div className="space-y-1 text-center">
-                                    {editData.image_url ? (
-                                        <div className="mb-3">
-                                            <img 
-                                                src={editData.image_url} 
-                                                alt="Current service image" 
-                                                className="mx-auto h-32 w-auto object-cover rounded-md"
-                                            />
-                                            <p className="text-xs text-gray-500 mt-1">Current image</p>
-                                        </div>
-                                    ) : (
-                                        <svg
-                                            className="mx-auto h-12 w-12 text-gray-400"
-                                            stroke="currentColor"
-                                            fill="none"
-                                            viewBox="0 0 48 48"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                                strokeWidth={2}
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                            />
-                                        </svg>
-                                    )}
-                                    <div className="flex text-sm text-gray-600">
-                                        <label
-                                            htmlFor="edit-file-upload"
-                                            className="relative cursor-pointer bg-white rounded-md font-medium text-teal-600 hover:text-teal-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-teal-500"
-                                        >
-                                            <span>Upload a file</span>
-                                            <input
-                                                id="edit-file-upload"
-                                                name="edit-file-upload"
-                                                type="file"
-                                                className="sr-only"
-                                                accept="image/*"
-                                                onChange={(e) => {
-                                                    const file = e.target.files?.[0] || null;
-                                                    setEditData('image', file);
-                                                }}
-                                            />
-                                        </label>
-                                        <p className="pl-1">or drag and drop</p>
-                                    </div>
-                                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                                    {editData.image && (
-                                        <p className="text-sm text-teal-600 mt-2">
-                                            Selected: {editData.image.name}
-                                        </p>
-                                    )}
-                                </div>
-                            </div>
+                            <label className="text-sm font-medium text-gray-700">Features</label>
+                            <TagInput
+                                value={editData.features || []}
+                                onChange={(tags) => setEditData('features', tags)}
+                                placeholder="Type a feature and press Enter (e.g., Responsive Design)"
+                                error={editErrors.features}
+                                maxTags={10}
+                            />
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Features (comma-separated)</label>
-                            <Textarea
-                                value={editData.features?.join(', ')}
-                                onChange={e => setEditData('features', e.target.value.split(',').map(item => item.trim()).filter(Boolean))}
-                                placeholder="Responsive Design, SEO Optimized, Performance Optimized"
-                                rows={2}
-                                className={cn(editErrors.features && "border-red-500 focus-visible:ring-red-500")}
+                            <label className="text-sm font-medium text-gray-700">Technologies</label>
+                            <TagInput
+                                value={editData.technologies || []}
+                                onChange={(tags) => setEditData('technologies', tags)}
+                                placeholder="Type a technology and press Enter (e.g., React)"
+                                error={editErrors.technologies}
+                                maxTags={15}
                             />
-                            {editErrors.features && (
-                                <p className="text-sm text-red-500">{editErrors.features}</p>
-                            )}
-                        </div>
-
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-700">Technologies (comma-separated)</label>
-                            <Textarea
-                                value={editData.technologies?.join(', ')}
-                                onChange={e => setEditData('technologies', e.target.value.split(',').map(item => item.trim()).filter(Boolean))}
-                                placeholder="React, Next.js, TypeScript"
-                                rows={2}
-                                className={cn(editErrors.technologies && "border-red-500 focus-visible:ring-red-500")}
-                            />
-                            {editErrors.technologies && (
-                                <p className="text-sm text-red-500">{editErrors.technologies}</p>
-                            )}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4 pt-2">

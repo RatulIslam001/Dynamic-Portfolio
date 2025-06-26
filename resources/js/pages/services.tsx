@@ -245,49 +245,95 @@ export default function Services({ services }: Props) {
                 <div className="max-w-7xl mx-auto px-4 pb-16">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {services.map((service) => (
-                            <div 
+                            <motion.div
                                 key={service.id}
-                                className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col h-full"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: service.id * 0.1 }}
+                                className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-lg hover:border-teal-200 dark:hover:border-teal-700 transition-all duration-300 p-6 flex flex-col h-full group"
                             >
-                                <div className="mb-4">
-                                    <div className="inline-flex p-2 rounded-md bg-teal-50 dark:bg-teal-900/20">
-                                        <IconComponent icon={service.icon} className="w-5 h-5 text-[#20B2AA]" />
+                                <div className="mb-6">
+                                    <div className="inline-flex p-3 rounded-xl bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-900/20 dark:to-teal-800/20 group-hover:from-teal-100 group-hover:to-teal-200 dark:group-hover:from-teal-800/30 dark:group-hover:to-teal-700/30 transition-all duration-300">
+                                        <IconComponent icon={service.icon} className="w-6 h-6 text-[#20B2AA] group-hover:scale-110 transition-transform duration-300" />
                                     </div>
                                 </div>
+
+                                <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors duration-300">{service.title}</h2>
                                 
-                                <h2 className="text-xl font-bold mb-2 text-gray-900 dark:text-white">{service.title}</h2>
-                                
-                                <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm">
+                                <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">
                                     {service.description}
                                 </p>
-                                
-                                <div className="mb-6 flex-grow">
-                                    <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-gray-200">Key Features:</h3>
-                                    <ul className="space-y-2">
-                                        {service.features.slice(0, 5).map((feature, index) => (
-                                            <li key={index} className="flex items-start">
-                                                <span className="text-[#20B2AA] mr-2 text-lg leading-none">•</span>
-                                                <span className="text-gray-700 dark:text-gray-300 text-sm">{feature}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
+
+                                <div className="mb-6 flex-grow space-y-6">
+                                    {/* Key Features Section */}
+                                    {service.features && service.features.length > 0 && (
+                                        <div>
+                                            <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-gray-200 flex items-center">
+                                                <CheckCircle className="w-4 h-4 text-[#20B2AA] mr-2" />
+                                                Key Features
+                                            </h3>
+                                            <ul className="space-y-2">
+                                                {service.features.slice(0, 4).map((feature, index) => (
+                                                    <li key={index} className="flex items-start">
+                                                        <span className="text-[#20B2AA] mr-2 text-lg leading-none">•</span>
+                                                        <span className="text-gray-700 dark:text-gray-300 text-sm">{feature}</span>
+                                                    </li>
+                                                ))}
+                                                {service.features.length > 4 && (
+                                                    <li className="text-xs text-gray-500 dark:text-gray-400 ml-6">
+                                                        +{service.features.length - 4} more features
+                                                    </li>
+                                                )}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Technologies Section */}
+                                    {service.technologies && service.technologies.length > 0 && (
+                                        <div>
+                                            <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-gray-200 flex items-center">
+                                                <Code className="w-4 h-4 text-[#20B2AA] mr-2" />
+                                                Technologies
+                                            </h3>
+                                            <div className="flex flex-wrap gap-2">
+                                                {service.technologies.slice(0, 6).map((tech, index) => (
+                                                    <span
+                                                        key={index}
+                                                        className="px-2 py-1 bg-teal-50 dark:bg-teal-900/20 text-teal-700 dark:text-teal-300 text-xs rounded-md border border-teal-200 dark:border-teal-700"
+                                                    >
+                                                        {tech}
+                                                    </span>
+                                                ))}
+                                                {service.technologies.length > 6 && (
+                                                    <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs rounded-md">
+                                                        +{service.technologies.length - 6}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 
-                                <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
-                                    <div>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">Starting at</p>
-                                        <p className="text-[#20B2AA] font-medium">
+                                <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-100 dark:border-gray-700">
+                                    <div className="flex flex-col">
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Starting at</p>
+                                        <p className="text-2xl font-bold text-[#20B2AA] group-hover:text-teal-600 transition-colors duration-300">
                                             ${(service.starting_price || service.price).toLocaleString()}
                                         </p>
+                                        {service.duration && (
+                                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                {service.duration}
+                                            </p>
+                                        )}
                                     </div>
-                                    <Link 
+                                    <Link
                                         href="/?section=contact"
-                                        className="px-4 py-2 bg-[#20B2AA] text-white text-sm rounded-md hover:bg-[#1a9994] transition-colors"
+                                        className="px-6 py-3 bg-gradient-to-r from-[#20B2AA] to-[#1a9994] text-white text-sm font-medium rounded-lg hover:from-[#1a9994] hover:to-[#158b80] transform hover:scale-105 transition-all duration-300 shadow-md hover:shadow-lg"
                                     >
                                         Get Quote
                                     </Link>
                                 </div>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 </div>

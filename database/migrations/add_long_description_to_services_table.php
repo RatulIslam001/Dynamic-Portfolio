@@ -15,6 +15,9 @@ return new class extends Migration
             // Check if the column doesn't exist before adding it
             if (!Schema::hasColumn('services', 'long_description')) {
                 $table->text('long_description')->nullable()->after('description');
+            } else {
+                // If column exists but is VARCHAR, change it to TEXT
+                $table->text('long_description')->nullable()->change();
             }
         });
     }
