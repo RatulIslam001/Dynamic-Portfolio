@@ -150,6 +150,95 @@ class ServicesTableSeeder extends Seeder
                 'is_featured' => false,
                 'order' => 6
             ],
+            // Adding 4 more services
+            [
+                'title' => 'DevOps & Deployment',
+                'description' => 'Setting up CI/CD pipelines, containerization, and cloud infrastructure for seamless deployment and scaling.',
+                'long_description' => 'I help teams implement efficient DevOps practices to streamline development workflows and deployment processes. From continuous integration to containerization and cloud infrastructure, I set up systems that improve productivity and reliability.',
+                'icon' => 'Activity',
+                'price' => 3200,
+                'duration' => '3-5 weeks',
+                'projects_count' => 24,
+                'features' => [
+                    'CI/CD Pipeline Setup',
+                    'Docker Containerization',
+                    'Kubernetes Orchestration',
+                    'Cloud Infrastructure',
+                    'Monitoring & Logging'
+                ],
+                'technologies' => [
+                    'Docker', 'Kubernetes', 'Jenkins', 'GitHub Actions', 'AWS', 'GCP', 'Azure'
+                ],
+                'is_active' => true,
+                'is_featured' => false,
+                'order' => 7
+            ],
+            [
+                'title' => 'Performance Optimization',
+                'description' => 'Improving website and application speed for better user experience, SEO, and conversion rates.',
+                'long_description' => 'I optimize web applications to deliver exceptional performance across all devices and network conditions. By identifying and resolving bottlenecks, implementing caching strategies, and optimizing code, I help your applications load faster and run smoother.',
+                'icon' => 'Zap',
+                'price' => 1800,
+                'duration' => '2-4 weeks',
+                'projects_count' => 31,
+                'features' => [
+                    'Performance Auditing',
+                    'Code Optimization',
+                    'Image & Asset Optimization',
+                    'Caching Strategies',
+                    'CDN Implementation'
+                ],
+                'technologies' => [
+                    'Lighthouse', 'WebPageTest', 'GTmetrix', 'Redis', 'Cloudflare'
+                ],
+                'is_active' => true,
+                'is_featured' => false,
+                'order' => 8
+            ],
+            [
+                'title' => 'API Development',
+                'description' => 'Building robust and secure APIs for seamless data exchange between applications and services.',
+                'long_description' => 'I specialize in creating well-designed, efficient, and secure APIs that enable seamless communication between different systems. Whether you need RESTful APIs, GraphQL, or microservices, I deliver solutions that are reliable and easy to integrate with.',
+                'icon' => 'Code',
+                'price' => 2400,
+                'duration' => '3-6 weeks',
+                'projects_count' => 27,
+                'features' => [
+                    'RESTful API Design',
+                    'GraphQL Implementation',
+                    'Authentication & Authorization',
+                    'Documentation',
+                    'Testing & Monitoring'
+                ],
+                'technologies' => [
+                    'Node.js', 'Express', 'Django', 'Laravel', 'Swagger', 'Postman'
+                ],
+                'is_active' => true,
+                'is_featured' => false,
+                'order' => 9
+            ],
+            [
+                'title' => 'Technical Consultation',
+                'description' => 'Expert advice on technology choices, architecture decisions, and implementation strategies.',
+                'long_description' => 'I provide expert guidance on technical decisions to help you make informed choices for your projects. From technology selection to architecture planning and implementation strategies, I offer insights based on industry best practices and years of experience.',
+                'icon' => 'FileText',
+                'price' => 200,
+                'duration' => 'Hourly',
+                'projects_count' => 40,
+                'features' => [
+                    'Technology Stack Assessment',
+                    'Architecture Planning',
+                    'Code Reviews',
+                    'Performance Evaluation',
+                    'Security Assessment'
+                ],
+                'technologies' => [
+                    'All major web and mobile technologies'
+                ],
+                'is_active' => true,
+                'is_featured' => false,
+                'order' => 10
+            ],
         ];
 
         // Insert services

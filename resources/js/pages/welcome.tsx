@@ -97,7 +97,7 @@ export default function Welcome({ services, projects, profile }: Props) {
     const navbarBackgroundDark = useTransform(
         scrollY, 
         [0, 100], 
-        ["rgba(17, 24, 39, 0.8)", "rgba(17, 24, 39, 0.95)"]
+        ["rgba(17, 24, 39, 0.85)", "rgba(17, 24, 39, 0.98)"]
     );
     const navbarHeight = useTransform(scrollY, [0, 100], ["80px", "64px"]);
     const navbarShadow = useTransform(
@@ -273,7 +273,11 @@ export default function Welcome({ services, projects, profile }: Props) {
                             backgroundColor: "transparent",
                             boxShadow: navbarShadowDark
                         }}
+                        animate={{
+                            backgroundColor: "transparent"
+                        }}
                     />
+                    <div className="absolute inset-0 z-[-1] bg-transparent dark:bg-gray-900/95 backdrop-blur-sm"></div>
 
                     <motion.div 
                         initial={{ opacity: 0, x: -20 }}
@@ -312,7 +316,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                                 smooth={true}
                                                 offset={-100}
                                                 duration={500}
-                                                className="text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] dark:hover:text-[#20B2AA] cursor-pointer font-medium text-sm transition-colors px-2 py-1.5 block"
+                                                className="text-gray-600 dark:text-gray-100 hover:text-[#20B2AA] dark:hover:text-[#20B2AA] cursor-pointer font-medium text-sm transition-colors px-2 py-1.5 block"
                                                 activeClass="text-[#20B2AA] font-semibold"
                                             >
                                                 {item.title}
@@ -321,7 +325,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                         {activeSection === item.href && (
                                             <motion.div
                                                 layoutId="activeIndicator"
-                                                className="absolute bottom-[-3px] left-0 right-0 h-[2px] bg-[#20B2AA]"
+                                                className="absolute bottom-[-3px] left-0 right-0 h-[2px] bg-[#20B2AA] dark:bg-[#20B2AA] dark:shadow-[0_0_4px_#20B2AA]"
                                                 initial={{ opacity: 0 }}
                                                 animate={{ opacity: 1 }}
                                                 transition={{ duration: 0.3 }}
@@ -353,7 +357,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
-                            <Button className="hidden md:inline-flex bg-[#20B2AA] hover:bg-[#1a9994] shadow-md shadow-[#20B2AA]/20 hover:shadow-lg hover:shadow-[#20B2AA]/30 transition-all duration-300">
+                            <Button className="hidden md:inline-flex bg-[#20B2AA] hover:bg-[#1a9994] text-white shadow-md shadow-[#20B2AA]/20 dark:shadow-[#20B2AA]/40 hover:shadow-lg hover:shadow-[#20B2AA]/30 dark:hover:shadow-[#20B2AA]/50 transition-all duration-300">
                                 <ScrollLink
                                     to="contact"
                                     spy={true}

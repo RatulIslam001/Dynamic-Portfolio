@@ -54,6 +54,7 @@ const IconComponent = ({ icon, className = "w-6 h-6 text-[#20B2AA]" }: { icon: s
         case 'search':
             return <Search className={className} />;
         case 'activity':
+        case 'Activity':
             return <Activity className={className} />;
         case 'shield':
             return <Shield className={className} />;
@@ -61,10 +62,13 @@ const IconComponent = ({ icon, className = "w-6 h-6 text-[#20B2AA]" }: { icon: s
             return <Headphones className={className} />;
         case 'file-text':
         case 'filetext':
+        case 'FileText':
             return <FileText className={className} />;
         case 'bar-chart':
         case 'barchart':
             return <BarChart className={className} />;
+        case 'zap':
+            return <Zap className={className} />;
         default:
             return <Code className={className} />;
     }
