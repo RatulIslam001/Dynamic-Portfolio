@@ -43,6 +43,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::put('/services/{service}', [ServiceController::class, 'update'])->name('services.update');
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
     Route::post('/services/reorder', [ServiceController::class, 'reorder'])->name('services.reorder');
+    Route::post('/services/content', [ServiceController::class, 'updateContent'])->name('services.content.update');
     // Route::post('/services/reset-ids', [ServiceController::class, 'resetIds'])->name('services.reset-ids');
 
     // Projects routes
@@ -51,10 +52,6 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     Route::post('/projects/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('projects.toggle-featured');
-    Route::post('/projects/reset-ids', function() {
-        Artisan::call('projects:reset-ids');
-        return redirect()->back()->with('success', 'Project IDs reset successfully.');
-    })->name('projects.reset-ids');
 
     // Skills routes
     Route::get('/skills', [SkillController::class, 'index'])->name('skills');

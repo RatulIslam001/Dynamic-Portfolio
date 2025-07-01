@@ -3,55 +3,99 @@
 namespace App\Http\Controllers;
 
 use App\Models\Service;
+use App\Models\ServicesManagement;
 use App\Models\Project;
 use App\Models\Profile;
+use App\Models\Skill;
+use App\Models\Testimonial;
+use App\Models\Experience;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Schema;
 
 class WelcomeController extends Controller
 {
     public function index()
     {
-        $services = Service::where('is_active', true)
+        // Get the profile
+        $profile = Profile::first();
+        
+        // Get services for home page (always show 6 services if available)
+        try {
+            // First, get featured services
+            $featuredServices = Service::where('is_active', true)
+                ->where('is_featured', true)
+                ->orderBy('order')
+                ->get();
+
+            // If we have less than 6 featured services, fill with non-featured ones
+            $servicesNeeded = 6 - $featuredServices->count();
+
+            if ($servicesNeeded > 0) {
+                $nonFeaturedServices = Service::where('is_active', true)
+                    ->where('is_featured', false)
+                    ->orderBy('order')
+                    ->take($servicesNeeded)
+                    ->get();
+
+                $services = $featuredServices->merge($nonFeaturedServices);
+            } else {
+                $services = $featuredServices->take(6);
+            }
+
+            // Get content management from dedicated table
+            $contentManagement = ServicesManagement::getOrCreate();
+        } catch (\Exception $e) {
+            \Log::error('Error loading services in WelcomeController: ' . $e->getMessage());
+            $services = collect();
+            $contentManagement = null;
+        }
+        
+        // Default content values if content management record is not available
+        $defaultServicesContent = [
+            'services_section_badge' => 'Professional Services',
+            'services_section_title' => 'Areas of Expertise',
+            'services_section_description' => 'Delivering tailored, high-quality solutions to help your business thrive in the digital landscape',
+            'services_button_text' => 'Explore All Services',
+        ];
+        
+        // Use content from the services management record
+        $servicesContent = $contentManagement ? [
+            'services_section_badge' => $contentManagement->services_section_badge,
+            'services_section_title' => $contentManagement->services_section_title,
+            'services_section_description' => $contentManagement->services_section_description,
+            'services_button_text' => $contentManagement->services_button_text,
+        ] : $defaultServicesContent;
+        
+        // Get featured projects (max 6 as per user preference)
+        $projects = Project::where('status', 'published')
+            ->where('is_featured', true)
             ->orderBy('order')
             ->take(6)
             ->get();
         
-        $projects = Project::where('status', 'published')
-            ->where('is_featured', true)
-            ->orderBy('id')
-            ->latest('completion_date')
-            ->take(6)
+        // Get featured testimonials
+        $testimonials = Testimonial::where('is_featured', true)
+            ->orderBy('created_at', 'desc')
+            ->take(3)
+            ->get();
+        
+        // Get skills grouped by category
+        $skills = Skill::where('is_visible', true)
+            ->orderBy('category')
+            ->orderBy('order')
             ->get()
-            ->map(function ($project) {
-                return [
-                    'id' => $project->id,
-                    'title' => $project->title,
-                    'description' => $project->description,
-                    'image' => $project->image ? Storage::url($project->image) : null,
-                    'category' => $project->category,
-                    'technologies' => $project->technologies,
-                ];
-            });
+            ->groupBy('category');
         
-        $profile = Profile::first();
+        // Get experiences
+        $experiences = Experience::orderBy('start_date', 'desc')
+            ->get();
         
-        // Default navbar items if not set in database
-        $defaultNavbarItems = [
-            ['title' => 'Home', 'href' => 'home'],
-            ['title' => 'Services', 'href' => 'services'],
-            ['title' => 'Works', 'href' => 'works'],
-            ['title' => 'Skills', 'href' => 'skills'],
-            ['title' => 'Resume', 'href' => 'resume'],
-            ['title' => 'Testimonials', 'href' => 'testimonials'],
-            ['title' => 'Contact', 'href' => 'contact']
-        ];
-        
-        return Inertia::render('welcome', [
-            'services' => $services,
-            'projects' => $projects,
-            'profile' => $profile ? [
+        // Transform profile data to ensure proper structure
+        $profileData = null;
+        if ($profile) {
+            $profileData = [
                 'full_name' => $profile->full_name,
                 'title' => $profile->title,
                 'about' => $profile->about,
@@ -62,7 +106,7 @@ class WelcomeController extends Controller
                 'cta_secondary_text' => $profile->cta_secondary_text,
                 'cta_url' => $profile->cta_url,
                 'cta_secondary_url' => $profile->cta_secondary_url,
-                'avatar' => $profile->avatar ? Storage::url($profile->avatar) : '/images/Profile.png',
+                'avatar' => $profile->avatar,
                 'logo' => [
                     'text' => $profile->logo_text,
                     'type' => $profile->logo_type,
@@ -70,18 +114,45 @@ class WelcomeController extends Controller
                     'icon_type' => $profile->logo_icon_type,
                     'color' => $profile->logo_color,
                 ],
-                'navbar_items' => $profile->navbar_items ?? $defaultNavbarItems,
+                'navbar_items' => is_array($profile->navbar_items) ? $profile->navbar_items :
+                    (is_string($profile->navbar_items) ? json_decode($profile->navbar_items, true) : []),
                 'social' => [
                     'github' => $profile->github_url,
                     'twitter' => $profile->twitter_url,
                     'linkedin' => $profile->linkedin_url,
                 ],
                 'contact' => [
-                    'email' => 'contact@example.com',
-                    'phone' => '+1(123) 456-7890',
-                    'location' => 'San Francisco, CA, USA',
+                    'email' => 'ratul.innovations@gmail.com', // Default email
+                    'phone' => '01781-935014', // Default phone
+                    'location' => 'Kushtia, Bangladesh', // Default location
                 ],
-            ] : null
+            ];
+        }
+
+        return Inertia::render('welcome', [
+            'profile' => $profileData,
+            'services' => $services,
+            'projects' => $projects,
+            'testimonials' => $testimonials,
+            'skills' => $skills,
+            'experiences' => $experiences,
+            'servicesContent' => [
+                'badge' => $servicesContent['services_section_badge'],
+                'title' => $servicesContent['services_section_title'],
+                'description' => $servicesContent['services_section_description'],
+                'button_text' => $servicesContent['services_button_text'],
+            ],
+            'projectsContent' => [
+                'badge' => 'Portfolio',
+                'title' => 'Featured Projects',
+                'description' => 'Explore some of my recent work that showcases my skills and expertise.',
+                'button_text' => 'Explore All Projects',
+            ],
+            'testimonialsContent' => [
+                'badge' => 'Testimonials',
+                'title' => 'What Clients Say',
+                'description' => 'Feedback from clients who have experienced working with me.',
+            ],
         ]);
     }
 } 

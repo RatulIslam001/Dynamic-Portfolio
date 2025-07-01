@@ -67,7 +67,8 @@ class ProfileController extends Controller
                 'logo_icon' => $profile->logo_icon,
                 'logo_icon_type' => $profile->logo_icon_type,
                 'logo_color' => $profile->logo_color,
-                'navbar_items' => $profile->navbar_items,
+                'navbar_items' => is_array($profile->navbar_items) ? $profile->navbar_items :
+                    (is_string($profile->navbar_items) ? json_decode($profile->navbar_items, true) : []),
             ],
         ]);
     }

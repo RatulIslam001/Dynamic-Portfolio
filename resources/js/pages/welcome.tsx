@@ -40,6 +40,13 @@ interface Project {
     technologies: string[];
 }
 
+interface ContentSection {
+    badge: string;
+    title: string;
+    description: string;
+    button_text: string;
+}
+
 interface ProfileData {
     full_name: string;
     title: string;
@@ -78,10 +85,30 @@ interface ProfileData {
 interface Props {
     services: Service[];
     projects: Project[];
+    testimonials: any[];
+    skills: Record<string, any[]>;
+    experiences: any[];
     profile: ProfileData | null;
+    servicesContent: ContentSection;
+    projectsContent: ContentSection;
+    testimonialsContent: {
+        badge: string;
+        title: string;
+        description: string;
+    };
 }
 
-export default function Welcome({ services, projects, profile }: Props) {
+export default function Welcome({ 
+    services, 
+    projects, 
+    testimonials, 
+    skills, 
+    experiences, 
+    profile, 
+    servicesContent, 
+    projectsContent, 
+    testimonialsContent 
+}: Props) {
     const [activeFilter, setActiveFilter] = useState('All');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
@@ -142,7 +169,23 @@ export default function Welcome({ services, projects, profile }: Props) {
     const githubUrl = profile?.social?.github ?? 'https://github.com';
     const twitterUrl = profile?.social?.twitter ?? 'https://twitter.com';
     const linkedinUrl = profile?.social?.linkedin ?? 'https://linkedin.com';
-    const navItems = profile?.navbar_items ?? defaultNavItems;
+
+    // Ensure navItems is always an array
+    let navItems = defaultNavItems;
+    if (profile?.navbar_items) {
+        if (Array.isArray(profile.navbar_items)) {
+            navItems = profile.navbar_items;
+        } else if (typeof profile.navbar_items === 'string') {
+            try {
+                const parsed = JSON.parse(profile.navbar_items);
+                if (Array.isArray(parsed)) {
+                    navItems = parsed;
+                }
+            } catch (e) {
+                console.warn('Failed to parse navbar_items JSON:', e);
+            }
+        }
+    }
     
     // Logo settings
     const logoText = profile?.logo?.text ?? 'Portfolio';
@@ -218,20 +261,25 @@ export default function Welcome({ services, projects, profile }: Props) {
     // Handle active section tracking
     useEffect(() => {
         const handleScroll = () => {
+            // Ensure navItems is an array before mapping
+            if (!Array.isArray(navItems)) return;
+
             const sections = navItems.map(item => item.href);
             const currentSection = sections.find(section => {
-                const element = document.getElementById(section);
+                // Handle both 'works' and 'projects' sections
+                const elementId = section === 'projects' ? 'works' : section;
+                const element = document.getElementById(elementId);
                 if (!element) return false;
-                
+
                 const rect = element.getBoundingClientRect();
                 return rect.top <= 150 && rect.bottom >= 150;
             });
-            
+
             if (currentSection) {
                 setActiveSection(currentSection);
             }
         };
-        
+
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, [navItems]);
@@ -301,7 +349,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                     <div className="hidden md:block">
                         <NavigationMenu>
                             <NavigationMenuList className="flex gap-4 lg:gap-8">
-                            {navItems.map((item, index) => (
+                            {Array.isArray(navItems) && navItems.map((item, index) => (
                                 <NavigationMenuItem key={item.title}>
                                     <motion.div
                                         initial={{ opacity: 0, y: -20 }}
@@ -311,7 +359,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                     >
                                         <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 400 }}>
                                             <ScrollLink
-                                                to={item.href}
+                                                to={item.href === 'works' || item.href === 'projects' ? 'works' : item.href}
                                                 spy={true}
                                                 smooth={true}
                                                 offset={-100}
@@ -322,7 +370,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                                 {item.title}
                                             </ScrollLink>
                                         </motion.div>
-                                        {activeSection === item.href && (
+                                        {(activeSection === item.href || (item.href === 'projects' && activeSection === 'works') || (item.href === 'works' && activeSection === 'projects')) && (
                                             <motion.div
                                                 layoutId="activeIndicator"
                                                 className="absolute bottom-[-3px] left-0 right-0 h-[2px] bg-[#20B2AA] dark:bg-[#20B2AA] dark:shadow-[0_0_4px_#20B2AA]"
@@ -374,10 +422,10 @@ export default function Welcome({ services, projects, profile }: Props) {
                 </motion.nav>
 
                 {/* Mobile Menu */}
-                <MobileMenu 
-                    isOpen={isMenuOpen} 
-                    onClose={() => setIsMenuOpen(false)} 
-                    navItems={navItems}
+                <MobileMenu
+                    isOpen={isMenuOpen}
+                    onClose={() => setIsMenuOpen(false)}
+                    navItems={Array.isArray(navItems) ? navItems : defaultNavItems}
                     logoText={logoText}
                     logoType={logoType as 'text_only' | 'icon_only' | 'text_with_icon'}
                     logoIcon={logoIcon}
@@ -563,23 +611,23 @@ export default function Welcome({ services, projects, profile }: Props) {
                             transition={{ duration: 0.6 }}
                             className="text-center mb-16 md:mb-24"
                         >
-                            <motion.span 
+                            <motion.span
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
                                 className="text-[#20B2AA] font-medium text-xs sm:text-sm inline-block px-3 sm:px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-3 sm:mb-4"
                             >
-                                Professional Services
+                                {servicesContent.badge || 'Professional Services'}
                             </motion.span>
-                            <motion.h2 
+                            <motion.h2
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.3 }}
                                 className="text-3xl sm:text-4xl font-bold mt-2 sm:mt-3 mb-3 sm:mb-5"
                             >
-                                Areas of Expertise
+                                {servicesContent.title || 'Areas of Expertise'}
                             </motion.h2>
                             <motion.p 
                                 initial={{ opacity: 0, y: 10 }}
@@ -588,7 +636,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                 transition={{ duration: 0.6, delay: 0.4 }}
                                 className="text-gray-600 dark:text-gray-300 text-base sm:text-lg max-w-2xl mx-auto px-2"
                             >
-                                Delivering tailored, high-quality solutions to help your business thrive in the digital landscape
+                                {servicesContent.description || 'Delivering tailored, high-quality solutions to help your business thrive in the digital landscape'}
                             </motion.p>
                         </motion.div>
 
@@ -674,7 +722,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                     className="font-medium text-[#20B2AA] bg-white dark:bg-transparent hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-2.5 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-sm hover:shadow-md backdrop-blur-sm overflow-hidden group w-full sm:w-auto text-[15px]"
                                     fullWidth={true}
                                 >
-                                    <span className="relative z-10">Explore All Services</span>
+                                    <span className="relative z-10">{servicesContent.button_text || 'Explore All Services'}</span>
                                     <motion.span 
                                         initial={{ x: "-100%" }}
                                         whileHover={{ x: "0%" }}
@@ -711,7 +759,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                 transition={{ duration: 0.6, delay: 0.2 }}
                                 className="text-[#20B2AA] font-medium inline-block px-3 sm:px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-3 sm:mb-4 text-xs sm:text-sm"
                             >
-                                Portfolio
+                                {projectsContent.badge}
                             </motion.span>
                             <motion.h2 
                                 initial={{ opacity: 0, y: 10 }}
@@ -720,7 +768,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                 transition={{ duration: 0.6, delay: 0.3 }}
                                 className="text-3xl sm:text-4xl font-bold mt-2 sm:mt-4 mb-3 sm:mb-6"
                             >
-                                Featured Projects
+                                {projectsContent.title}
                             </motion.h2>
                             <motion.p 
                                 initial={{ opacity: 0, y: 10 }}
@@ -829,7 +877,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                     className="font-medium text-[#20B2AA] bg-white dark:bg-transparent hover:text-[#1a9994] border border-[#20B2AA]/20 hover:border-[#20B2AA]/60 px-8 py-2.5 rounded-full hover:bg-[#E6F7F6]/50 transition-all shadow-sm hover:shadow-md backdrop-blur-sm overflow-hidden group w-full sm:w-auto text-[15px]"
                                     fullWidth={true}
                                 >
-                                    <span className="relative z-10">Explore All Projects</span>
+                                    <span className="relative z-10">{projectsContent.button_text}</span>
                                     <motion.span 
                                         initial={{ x: "-100%" }}
                                         whileHover={{ x: "0%" }}
@@ -1246,7 +1294,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                 transition={{ duration: 0.6, delay: 0.2 }}
                                 className="text-[#20B2AA] font-medium inline-block px-3 sm:px-4 py-1.5 bg-[#E6F7F6] rounded-full mb-3 sm:mb-4 text-xs sm:text-sm"
                             >
-                                Testimonials
+                                {testimonialsContent.badge}
                             </motion.span>
                             <motion.h2 
                                 initial={{ opacity: 0, y: 10 }}
@@ -1255,7 +1303,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                 transition={{ duration: 0.6, delay: 0.3 }}
                                 className="text-3xl sm:text-4xl font-bold mt-2 sm:mt-4 mb-3 sm:mb-6"
                             >
-                                What Clients Say
+                                {testimonialsContent.title}
                             </motion.h2>
                             <motion.p 
                                 initial={{ opacity: 0, y: 10 }}
@@ -1264,7 +1312,7 @@ export default function Welcome({ services, projects, profile }: Props) {
                                 transition={{ duration: 0.6, delay: 0.4 }}
                                 className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-base sm:text-lg px-2"
                             >
-                                Feedback from clients who have experienced working with me
+                                {testimonialsContent.description}
                             </motion.p>
                         </motion.div>
 

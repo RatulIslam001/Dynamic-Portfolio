@@ -140,8 +140,21 @@ function SortableItem({ id, item, index, updateNavbarItem, removeNavbarItem }: S
 export default function AdminProfile({ profile, success }: Props) {
     const [avatarPreview, setAvatarPreview] = useState<string | null>(profile.avatar);
     const [activeTab, setActiveTab] = useState('hero');
-    const [navbarItems, setNavbarItems] = useState<NavbarItem[]>(
-        profile.navbar_items || [
+    // Ensure navbar_items is always an array
+    const getNavbarItems = () => {
+        if (Array.isArray(profile.navbar_items)) {
+            return profile.navbar_items;
+        }
+        if (typeof profile.navbar_items === 'string') {
+            try {
+                const parsed = JSON.parse(profile.navbar_items);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                console.warn('Failed to parse navbar_items JSON:', e);
+                return [];
+            }
+        }
+        return [
             { title: 'Home', href: 'home' },
             { title: 'Services', href: 'services' },
             { title: 'Works', href: 'works' },
@@ -149,8 +162,10 @@ export default function AdminProfile({ profile, success }: Props) {
             { title: 'Resume', href: 'resume' },
             { title: 'Testimonials', href: 'testimonials' },
             { title: 'Contact', href: 'contact' }
-        ]
-    );
+        ];
+    };
+
+    const [navbarItems, setNavbarItems] = useState<NavbarItem[]>(getNavbarItems());
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -890,11 +905,11 @@ export default function AdminProfile({ profile, success }: Props) {
                                                     onDragEnd={handleDragEnd}
                                                 >
                                                     <SortableContext
-                                                        items={navbarItems.map((_, index) => `item-${index}`)}
+                                                        items={Array.isArray(navbarItems) ? navbarItems.map((_, index) => `item-${index}`) : []}
                                                         strategy={verticalListSortingStrategy}
                                                     >
                                                         <div className="space-y-2">
-                                                            {navbarItems.map((item, index) => (
+                                                            {Array.isArray(navbarItems) && navbarItems.map((item, index) => (
                                                                 <SortableItem
                                                                     key={`item-${index}`}
                                                                     id={`item-${index}`}
@@ -908,7 +923,7 @@ export default function AdminProfile({ profile, success }: Props) {
                                                     </SortableContext>
                                                 </DndContext>
                                                 
-                                                {navbarItems.length === 0 && (
+                                                {(!Array.isArray(navbarItems) || navbarItems.length === 0) && (
                                                     <div className="text-center py-8 text-gray-500">
                                                         No menu items. Click "Add Item" to create one.
                                                     </div>

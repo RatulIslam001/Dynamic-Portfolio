@@ -29,9 +29,48 @@ interface Service {
   starting_price?: number;
 }
 
+// Define the content type
+interface Content {
+  page_title: string;
+  page_description: string;
+  benefits: Array<{
+    text: string;
+    icon: string;
+  }>;
+  work_process: {
+    title: string;
+    description: string;
+    steps: Array<{
+      number: string;
+      title: string;
+      description: string;
+    }>;
+  };
+  cta: {
+    title: string;
+    description: string;
+    primary_text: string;
+    secondary_text: string;
+  };
+}
+
 // Define the props type
 interface Props {
   services: Service[];
+  content?: Content;
+  profile?: {
+    navbar_items?: Array<{
+      title: string;
+      href: string;
+    }>;
+    logo?: {
+      text: string;
+      type: string;
+      icon: string;
+      icon_type: string;
+      color: string;
+    };
+  };
 }
 
 // Icon component mapping
@@ -74,7 +113,21 @@ const IconComponent = ({ icon, className = "w-6 h-6 text-[#20B2AA]" }: { icon: s
     }
 };
 
-export default function Services({ services }: Props) {
+export default function Services({ services, content, profile }: Props) {
+    // Default navigation items (fallback)
+    const defaultNavItems = [
+        { title: 'Home', href: 'home' },
+        { title: 'Services', href: 'services' },
+        { title: 'Works', href: 'works' },
+        { title: 'Skills', href: 'skills' },
+        { title: 'Resume', href: 'resume' },
+        { title: 'Testimonials', href: 'testimonials' },
+        { title: 'Contact', href: 'contact' }
+    ];
+
+    // Use dynamic navigation from profile or fallback to default
+    const navItems = profile?.navbar_items || defaultNavItems;
+
     // Work process steps
     const workProcess = [
         {
@@ -133,49 +186,42 @@ export default function Services({ services }: Props) {
 
                     <NavigationMenu>
                         <NavigationMenuList className="flex gap-8">
-                            {['Home', 'Services', 'Works', 'Skills', 'Resume', 'Testimonials', 'Contact'].map((item, index) => (
-                                <NavigationMenuItem key={item}>
+                            {navItems.map((navItem, index) => (
+                                <NavigationMenuItem key={navItem.title}>
                                     <motion.div
                                         initial={{ opacity: 0, y: -20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
                                     >
-                                    {item === 'Services' ? (
-                                        <Link
-                                            href="/services"
-                                            className="text-sm font-medium cursor-pointer text-[#20B2AA] hover:text-[#20B2AA] transition-colors relative group after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#20B2AA] after:rounded-full"
-                                        >
-                                            {item}
-                                        </Link>
-                                    ) : item === 'Home' ? (
-                                        <Link
-                                            href="/"
-                                            className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
-                                        >
-                                            {item}
-                                        </Link>
-                                    ) : item === 'Contact' ? (
-                                        <Link
-                                            href="/contact"
-                                            className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
-                                        >
-                                            {item}
-                                        </Link>
-                                    ) : item === 'Works' ? (
-                                        <Link
-                                            href="/projects"
-                                            className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
-                                        >
-                                            {item}
-                                        </Link>
-                                    ) : (
-                                        <Link
-                                            href={`/#${item.toLowerCase()}`}
-                                            className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
-                                        >
-                                            {item}
-                                        </Link>
-                                    )}
+                                    {(() => {
+                                        // Determine the href based on the navigation item
+                                        let href = `/#${navItem.href}`;
+                                        if (navItem.title === 'Home') {
+                                            href = '/';
+                                        } else if (navItem.title === 'Services') {
+                                            href = '/services';
+                                        } else if (navItem.title === 'Works' || navItem.title === 'Projects') {
+                                            href = '/projects';
+                                        } else if (navItem.title === 'Contact') {
+                                            href = '/#contact';
+                                        }
+
+                                        // Determine if this is the active page
+                                        const isActive = navItem.title === 'Services';
+
+                                        return (
+                                            <Link
+                                                href={href}
+                                                className={`text-sm font-medium cursor-pointer transition-colors relative group ${
+                                                    isActive
+                                                        ? 'text-[#20B2AA] hover:text-[#20B2AA] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#20B2AA] after:rounded-full'
+                                                        : 'text-gray-600 dark:text-gray-300 hover:text-[#20B2AA]'
+                                                }`}
+                                            >
+                                                {navItem.title}
+                                            </Link>
+                                        );
+                                    })()}
                                     </motion.div>
                                 </NavigationMenuItem>
                             ))}
@@ -185,7 +231,7 @@ export default function Services({ services }: Props) {
                     <div className="flex items-center gap-3">
                         <ThemeToggle />
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Link href="/contact">
+                            <Link href="/#contact">
                                 <Button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-6 py-2.5 text-sm">
                                     Hire Me
                                 </Button>
@@ -217,29 +263,47 @@ export default function Services({ services }: Props) {
                     {/* Header Section */}
                     <div className="max-w-7xl mx-auto px-4 py-12 text-center">
                         <h1 className="text-4xl font-bold mb-2 text-gray-900 dark:text-white">
-                            Professional <span className="text-[#20B2AA]">Services</span>
+                            {content?.page_title ? (
+                                content.page_title.includes('Services') ? (
+                                    <>
+                                        {content.page_title.replace(' Services', '')} <span className="text-[#20B2AA]">Services</span>
+                                    </>
+                                ) : (
+                                    content.page_title
+                                )
+                            ) : (
+                                <>Professional <span className="text-[#20B2AA]">Services</span></>
+                            )}
                         </h1>
                         <p className="text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-10">
-                            Comprehensive digital solutions tailored to your business needs. From concept to deployment, I provide 
-                            end-to-end services that drive results and exceed expectations.
+                            {content?.page_description || 'Comprehensive digital solutions tailored to your business needs. From concept to deployment, I provide end-to-end services that drive results and exceed expectations.'}
                         </p>
                         
                         {/* Benefits */}
                         <div className="flex flex-wrap justify-center gap-8 mb-16">
-                            <div className="flex items-center gap-2">
-                                <Zap className="w-5 h-5 text-[#20B2AA]" />
-                                <span className="text-sm font-medium dark:text-gray-200">Fast Delivery</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <CheckCircle className="w-5 h-5 text-[#20B2AA]" />
-                                <span className="text-sm font-medium dark:text-gray-200">Quality Guaranteed</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Clock className="w-5 h-5 text-[#20B2AA]" />
-                                <span className="text-sm font-medium dark:text-gray-200">24/7 Support</span>
+                            {content?.benefits ? content.benefits.map((benefit, index) => (
+                                <div key={index} className="flex items-center gap-2">
+                                    <IconComponent icon={benefit.icon} className="w-5 h-5 text-[#20B2AA]" />
+                                    <span className="text-sm font-medium dark:text-gray-200">{benefit.text}</span>
+                                </div>
+                            )) : (
+                                <>
+                                    <div className="flex items-center gap-2">
+                                        <Zap className="w-5 h-5 text-[#20B2AA]" />
+                                        <span className="text-sm font-medium dark:text-gray-200">Fast Delivery</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <CheckCircle className="w-5 h-5 text-[#20B2AA]" />
+                                        <span className="text-sm font-medium dark:text-gray-200">Quality Guaranteed</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <Clock className="w-5 h-5 text-[#20B2AA]" />
+                                        <span className="text-sm font-medium dark:text-gray-200">24/7 Support</span>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
-                </div>
 
                     {/* Services Grid - All services from database */}
                 <div className="max-w-7xl mx-auto px-4 pb-16">
@@ -266,7 +330,7 @@ export default function Services({ services }: Props) {
 
                                 <div className="mb-6 flex-grow space-y-6">
                                     {/* Key Features Section */}
-                                    {service.features && service.features.length > 0 && (
+                                    {service.features && Array.isArray(service.features) && service.features.length > 0 && (
                                         <div>
                                             <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-gray-200 flex items-center">
                                                 <CheckCircle className="w-4 h-4 text-[#20B2AA] mr-2" />
@@ -289,7 +353,7 @@ export default function Services({ services }: Props) {
                                     )}
 
                                     {/* Technologies Section */}
-                                    {service.technologies && service.technologies.length > 0 && (
+                                    {service.technologies && Array.isArray(service.technologies) && service.technologies.length > 0 && (
                                         <div>
                                             <h3 className="text-sm font-semibold mb-3 text-gray-800 dark:text-gray-200 flex items-center">
                                                 <Code className="w-4 h-4 text-[#20B2AA] mr-2" />
@@ -341,13 +405,15 @@ export default function Services({ services }: Props) {
                     {/* Work Process Section */}
                     <div className="bg-[#0F172A] text-white py-16">
                         <div className="max-w-7xl mx-auto px-4">
-                            <h2 className="text-3xl font-bold mb-4 text-center">My Work Process</h2>
+                            <h2 className="text-3xl font-bold mb-4 text-center">
+                                {content?.work_process?.title || 'My Work Process'}
+                            </h2>
                             <p className="text-gray-300 text-center max-w-2xl mx-auto mb-12">
-                                A systematic approach that ensures quality results and client satisfaction.
+                                {content?.work_process?.description || 'A systematic approach that ensures quality results and client satisfaction.'}
                             </p>
-                            
+
                             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
-                                {workProcess.map((step, index) => (
+                                {(content?.work_process?.steps || workProcess).map((step, index) => (
                                     <div key={index} className="text-center">
                                         <div className="w-12 h-12 rounded-full bg-[#20B2AA] flex items-center justify-center mx-auto mb-4">
                                             <span className="font-bold">{step.number}</span>
@@ -363,23 +429,25 @@ export default function Services({ services }: Props) {
                     {/* CTA Section */}
                     <div className="bg-[#20B2AA] text-white py-16">
                     <div className="max-w-7xl mx-auto px-4 text-center">
-                        <h2 className="text-3xl font-bold mb-4">Ready to Start Your Project?</h2>
+                        <h2 className="text-3xl font-bold mb-4">
+                            {content?.cta?.title || 'Ready to Start Your Project?'}
+                        </h2>
                             <p className="text-white/80 max-w-2xl mx-auto mb-8">
-                                Let's discuss your requirements and create something amazing together.
+                                {content?.cta?.description || 'Let us discuss your requirements and create something amazing together.'}
                             </p>
                             <div className="flex flex-wrap justify-center gap-4">
-                                <Link 
+                                <Link
                                     href="/?section=contact"
                                     className="px-6 py-3 bg-white text-[#20B2AA] font-medium rounded-md hover:bg-gray-100 transition-colors cursor-pointer"
                                 >
-                                    Get Free Consultation
+                                    {content?.cta?.primary_text || 'Get Free Consultation'}
                                 </Link>
-                                <Link 
+                                <Link
                                     href="/projects"
                                     className="px-6 py-3 bg-transparent border border-white text-white font-medium rounded-md hover:bg-white/10 transition-colors"
                                 >
-                                    View Portfolio
-                            </Link>
+                                    {content?.cta?.secondary_text || 'View Portfolio'}
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -387,4 +455,4 @@ export default function Services({ services }: Props) {
             </div>
         </ThemeProvider>
     );
-} 
+}

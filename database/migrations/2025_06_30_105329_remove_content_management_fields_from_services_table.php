@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // These fields are already added in previous migrations
-        // No need to add them again
+        Schema::table('services', function (Blueprint $table) {
+            //
+        });
     }
 
     /**
@@ -20,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // No changes to revert
+        Schema::table('services', function (Blueprint $table) {
+            //
+        });
     }
-}; 
+};

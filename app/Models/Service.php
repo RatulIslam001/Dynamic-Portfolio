@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Schema;
 
 class Service extends Model
 {
@@ -28,7 +29,7 @@ class Service extends Model
         'image_url',
         'is_active',
         'is_featured',
-        'order'
+        'order',
     ];
 
     /**
@@ -43,6 +44,9 @@ class Service extends Model
         'features' => 'array',
         'technologies' => 'array',
         'projects_count' => 'integer',
-        'order' => 'integer'
+        'order' => 'integer',
     ];
+
+
+
 } 

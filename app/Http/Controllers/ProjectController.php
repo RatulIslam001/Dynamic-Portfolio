@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -56,9 +57,29 @@ class ProjectController extends Controller
                     'live_url' => $project->live_url,
                 ];
             });
-        
+
+        // Get profile for navigation items
+        $profile = Profile::first();
+
+        // Prepare profile data for navigation
+        $profileData = null;
+        if ($profile) {
+            $profileData = [
+                'navbar_items' => is_array($profile->navbar_items) ? $profile->navbar_items :
+                    (is_string($profile->navbar_items) ? json_decode($profile->navbar_items, true) : []),
+                'logo' => [
+                    'text' => $profile->logo_text,
+                    'type' => $profile->logo_type,
+                    'icon' => $profile->logo_icon,
+                    'icon_type' => $profile->logo_icon_type,
+                    'color' => $profile->logo_color,
+                ],
+            ];
+        }
+
         return Inertia::render('projects', [
-            'projects' => $projects
+            'projects' => $projects,
+            'profile' => $profileData
         ]);
     }
 

@@ -48,7 +48,9 @@ export function MobileMenu({
     const handleScroll = () => {
       const sections = navItems.map(item => item.href);
       const currentSection = sections.find(section => {
-        const element = document.getElementById(section);
+        // Handle both 'works' and 'projects' sections
+        const elementId = section === 'projects' ? 'works' : section;
+        const element = document.getElementById(elementId);
         if (!element) return false;
         
         const rect = element.getBoundingClientRect();
@@ -184,13 +186,15 @@ export function MobileMenu({
                     variants={itemVariants}
                   >
                     <ScrollLink
-                      to={item.href}
+                      to={item.href === 'works' || item.href === 'projects' ? 'works' : item.href}
                       spy={true}
                       smooth={true}
                       offset={-80}
                       duration={500}
                       className={`flex items-center justify-between text-base font-medium cursor-pointer py-3 px-4 rounded-lg transition-all duration-300 ${
-                        activeSection === item.href 
+                        activeSection === item.href || 
+                        (item.href === 'projects' && activeSection === 'works') || 
+                        (item.href === 'works' && activeSection === 'projects')
                           ? 'text-[#20B2AA] bg-[#E6F7F6] dark:bg-[#20B2AA]/10' 
                           : 'text-gray-800 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800'
                       }`}
@@ -198,11 +202,15 @@ export function MobileMenu({
                     >
                       <span>{item.title}</span>
                       <motion.div
-                        animate={activeSection === item.href ? { x: 0 } : { x: -5 }}
+                        animate={activeSection === item.href || 
+                                (item.href === 'projects' && activeSection === 'works') || 
+                                (item.href === 'works' && activeSection === 'projects') ? { x: 0 } : { x: -5 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
                         <ChevronRight className={`w-4 h-4 ${
-                          activeSection === item.href 
+                          activeSection === item.href || 
+                          (item.href === 'projects' && activeSection === 'works') || 
+                          (item.href === 'works' && activeSection === 'projects')
                             ? 'opacity-100 text-[#20B2AA]' 
                             : 'opacity-50'
                         }`} />

@@ -26,13 +26,40 @@ type Project = {
 
 type Props = {
   projects: Project[];
+  profile?: {
+    navbar_items?: Array<{
+      title: string;
+      href: string;
+    }>;
+    logo?: {
+      text: string;
+      type: string;
+      icon: string;
+      icon_type: string;
+      color: string;
+    };
+  };
 };
 
-export default function Projects({ projects }: Props) {
+export default function Projects({ projects, profile }: Props) {
     const [searchQuery, setSearchQuery] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('All');
     const [filteredProjects, setFilteredProjects] = useState<Project[]>(projects);
     const [projectCount, setProjectCount] = useState(projects.length);
+
+    // Default navigation items (fallback)
+    const defaultNavItems = [
+        { title: 'Home', href: 'home' },
+        { title: 'Services', href: 'services' },
+        { title: 'Works', href: 'works' },
+        { title: 'Skills', href: 'skills' },
+        { title: 'Resume', href: 'resume' },
+        { title: 'Testimonials', href: 'testimonials' },
+        { title: 'Contact', href: 'contact' }
+    ];
+
+    // Use dynamic navigation from profile or fallback to default
+    const navItems = profile?.navbar_items || defaultNavItems;
 
     // Derive categories from projects
     const categories = ['All', ...new Set(projects.map(project => project.category))];
@@ -90,49 +117,44 @@ export default function Projects({ projects }: Props) {
 
                     <NavigationMenu>
                         <NavigationMenuList className="flex gap-8">
-                            {['Home', 'Services', 'Works', 'Skills', 'Resume', 'Testimonials', 'Contact'].map((item, index) => (
-                                <NavigationMenuItem key={item}>
+                            {navItems.map((navItem, index) => (
+                                <NavigationMenuItem key={navItem.title}>
                                     <motion.div
                                         initial={{ opacity: 0, y: -20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: index * 0.1 }}
                                     >
-                                    {item === 'Works' ? (
-                                        <Link
-                                            href="/projects"
-                                            className="text-sm font-medium cursor-pointer text-[#20B2AA] hover:text-[#20B2AA] transition-colors relative group after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#20B2AA] after:rounded-full"
-                                        >
-                                            {item}
-                                        </Link>
-                                    ) : item === 'Home' ? (
-                                        <Link
-                                            href="/"
-                                            className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
-                                        >
-                                            {item}
-                                        </Link>
-                                    ) : item === 'Contact' ? (
-                                        <Link
-                                            href="/contact"
-                                            className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
-                                        >
-                                            {item}
-                                        </Link>
-                                    ) : item === 'Services' ? (
-                                        <Link
-                                            href="/services"
-                                            className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
-                                        >
-                                            {item}
-                                        </Link>
-                                    ) : (
-                                        <Link
-                                            href={`/#${item.toLowerCase()}`}
-                                            className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
-                                        >
-                                            {item}
-                                        </Link>
-                                    )}
+                                    {(() => {
+                                        // Determine the href based on the navigation item
+                                        let href = `/#${navItem.href}`;
+                                        if (navItem.title === 'Home') {
+                                            href = '/';
+                                        } else if (navItem.title === 'Services') {
+                                            href = '/services';
+                                        } else if (navItem.title === 'Works' || navItem.title === 'Projects') {
+                                            href = '/projects';
+                                        } else if (navItem.title === 'Contact') {
+                                            href = '/#contact';
+                                        } else if (navItem.href === 'works' || navItem.href === 'projects') {
+                                            href = '/#works';
+                                        }
+
+                                        // Determine if this is the active page
+                                        const isActive = navItem.title === 'Works' || navItem.title === 'Projects';
+
+                                        return (
+                                            <Link
+                                                href={href}
+                                                className={`text-sm font-medium cursor-pointer transition-colors relative group ${
+                                                    isActive
+                                                        ? 'text-[#20B2AA] hover:text-[#20B2AA] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-[#20B2AA] after:rounded-full'
+                                                        : 'text-gray-600 dark:text-gray-300 hover:text-[#20B2AA]'
+                                                }`}
+                                            >
+                                                {navItem.title}
+                                            </Link>
+                                        );
+                                    })()}
                                     </motion.div>
                                 </NavigationMenuItem>
                             ))}
@@ -142,7 +164,7 @@ export default function Projects({ projects }: Props) {
                     <div className="flex items-center gap-3">
                         <ThemeToggle />
                         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                            <Link href="/contact">
+                            <Link href="/#contact">
                                 <Button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-6 py-2.5 text-sm">
                                     Hire Me
                                 </Button>

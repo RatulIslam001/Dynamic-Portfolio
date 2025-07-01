@@ -79,7 +79,7 @@ export default function ProjectDetail({ project, relatedProjects }: Props) {
                     </Link>
                   ) : item === 'Contact' ? (
                     <Link
-                      href="/contact"
+                      href="/#contact"
                       className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
                     >
                       {item}
@@ -93,7 +93,7 @@ export default function ProjectDetail({ project, relatedProjects }: Props) {
                     </Link>
                   ) : (
                     <Link
-                      href={`/#${item.toLowerCase()}`}
+                      href={`/#${item.toLowerCase() === 'works' ? 'works' : item.toLowerCase()}`}
                       className="text-sm font-medium cursor-pointer text-gray-600 dark:text-gray-300 hover:text-[#20B2AA] transition-colors relative group"
                     >
                       {item}
@@ -108,7 +108,7 @@ export default function ProjectDetail({ project, relatedProjects }: Props) {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link href="/contact">
+              <Link href="/#contact">
                 <Button className="bg-[#20B2AA] hover:bg-[#1a9994] text-white px-6 py-2.5 text-sm">
                   Hire Me
                 </Button>

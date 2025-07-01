@@ -12,11 +12,7 @@ class ProfileSeeder extends Seeder
         Profile::create([
             'full_name' => 'John Doe',
             'title' => 'Full Stack Developer',
-            'bio' => 'Passionate full-stack developer with 5+ years of experience in building modern web applications. Specialized in Laravel, React, and cloud technologies.',
             'about' => 'I am a dedicated full-stack developer who loves turning complex problems into simple, beautiful, and intuitive solutions. With expertise in both front-end and back-end development, I create scalable web applications that provide exceptional user experiences.',
-            'email' => 'john.doe@example.com',
-            'phone' => '+1 (555) 123-4567',
-            'location' => 'New York, USA',
             'avatar' => null,
             'resume' => null,
             'github_url' => 'https://github.com/johndoe',
@@ -24,6 +20,25 @@ class ProfileSeeder extends Seeder
             'twitter_url' => 'https://twitter.com/johndoe',
             'years_experience' => 5,
             'projects_completed' => 50,
+            'is_available' => true,
+            'cta_text' => 'Contact Me',
+            'cta_url' => '#contact',
+            'cta_secondary_text' => 'View Portfolio',
+            'cta_secondary_url' => '#portfolio',
+            'logo_text' => 'Portfolio',
+            'logo_type' => 'text_with_icon',
+            'logo_icon' => 'P',
+            'logo_icon_type' => 'letter',
+            'logo_color' => '#20B2AA',
+            'navbar_items' => json_encode([
+                ['title' => 'Home', 'href' => 'home'],
+                ['title' => 'Services', 'href' => 'services'],
+                ['title' => 'Projects', 'href' => 'projects'],
+                ['title' => 'Skills', 'href' => 'skills'],
+                ['title' => 'Resume', 'href' => 'resume'],
+                ['title' => 'Testimonials', 'href' => 'testimonials'],
+                ['title' => 'Contact', 'href' => 'contact']
+            ]),
         ]);
     }
 } 

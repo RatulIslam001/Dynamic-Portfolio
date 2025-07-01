@@ -1,0 +1,21 @@
+-- Remove all services-related fields from profiles table
+ALTER TABLE `profiles` 
+DROP COLUMN `services_section_badge`,
+DROP COLUMN `services_section_title`,
+DROP COLUMN `services_section_description`,
+DROP COLUMN `services_button_text`,
+DROP COLUMN `services_page_title`,
+DROP COLUMN `services_page_description`,
+DROP COLUMN `services_benefit_1_text`,
+DROP COLUMN `services_benefit_1_icon`,
+DROP COLUMN `services_benefit_2_text`,
+DROP COLUMN `services_benefit_2_icon`,
+DROP COLUMN `services_benefit_3_text`,
+DROP COLUMN `services_benefit_3_icon`,
+DROP COLUMN `work_process_title`,
+DROP COLUMN `work_process_description`,
+DROP COLUMN `work_process_steps`,
+DROP COLUMN `services_cta_title`,
+DROP COLUMN `services_cta_description`,
+DROP COLUMN `services_cta_primary_text`,
+DROP COLUMN `services_cta_secondary_text`;
