@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ResetProjectIds::class,
         \App\Console\Commands\SeedDummyProjects::class,
         \App\Console\Commands\ResetDummyServices::class,
+        \App\Console\Commands\UpdateProfileAvatar::class,
     ];
 
     /**

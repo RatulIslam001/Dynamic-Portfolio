@@ -24,6 +24,28 @@ type Project = {
   live_url?: string;
 };
 
+type Content = {
+  page_title: string;
+  page_description: string;
+  page_badge: string;
+  total_projects_label: string;
+  categories_label: string;
+  technologies_label: string;
+  clients_label: string;
+  search_placeholder: string;
+  all_categories_text: string;
+  projects_section_title: string;
+  cta_title: string;
+  cta_description: string;
+  cta_primary_button: string;
+  cta_secondary_button: string;
+  cta_primary_url: string;
+  cta_secondary_url: string;
+  meta_title?: string;
+  meta_description?: string;
+  meta_keywords?: string;
+};
+
 type Props = {
   projects: Project[];
   profile?: {
@@ -39,11 +61,12 @@ type Props = {
       color: string;
     };
   };
+  content?: Content;
 };
 
-export default function Projects({ projects, profile }: Props) {
+export default function Projects({ projects, profile, content }: Props) {
     const [searchQuery, setSearchQuery] = useState('');
-    const [categoryFilter, setCategoryFilter] = useState('All');
+    const [categoryFilter, setCategoryFilter] = useState(content?.all_categories_text || 'All');
     const [filteredProjects, setFilteredProjects] = useState<Project[]>(projects);
     const [projectCount, setProjectCount] = useState(projects.length);
 
@@ -61,8 +84,12 @@ export default function Projects({ projects, profile }: Props) {
     // Use dynamic navigation from profile or fallback to default
     const navItems = profile?.navbar_items || defaultNavItems;
 
-    // Derive categories from projects
-    const categories = ['All', ...new Set(projects.map(project => project.category))];
+    // Use dynamic categories from admin panel or derive from projects
+    const allCategoriesText = content?.all_categories_text || 'All';
+    const adminCategories = content?.filter_categories || [];
+    const categories = adminCategories.length > 0
+        ? [allCategoriesText, ...adminCategories]
+        : [allCategoriesText, ...new Set(projects.map(project => project.category))];
 
     // Filter projects based on search query and category
     useEffect(() => {
@@ -80,7 +107,7 @@ export default function Projects({ projects, profile }: Props) {
         }
         
         // Filter by category
-        if (categoryFilter !== 'All') {
+        if (categoryFilter !== allCategoriesText) {
             filtered = filtered.filter(project => project.category === categoryFilter);
         }
         
@@ -90,7 +117,7 @@ export default function Projects({ projects, profile }: Props) {
 
     return (
         <ThemeProvider defaultTheme="light" storageKey="portfolio-theme">
-            <Head title="My Projects" />
+            <Head title={content?.meta_title || content?.page_title || "My Projects"} />
 
             <div className="min-h-screen bg-white dark:bg-gray-900">
                 {/* Navigation */}
@@ -200,26 +227,49 @@ export default function Projects({ projects, profile }: Props) {
                             <div className="absolute bottom-0 right-0 w-72 h-72 bg-[#20B2AA] rounded-full filter blur-3xl translate-x-1/2 translate-y-1/2"></div>
                         </div>
                         <div className="max-w-7xl mx-auto px-4 relative z-10">
-                            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">My <span className="text-[#20B2AA]">Projects</span></h1>
+                            <div className="inline-block px-3 py-1 bg-[#20B2AA]/10 text-[#20B2AA] text-sm font-medium rounded-full mb-4">
+                                {content?.page_badge || 'Portfolio'}
+                            </div>
+                            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
+                                {content?.page_title || 'My Projects'}
+                            </h1>
                             <p className="text-gray-600 dark:text-gray-300 text-lg max-w-3xl mx-auto">
-                                A collection of projects showcasing my expertise in web development, mobile 
-                                applications, and user experience design. Each project represents a unique challenge 
-                                and innovative solution.
+                                {content?.page_description || 'A collection of projects showcasing my expertise in web development, mobile applications, and user experience design. Each project represents a unique challenge and innovative solution.'}
                             </p>
                             
                             {/* Stats */}
                             <div className="flex flex-wrap justify-center gap-12 mt-12">
                                 <div className="text-center">
-                                    <p className="text-[#20B2AA] font-bold text-3xl mb-1">40+</p>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Projects Completed</p>
+                                    <p className="text-[#20B2AA] font-bold text-3xl mb-1">
+                                        {content?.stat_total_projects || `${projects.length}+`}
+                                    </p>
+                                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
+                                        {content?.total_projects_label || 'Total Projects'}
+                                    </p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-[#20B2AA] font-bold text-3xl mb-1">30+</p>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Happy Clients</p>
+                                    <p className="text-[#20B2AA] font-bold text-3xl mb-1">
+                                        {content?.stat_categories || (categories.length - 1)}
+                                    </p>
+                                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
+                                        {content?.categories_label || 'Categories'}
+                                    </p>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-[#20B2AA] font-bold text-3xl mb-1">99%</p>
-                                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Success Rate</p>
+                                    <p className="text-[#20B2AA] font-bold text-3xl mb-1">
+                                        {content?.stat_technologies || `${Array.from(new Set(projects.flatMap(p => p.technologies))).length}+`}
+                                    </p>
+                                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
+                                        {content?.technologies_label || 'Technologies'}
+                                    </p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-[#20B2AA] font-bold text-3xl mb-1">
+                                        {content?.stat_clients || `${Array.from(new Set(projects.filter(p => p.client_name).map(p => p.client_name))).length}+`}
+                                    </p>
+                                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
+                                        {content?.clients_label || 'Happy Clients'}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -230,7 +280,9 @@ export default function Projects({ projects, profile }: Props) {
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
                             <div className="flex items-center justify-between w-full">
                                 <div className="flex items-center">
-                                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Browse My Work</h2>
+                                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                                        {content?.projects_section_title || 'Featured Work'}
+                                    </h2>
                                 </div>
                                 <div className="flex items-center">
                                     <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{projectCount} Projects</p>
@@ -258,7 +310,7 @@ export default function Projects({ projects, profile }: Props) {
                         <div className="relative w-full mb-10">
                             <input
                                 type="text"
-                                placeholder="Search projects..."
+                                placeholder={content?.search_placeholder || "Search projects..."}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full px-4 py-3 pl-12 rounded-xl border border-gray-200 dark:border-gray-700 focus:border-[#20B2AA] focus:ring-2 focus:ring-[#20B2AA] focus:ring-opacity-20 outline-none transition-all duration-200 bg-white dark:bg-gray-800 dark:text-white shadow-sm"
@@ -377,26 +429,25 @@ export default function Projects({ projects, profile }: Props) {
                             <div className="absolute top-0 right-0 w-96 h-96 bg-[#20B2AA] rounded-full filter blur-3xl translate-x-1/2 -translate-y-1/2"></div>
                         </div>
                         <div className="max-w-7xl mx-auto px-4 text-center relative z-10">
-                            <h2 className="text-3xl font-bold mb-4">Have a Project in Mind?</h2>
+                            <h2 className="text-3xl font-bold mb-4">
+                                {content?.cta_title || 'Ready to Start Your Project?'}
+                            </h2>
                             <p className="text-gray-300 mb-10 max-w-2xl mx-auto">
-                                Let's collaborate and bring your ideas to life with cutting-edge technology and innovative
-                                solutions tailored to your specific needs.
+                                {content?.cta_description || 'Let\'s collaborate to bring your ideas to life with innovative solutions and exceptional results.'}
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <Link
-                                    href="/?section=contact"
+                                    href={content?.cta_primary_url || '#contact'}
                                     className="px-8 py-3.5 bg-[#20B2AA] hover:bg-[#1a9e98] text-white font-medium rounded-lg w-full sm:w-auto transition-all duration-300 shadow-lg shadow-[#20B2AA]/20"
                                 >
-                                    Start a Project
+                                    {content?.cta_primary_button || 'Start a Project'}
                                 </Link>
-                                <motion.button
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
+                                <Link
+                                    href={content?.cta_secondary_url || '/services'}
                                     className="px-8 py-3.5 border border-gray-700 text-white font-medium rounded-lg hover:border-[#20B2AA] hover:text-[#20B2AA] w-full sm:w-auto transition-all duration-300"
                                 >
-                                    <Download className="w-4 h-4 inline-block mr-2" />
-                                    Download Resume
-                                </motion.button>
+                                    {content?.cta_secondary_button || 'View All Services'}
+                                </Link>
                             </div>
                         </div>
                     </div>

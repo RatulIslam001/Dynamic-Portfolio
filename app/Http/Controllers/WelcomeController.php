@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Service;
 use App\Models\ServicesManagement;
 use App\Models\Project;
+use App\Models\ProjectsManagement;
 use App\Models\Profile;
 use App\Models\Skill;
 use App\Models\Testimonial;
@@ -68,12 +69,27 @@ class WelcomeController extends Controller
             'services_button_text' => $contentManagement->services_button_text,
         ] : $defaultServicesContent;
         
-        // Get featured projects (max 6 as per user preference)
-        $projects = Project::where('status', 'published')
+        // Get projects for home page (always show 6 projects if available)
+        // First, get featured projects
+        $featuredProjects = Project::where('status', 'published')
             ->where('is_featured', true)
             ->orderBy('order')
-            ->take(6)
             ->get();
+
+        // If we have less than 6 featured projects, fill with non-featured ones
+        $projectsNeeded = 6 - $featuredProjects->count();
+
+        if ($projectsNeeded > 0) {
+            $nonFeaturedProjects = Project::where('status', 'published')
+                ->where('is_featured', false)
+                ->orderBy('order')
+                ->take($projectsNeeded)
+                ->get();
+
+            $projects = $featuredProjects->merge($nonFeaturedProjects);
+        } else {
+            $projects = $featuredProjects->take(6);
+        }
         
         // Get featured testimonials
         $testimonials = Testimonial::where('is_featured', true)
@@ -91,6 +107,22 @@ class WelcomeController extends Controller
         // Get experiences
         $experiences = Experience::orderBy('start_date', 'desc')
             ->get();
+
+        // Get projects content management
+        try {
+            $projectsManagement = ProjectsManagement::getOrCreate();
+        } catch (\Exception $e) {
+            \Log::error('Error loading projects content in WelcomeController: ' . $e->getMessage());
+            $projectsManagement = null;
+        }
+
+        // Default content values if projects management record is not available
+        $defaultProjectsContent = [
+            'home_section_badge' => 'Portfolio',
+            'home_section_title' => 'Featured Projects',
+            'home_section_description' => 'Explore my latest work and see how I have helped clients achieve their goals',
+            'home_section_button_text' => 'Explore All Projects',
+        ];
         
         // Transform profile data to ensure proper structure
         $profileData = null;
@@ -106,7 +138,7 @@ class WelcomeController extends Controller
                 'cta_secondary_text' => $profile->cta_secondary_text,
                 'cta_url' => $profile->cta_url,
                 'cta_secondary_url' => $profile->cta_secondary_url,
-                'avatar' => $profile->avatar,
+                'avatar' => $profile->avatar ? Storage::url($profile->avatar) : null,
                 'logo' => [
                     'text' => $profile->logo_text,
                     'type' => $profile->logo_type,
@@ -142,12 +174,15 @@ class WelcomeController extends Controller
                 'description' => $servicesContent['services_section_description'],
                 'button_text' => $servicesContent['services_button_text'],
             ],
-            'projectsContent' => [
-                'badge' => 'Portfolio',
-                'title' => 'Featured Projects',
-                'description' => 'Explore some of my recent work that showcases my skills and expertise.',
-                'button_text' => 'Explore All Projects',
-            ],
+            'projectsContent' => $projectsManagement ? [
+                'badge' => $projectsManagement->home_section_badge,
+                'title' => $projectsManagement->home_section_title,
+                'description' => $projectsManagement->home_section_description,
+                'button_text' => $projectsManagement->home_section_button_text,
+                'filter_categories' => $projectsManagement->filter_categories ?: ['Web Development', 'E-commerce', 'Mobile App', 'UI/UX Design', 'Branding'],
+            ] : array_merge($defaultProjectsContent, [
+                'filter_categories' => ['Web Development', 'E-commerce', 'Mobile App', 'UI/UX Design', 'Branding']
+            ]),
             'testimonialsContent' => [
                 'badge' => 'Testimonials',
                 'title' => 'What Clients Say',

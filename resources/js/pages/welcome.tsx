@@ -770,14 +770,14 @@ export default function Welcome({
                             >
                                 {projectsContent.title}
                             </motion.h2>
-                            <motion.p 
+                            <motion.p
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: 0.4 }}
                                 className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-base sm:text-lg px-2"
                             >
-                                Explore my latest work and see how I've helped clients achieve their goals
+                                {projectsContent.description}
                             </motion.p>
                         </motion.div>
 
@@ -804,16 +804,16 @@ export default function Welcome({
                                 All
                             </motion.button>
 
-                            {/* Predefined categories for better UI and organization */}
-                            {['Web Development', 'E-commerce', 'Mobile App', 'UI/UX Design', 'Branding'].map((category) => (
+                            {/* Dynamic categories from admin panel */}
+                            {(projectsContent?.filter_categories || ['Web Development', 'E-commerce', 'Mobile App', 'UI/UX Design', 'Branding']).map((category) => (
                                 <motion.button
                                     key={category}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => setActiveFilter(category)}
                                     className={`px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                                        activeFilter === category 
-                                            ? 'bg-[#20B2AA] text-white' 
+                                        activeFilter === category
+                                            ? 'bg-[#20B2AA] text-white'
                                             : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                                     }`}
                                 >

@@ -52,6 +52,7 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->name('admin.')->group(
     Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
     Route::delete('/projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
     Route::post('/projects/{project}/toggle-featured', [ProjectController::class, 'toggleFeatured'])->name('projects.toggle-featured');
+    Route::post('/projects/content', [ProjectController::class, 'updateContent'])->name('projects.content.update');
 
     // Skills routes
     Route::get('/skills', [SkillController::class, 'index'])->name('skills');

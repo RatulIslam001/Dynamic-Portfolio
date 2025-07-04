@@ -6,6 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { Plus, Search, Star, Edit2, Trash2, Calendar, Link as LinkIcon, MoreHorizontal, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
@@ -40,8 +43,35 @@ interface Project {
     technologies: string[];
 }
 
+interface Content {
+    // Home page projects section
+    home_section_badge: string;
+    home_section_title: string;
+    home_section_description: string;
+    home_section_button_text: string;
+
+    // Projects page content
+    page_title: string;
+    page_description: string;
+    page_badge: string;
+    total_projects_label: string;
+    categories_label: string;
+    technologies_label: string;
+    clients_label: string;
+    search_placeholder: string;
+    all_categories_text: string;
+    projects_section_title: string;
+    cta_title: string;
+    cta_description: string;
+    cta_primary_button: string;
+    cta_secondary_button: string;
+    cta_primary_url: string;
+    cta_secondary_url: string;
+}
+
 interface Props {
     projects: Project[];
+    content?: Content;
 }
 
 type FormDataConvertible = string | number | boolean | null | undefined | File | Blob | Date | FormDataConvertible[];
@@ -60,7 +90,7 @@ interface FormData {
     image: File | string | null;
 }
 
-export default function Projects({ projects: initialProjects }: Props) {
+export default function Projects({ projects: initialProjects, content }: Props) {
     const [projects, setProjects] = useState<Project[]>(initialProjects);
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -94,6 +124,40 @@ export default function Projects({ projects: initialProjects }: Props) {
         completion_date: '',
         technologies: [],
         image: null,
+    });
+
+    // Content management form
+    const contentForm = useForm({
+        // Home page projects section
+        home_section_badge: content?.home_section_badge || 'Portfolio',
+        home_section_title: content?.home_section_title || 'Featured Projects',
+        home_section_description: content?.home_section_description || 'Explore my latest work and see how I have helped clients achieve their goals',
+        home_section_button_text: content?.home_section_button_text || 'Explore All Projects',
+
+        // Projects page content
+        page_title: content?.page_title || 'My Projects',
+        page_description: content?.page_description || 'Explore my portfolio of innovative projects that showcase creativity, technical expertise, and problem-solving skills.',
+        page_badge: content?.page_badge || 'Portfolio',
+        total_projects_label: content?.total_projects_label || 'Total Projects',
+        categories_label: content?.categories_label || 'Categories',
+        technologies_label: content?.technologies_label || 'Technologies',
+        clients_label: content?.clients_label || 'Happy Clients',
+        search_placeholder: content?.search_placeholder || 'Search projects...',
+        all_categories_text: content?.all_categories_text || 'All Categories',
+        projects_section_title: content?.projects_section_title || 'Featured Work',
+        cta_title: content?.cta_title || 'Ready to Start Your Project?',
+        cta_description: content?.cta_description || 'Let\'s collaborate to bring your ideas to life with innovative solutions and exceptional results.',
+        cta_primary_button: content?.cta_primary_button || 'Start a Project',
+        cta_secondary_button: content?.cta_secondary_button || 'View All Services',
+        cta_primary_url: content?.cta_primary_url || '#contact',
+        cta_secondary_url: content?.cta_secondary_url || '/services',
+
+        // Filter categories and custom statistics
+        filter_categories: content?.filter_categories || ['Web Development', 'E-commerce', 'Mobile App', 'UI/UX Design', 'Branding'],
+        stat_total_projects: content?.stat_total_projects || '',
+        stat_categories: content?.stat_categories || '',
+        stat_technologies: content?.stat_technologies || '',
+        stat_clients: content?.stat_clients || '',
     });
 
     const filteredProjects = projects.filter(project => {
@@ -216,6 +280,16 @@ export default function Projects({ projects: initialProjects }: Props) {
         });
     };
 
+    // Handle content form submission
+    const handleContentSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        contentForm.post(route('admin.projects.content.update'), {
+            onSuccess: () => {
+                toast.success('Projects content updated successfully');
+            },
+        });
+    };
+
     return (
         <AdminLayout>
             <Head title="Projects - Portfolio Admin" />
@@ -251,7 +325,16 @@ export default function Projects({ projects: initialProjects }: Props) {
                     </div>
                 </motion.div>
 
-                {/* Search and Filters */}
+                {/* Tabs for Projects Management and Content Management */}
+                <Tabs defaultValue="projects" className="w-full">
+                    <TabsList className="mb-6 border border-gray-200">
+                        <TabsTrigger value="projects" className="border-r border-gray-200">Projects Management</TabsTrigger>
+                        <TabsTrigger value="content" className="bg-red-50">Content Management</TabsTrigger>
+                    </TabsList>
+
+                    {/* Projects Management Tab */}
+                    <TabsContent value="projects" className="space-y-6">
+                        {/* Search and Filters */}
                 <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -487,6 +570,376 @@ export default function Projects({ projects: initialProjects }: Props) {
                         </table>
                     </div>
                 </motion.div>
+                    </TabsContent>
+
+                    {/* Content Management Tab */}
+                    <TabsContent value="content" className="space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Projects Page Content Management</CardTitle>
+                                <CardDescription>
+                                    Manage the content and text displayed on the projects page.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <form onSubmit={handleContentSubmit} className="space-y-6">
+                                    {/* Home Page Projects Section */}
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Home Page Projects Section</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="home_section_badge">Section Badge</Label>
+                                                <Input
+                                                    id="home_section_badge"
+                                                    value={contentForm.data.home_section_badge}
+                                                    onChange={e => contentForm.setData('home_section_badge', e.target.value)}
+                                                    placeholder="Portfolio"
+                                                />
+                                                {contentForm.errors.home_section_badge && (
+                                                    <p className="text-sm text-red-500">{contentForm.errors.home_section_badge}</p>
+                                                )}
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="home_section_title">Section Title</Label>
+                                                <Input
+                                                    id="home_section_title"
+                                                    value={contentForm.data.home_section_title}
+                                                    onChange={e => contentForm.setData('home_section_title', e.target.value)}
+                                                    placeholder="Featured Projects"
+                                                />
+                                                {contentForm.errors.home_section_title && (
+                                                    <p className="text-sm text-red-500">{contentForm.errors.home_section_title}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="home_section_description">Section Description</Label>
+                                            <Textarea
+                                                id="home_section_description"
+                                                value={contentForm.data.home_section_description}
+                                                onChange={e => contentForm.setData('home_section_description', e.target.value)}
+                                                placeholder="Explore my latest work and see how I have helped clients achieve their goals"
+                                                rows={3}
+                                            />
+                                            {contentForm.errors.home_section_description && (
+                                                <p className="text-sm text-red-500">{contentForm.errors.home_section_description}</p>
+                                            )}
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="home_section_button_text">Button Text</Label>
+                                            <Input
+                                                id="home_section_button_text"
+                                                value={contentForm.data.home_section_button_text}
+                                                onChange={e => contentForm.setData('home_section_button_text', e.target.value)}
+                                                placeholder="Explore All Projects"
+                                            />
+                                            {contentForm.errors.home_section_button_text && (
+                                                <p className="text-sm text-red-500">{contentForm.errors.home_section_button_text}</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Page Header Section */}
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Projects Page Header</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="page_title">Page Title</Label>
+                                                <Input
+                                                    id="page_title"
+                                                    value={contentForm.data.page_title}
+                                                    onChange={e => contentForm.setData('page_title', e.target.value)}
+                                                    placeholder="My Projects"
+                                                />
+                                                {contentForm.errors.page_title && (
+                                                    <p className="text-sm text-red-500">{contentForm.errors.page_title}</p>
+                                                )}
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="page_badge">Page Badge</Label>
+                                                <Input
+                                                    id="page_badge"
+                                                    value={contentForm.data.page_badge}
+                                                    onChange={e => contentForm.setData('page_badge', e.target.value)}
+                                                    placeholder="Portfolio"
+                                                />
+                                                {contentForm.errors.page_badge && (
+                                                    <p className="text-sm text-red-500">{contentForm.errors.page_badge}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="page_description">Page Description</Label>
+                                            <Textarea
+                                                id="page_description"
+                                                value={contentForm.data.page_description}
+                                                onChange={e => contentForm.setData('page_description', e.target.value)}
+                                                placeholder="Explore my portfolio of innovative projects..."
+                                                rows={3}
+                                            />
+                                            {contentForm.errors.page_description && (
+                                                <p className="text-sm text-red-500">{contentForm.errors.page_description}</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Custom Statistics Section */}
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Custom Statistics Numbers</h3>
+                                        <p className="text-sm text-gray-600">Leave empty to use auto-calculated values</p>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="stat_total_projects">Total Projects Number</Label>
+                                                <Input
+                                                    id="stat_total_projects"
+                                                    value={contentForm.data.stat_total_projects}
+                                                    onChange={e => contentForm.setData('stat_total_projects', e.target.value)}
+                                                    placeholder="12+ (or leave empty for auto)"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="stat_categories">Categories Number</Label>
+                                                <Input
+                                                    id="stat_categories"
+                                                    value={contentForm.data.stat_categories}
+                                                    onChange={e => contentForm.setData('stat_categories', e.target.value)}
+                                                    placeholder="5 (or leave empty for auto)"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="stat_technologies">Technologies Number</Label>
+                                                <Input
+                                                    id="stat_technologies"
+                                                    value={contentForm.data.stat_technologies}
+                                                    onChange={e => contentForm.setData('stat_technologies', e.target.value)}
+                                                    placeholder="28+ (or leave empty for auto)"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="stat_clients">Clients Number</Label>
+                                                <Input
+                                                    id="stat_clients"
+                                                    value={contentForm.data.stat_clients}
+                                                    onChange={e => contentForm.setData('stat_clients', e.target.value)}
+                                                    placeholder="12+ (or leave empty for auto)"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Statistics Labels Section */}
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Statistics Labels</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="total_projects_label">Total Projects Label</Label>
+                                                <Input
+                                                    id="total_projects_label"
+                                                    value={contentForm.data.total_projects_label}
+                                                    onChange={e => contentForm.setData('total_projects_label', e.target.value)}
+                                                    placeholder="Total Projects"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="categories_label">Categories Label</Label>
+                                                <Input
+                                                    id="categories_label"
+                                                    value={contentForm.data.categories_label}
+                                                    onChange={e => contentForm.setData('categories_label', e.target.value)}
+                                                    placeholder="Categories"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="technologies_label">Technologies Label</Label>
+                                                <Input
+                                                    id="technologies_label"
+                                                    value={contentForm.data.technologies_label}
+                                                    onChange={e => contentForm.setData('technologies_label', e.target.value)}
+                                                    placeholder="Technologies"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="clients_label">Clients Label</Label>
+                                                <Input
+                                                    id="clients_label"
+                                                    value={contentForm.data.clients_label}
+                                                    onChange={e => contentForm.setData('clients_label', e.target.value)}
+                                                    placeholder="Happy Clients"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Filter Categories Section */}
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Filter Categories</h3>
+                                        <div className="space-y-4">
+                                            <div className="space-y-2">
+                                                <Label>Filter Categories (Used on both Home and Projects pages)</Label>
+                                                <div className="space-y-2">
+                                                    {contentForm.data.filter_categories.map((category, index) => (
+                                                        <div key={index} className="flex items-center gap-2">
+                                                            <Input
+                                                                value={category}
+                                                                onChange={(e) => {
+                                                                    const newCategories = [...contentForm.data.filter_categories];
+                                                                    newCategories[index] = e.target.value;
+                                                                    contentForm.setData('filter_categories', newCategories);
+                                                                }}
+                                                                placeholder="Category name"
+                                                                className="flex-1"
+                                                            />
+                                                            <Button
+                                                                type="button"
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() => {
+                                                                    const newCategories = contentForm.data.filter_categories.filter((_, i) => i !== index);
+                                                                    contentForm.setData('filter_categories', newCategories);
+                                                                }}
+                                                                className="text-red-600 hover:text-red-700"
+                                                            >
+                                                                Remove
+                                                            </Button>
+                                                        </div>
+                                                    ))}
+                                                    <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => {
+                                                            contentForm.setData('filter_categories', [...contentForm.data.filter_categories, '']);
+                                                        }}
+                                                        className="w-full"
+                                                    >
+                                                        Add Category
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Filter Section */}
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Filter Section</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="search_placeholder">Search Placeholder</Label>
+                                                <Input
+                                                    id="search_placeholder"
+                                                    value={contentForm.data.search_placeholder}
+                                                    onChange={e => contentForm.setData('search_placeholder', e.target.value)}
+                                                    placeholder="Search projects..."
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="all_categories_text">All Categories Text</Label>
+                                                <Input
+                                                    id="all_categories_text"
+                                                    value={contentForm.data.all_categories_text}
+                                                    onChange={e => contentForm.setData('all_categories_text', e.target.value)}
+                                                    placeholder="All Categories"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Projects Section */}
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Projects Section</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="projects_section_title">Section Title</Label>
+                                                <Input
+                                                    id="projects_section_title"
+                                                    value={contentForm.data.projects_section_title}
+                                                    onChange={e => contentForm.setData('projects_section_title', e.target.value)}
+                                                    placeholder="Featured Work"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Call to Action Section */}
+                                    <div className="space-y-4">
+                                        <h3 className="text-lg font-medium">Call to Action Section</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="cta_title">CTA Title</Label>
+                                                <Input
+                                                    id="cta_title"
+                                                    value={contentForm.data.cta_title}
+                                                    onChange={e => contentForm.setData('cta_title', e.target.value)}
+                                                    placeholder="Ready to Start Your Project?"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="cta_description">CTA Description</Label>
+                                            <Textarea
+                                                id="cta_description"
+                                                value={contentForm.data.cta_description}
+                                                onChange={e => contentForm.setData('cta_description', e.target.value)}
+                                                placeholder="Let's collaborate to bring your ideas to life..."
+                                                rows={3}
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="cta_primary_button">Primary Button Text</Label>
+                                                <Input
+                                                    id="cta_primary_button"
+                                                    value={contentForm.data.cta_primary_button}
+                                                    onChange={e => contentForm.setData('cta_primary_button', e.target.value)}
+                                                    placeholder="Start a Project"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="cta_secondary_button">Secondary Button Text</Label>
+                                                <Input
+                                                    id="cta_secondary_button"
+                                                    value={contentForm.data.cta_secondary_button}
+                                                    onChange={e => contentForm.setData('cta_secondary_button', e.target.value)}
+                                                    placeholder="View All Services"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="cta_primary_url">Primary Button URL</Label>
+                                                <Input
+                                                    id="cta_primary_url"
+                                                    value={contentForm.data.cta_primary_url}
+                                                    onChange={e => contentForm.setData('cta_primary_url', e.target.value)}
+                                                    placeholder="#contact"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="cta_secondary_url">Secondary Button URL</Label>
+                                                <Input
+                                                    id="cta_secondary_url"
+                                                    value={contentForm.data.cta_secondary_url}
+                                                    onChange={e => contentForm.setData('cta_secondary_url', e.target.value)}
+                                                    placeholder="/services"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div className="flex justify-end">
+                                        <Button
+                                            type="submit"
+                                            className="bg-[#20B2AA] hover:bg-[#1a9994]"
+                                            disabled={contentForm.processing}
+                                        >
+                                            {contentForm.processing ? 'Saving...' : 'Save Content'}
+                                        </Button>
+                                    </div>
+                                </form>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
             </div>
 
             {/* Add Project Dialog */}
