@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use App\Models\ProjectsManagement;
+use App\Models\Project;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -360,5 +361,209 @@ class ProjectsManagementTest extends TestCase
                 ->has('projectsContent')
                 ->where('projectsContent.description', 'This is a custom dynamic description from admin panel')
         );
+    }
+
+    public function test_home_page_shows_first_6_projects_in_same_order_as_projects_page()
+    {
+        // Create 10 test projects to ensure we have enough data
+        for ($i = 1; $i <= 10; $i++) {
+            Project::create([
+                'title' => "Test Project $i",
+                'description' => "Description for project $i",
+                'category' => 'Web Development',
+                'status' => 'published',
+                'is_featured' => false,
+            ]);
+        }
+
+        // Get home page response
+        $homeResponse = $this->get('/');
+        $homeResponse->assertOk();
+
+        // Get projects page response
+        $projectsResponse = $this->get('/projects');
+        $projectsResponse->assertOk();
+
+        // Extract project IDs from both pages
+        $homeProjects = $homeResponse->viewData('page')['props']['projects'];
+        $projectsPageProjects = $projectsResponse->viewData('page')['props']['projects'];
+
+        // Home page should show exactly 6 projects
+        $this->assertCount(6, $homeProjects);
+
+        // Home page should show the first 6 projects from projects page in same order
+        $firstSixProjectsFromProjectsPage = array_slice($projectsPageProjects, 0, 6);
+
+        for ($i = 0; $i < 6; $i++) {
+            $this->assertEquals(
+                $firstSixProjectsFromProjectsPage[$i]['id'],
+                $homeProjects[$i]['id'],
+                "Project at position $i should be the same on both pages"
+            );
+        }
+    }
+
+    public function test_home_page_project_images_are_properly_formatted()
+    {
+        // Create a test project with an image
+        $project = Project::create([
+            'title' => 'Test Project with Image',
+            'description' => 'A test project',
+            'category' => 'Web Development',
+            'status' => 'published',
+            'is_featured' => false,
+            'image' => 'projects/test-image.jpg', // Raw database path
+        ]);
+
+        // Get home page response
+        $response = $this->get('/');
+        $response->assertOk();
+
+        // Extract project data from home page
+        $homeProjects = $response->viewData('page')['props']['projects'];
+
+        // Find our test project
+        $testProject = collect($homeProjects)->firstWhere('id', $project->id);
+
+        $this->assertNotNull($testProject, 'Test project should be found on home page');
+
+        // Verify that the image URL is properly formatted with Storage::url()
+        $this->assertEquals(
+            '/storage/projects/test-image.jpg',
+            $testProject['image'],
+            'Project image should be formatted with Storage::url()'
+        );
+
+        // Verify that projects without images have null image value
+        $projectWithoutImage = Project::create([
+            'title' => 'Project without Image',
+            'description' => 'A test project without image',
+            'category' => 'Web Development',
+            'status' => 'published',
+            'is_featured' => false,
+            'image' => null,
+        ]);
+
+        $response = $this->get('/');
+        $homeProjects = $response->viewData('page')['props']['projects'];
+        $testProjectNoImage = collect($homeProjects)->firstWhere('id', $projectWithoutImage->id);
+
+        $this->assertNull(
+            $testProjectNoImage['image'],
+            'Project without image should have null image value'
+        );
+    }
+
+    public function test_project_update_with_image_upload_works()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        // Create a test project
+        $project = Project::create([
+            'title' => 'Original Project',
+            'description' => 'Original description',
+            'category' => 'Web Development',
+            'status' => 'draft',
+            'is_featured' => false,
+        ]);
+
+        // Create a fake file (simulating an image)
+        $fakeImage = \Illuminate\Http\UploadedFile::fake()->create('test-project.jpg', 100, 'image/jpeg');
+
+        // Update the project with new data and image
+        $response = $this->put(route('admin.projects.update', $project), [
+            'title' => 'Updated Project Title',
+            'description' => 'Updated description',
+            'category' => 'UI/UX Design',
+            'status' => 'published',
+            'is_featured' => true,
+            'client_name' => 'Test Client',
+            'project_url' => 'https://example.com',
+            'completion_date' => '2024-01-15',
+            'technologies' => ['React', 'Laravel'],
+            'image' => $fakeImage,
+        ]);
+
+        // Assert the response is successful
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        // Refresh the project from database
+        $project->refresh();
+
+        // Assert the project was updated correctly
+        $this->assertEquals('Updated Project Title', $project->title);
+        $this->assertEquals('Updated description', $project->description);
+        $this->assertEquals('UI/UX Design', $project->category);
+        $this->assertEquals('published', $project->status);
+        $this->assertTrue($project->is_featured);
+        $this->assertEquals('Test Client', $project->client_name);
+        $this->assertEquals('https://example.com', $project->project_url);
+        $this->assertEquals(['React', 'Laravel'], $project->technologies);
+
+        // Assert the image was uploaded and stored
+        $this->assertNotNull($project->image);
+        $this->assertStringContainsString('projects/', $project->image);
+
+        // Assert the image file exists in storage
+        $this->assertTrue(\Storage::disk('public')->exists($project->image));
+    }
+
+    public function test_project_update_with_method_spoofing_works()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        // Create a test project
+        $project = Project::create([
+            'title' => 'Original Project',
+            'description' => 'Original description',
+            'category' => 'Web Development',
+            'status' => 'draft',
+            'is_featured' => false,
+        ]);
+
+        // Create a fake file (simulating an image)
+        $fakeImage = \Illuminate\Http\UploadedFile::fake()->create('test-project.jpg', 100, 'image/jpeg');
+
+        // Update the project using POST with _method=PUT (method spoofing)
+        $response = $this->post(route('admin.projects.update', $project), [
+            '_method' => 'PUT', // Method spoofing
+            'title' => 'Updated via Method Spoofing',
+            'description' => 'Updated with method spoofing',
+            'category' => 'UI/UX Design',
+            'status' => 'published',
+            'is_featured' => true,
+            'client_name' => 'Test Client',
+            'project_url' => 'https://example.com',
+            'completion_date' => '2024-01-15',
+            'technologies' => ['React', 'Laravel'],
+            'image' => $fakeImage,
+        ]);
+
+        // Assert the response is successful
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        // Refresh the project from database
+        $project->refresh();
+
+        // Assert the project was updated correctly
+        $this->assertEquals('Updated via Method Spoofing', $project->title);
+        $this->assertEquals('Updated with method spoofing', $project->description);
+        $this->assertEquals('UI/UX Design', $project->category);
+        $this->assertEquals('published', $project->status);
+        $this->assertTrue($project->is_featured);
+        $this->assertEquals('Test Client', $project->client_name);
+        $this->assertEquals('https://example.com', $project->project_url);
+        $this->assertEquals(['React', 'Laravel'], $project->technologies);
+
+        // Assert the image was uploaded and stored
+        $this->assertNotNull($project->image);
+        $this->assertStringContainsString('projects/', $project->image);
+
+        // Assert the image file exists in storage
+        $this->assertTrue(\Storage::disk('public')->exists($project->image));
     }
 }

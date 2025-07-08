@@ -69,27 +69,27 @@ class WelcomeController extends Controller
             'services_button_text' => $contentManagement->services_button_text,
         ] : $defaultServicesContent;
         
-        // Get projects for home page (always show 6 projects if available)
-        // First, get featured projects
-        $featuredProjects = Project::where('status', 'published')
-            ->where('is_featured', true)
-            ->orderBy('order')
-            ->get();
-
-        // If we have less than 6 featured projects, fill with non-featured ones
-        $projectsNeeded = 6 - $featuredProjects->count();
-
-        if ($projectsNeeded > 0) {
-            $nonFeaturedProjects = Project::where('status', 'published')
-                ->where('is_featured', false)
-                ->orderBy('order')
-                ->take($projectsNeeded)
-                ->get();
-
-            $projects = $featuredProjects->merge($nonFeaturedProjects);
-        } else {
-            $projects = $featuredProjects->take(6);
-        }
+        // Get projects for home page (show first 6 projects in same order as projects page)
+        $projects = Project::where('status', 'published')
+            ->orderBy('id')
+            ->take(6)
+            ->get()
+            ->map(function ($project) {
+                return [
+                    'id' => $project->id,
+                    'title' => $project->title,
+                    'description' => $project->description,
+                    'image' => $project->image ? Storage::url($project->image) : null,
+                    'category' => $project->category,
+                    'status' => $project->status,
+                    'is_featured' => $project->is_featured,
+                    'completion_date' => $project->formatted_date,
+                    'client_name' => $project->client_name,
+                    'project_url' => $project->project_url,
+                    'technologies' => $project->technologies,
+                    'github_url' => $project->github_url,
+                ];
+            });
         
         // Get featured testimonials
         $testimonials = Testimonial::where('is_featured', true)

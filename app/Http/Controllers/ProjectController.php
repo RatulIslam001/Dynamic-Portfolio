@@ -29,6 +29,7 @@ class ProjectController extends Controller
                         'completion_date' => $project->formatted_date,
                         'client_name' => $project->client_name,
                         'project_url' => $project->project_url,
+                        'github_url' => $project->github_url,
                         'technologies' => $project->technologies,
                     ];
                 });
@@ -155,7 +156,6 @@ class ProjectController extends Controller
                         'project_url' => $project->project_url,
                         'technologies' => $project->technologies,
                         'github_url' => $project->github_url,
-                        'live_url' => $project->live_url,
                     ];
                 });
 
@@ -261,6 +261,7 @@ class ProjectController extends Controller
             'is_featured' => 'boolean',
             'client_name' => 'nullable|string|max:255',
             'project_url' => 'nullable|url|max:255',
+            'github_url' => 'nullable|url|max:255',
             'completion_date' => 'nullable|date',
             'technologies' => 'nullable|array',
             'image' => 'nullable|image|max:2048',
@@ -285,6 +286,7 @@ class ProjectController extends Controller
             'is_featured' => 'sometimes|boolean',
             'client_name' => 'nullable|string|max:255',
             'project_url' => 'nullable|url|max:255',
+            'github_url' => 'nullable|url|max:255',
             'completion_date' => 'nullable|date',
             'technologies' => 'nullable|array',
             'image' => 'nullable|image|max:2048',
@@ -342,7 +344,6 @@ class ProjectController extends Controller
             'project_url' => $project->project_url,
             'technologies' => $project->technologies,
             'github_url' => $project->github_url,
-            'live_url' => $project->live_url,
         ];
         
         // Get related projects (same category, excluding current)

@@ -21,7 +21,6 @@ class Project extends Model
         'technologies',
         'image',
         'github_url',
-        'live_url',
         'order',
         'is_featured',
         'status',

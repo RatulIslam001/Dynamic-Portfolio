@@ -4,17 +4,58 @@ import AdminLayout from '@/layouts/admin-layout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter
+} from '@/components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Plus, Search, Star, Edit2, Trash2, Calendar, Link as LinkIcon, MoreHorizontal, Eye } from 'lucide-react';
+import {
+    Plus,
+    Search,
+    Star,
+    Edit2,
+    Trash2,
+    Calendar,
+    Link as LinkIcon,
+    MoreHorizontal,
+    Eye,
+    Grid,
+    List
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 import DeleteConfirmation from '@/components/ui/delete-confirmation';
 import { motion } from 'framer-motion';
+import Combobox from '@/components/ui/combobox';
+import TagInput from '@/components/ui/tag-input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { ProjectManagementGrid } from '@/components/ui/project-management-grid';
 
 const categoryOptions = [
     'Web Design',
@@ -40,6 +81,7 @@ interface Project {
     completion_date: string;
     client_name: string | null;
     project_url: string | null;
+    github_url: string | null;
     technologies: string[];
 }
 
@@ -67,6 +109,13 @@ interface Content {
     cta_secondary_button: string;
     cta_primary_url: string;
     cta_secondary_url: string;
+
+    // Filter categories and statistics
+    filter_categories: string[];
+    stat_total_projects: string;
+    stat_categories: string;
+    stat_technologies: string;
+    stat_clients: string;
 }
 
 interface Props {
@@ -74,10 +123,7 @@ interface Props {
     content?: Content;
 }
 
-type FormDataConvertible = string | number | boolean | null | undefined | File | Blob | Date | FormDataConvertible[];
-
-interface FormData {
-    [key: string]: FormDataConvertible;
+interface ProjectFormData {
     title: string;
     description: string;
     category: string;
@@ -85,9 +131,11 @@ interface FormData {
     is_featured: boolean;
     client_name: string;
     project_url: string;
+    github_url: string;
     completion_date: string;
     technologies: string[];
     image: File | string | null;
+    [key: string]: any;
 }
 
 export default function Projects({ projects: initialProjects, content }: Props) {
@@ -99,8 +147,25 @@ export default function Projects({ projects: initialProjects, content }: Props) 
     const [selectedStatus, setSelectedStatus] = useState<string>('All Status');
     const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
     const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+    const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
 
-    const form = useForm<FormData>({
+    // Get all available categories (static + dynamic + existing project categories)
+    const getAllCategories = () => {
+        const staticCategories = [...categoryOptions];
+        const dynamicCategories = content?.filter_categories || [];
+        const existingCategories = [...new Set(projects.map(p => p.category))];
+
+        // Combine all categories and remove duplicates
+        const allCategories = [...new Set([
+            ...staticCategories,
+            ...dynamicCategories,
+            ...existingCategories
+        ])].filter(Boolean); // Remove empty strings
+
+        return allCategories.sort();
+    };
+
+    const form = useForm<ProjectFormData>({
         title: '',
         description: '',
         category: '',
@@ -108,12 +173,13 @@ export default function Projects({ projects: initialProjects, content }: Props) 
         is_featured: false,
         client_name: '',
         project_url: '',
+        github_url: '',
         completion_date: '',
         technologies: [],
         image: null,
     });
 
-    const editForm = useForm<FormData>({
+    const editForm = useForm<ProjectFormData>({
         title: '',
         description: '',
         category: '',
@@ -121,6 +187,7 @@ export default function Projects({ projects: initialProjects, content }: Props) 
         is_featured: false,
         client_name: '',
         project_url: '',
+        github_url: '',
         completion_date: '',
         technologies: [],
         image: null,
@@ -169,12 +236,50 @@ export default function Projects({ projects: initialProjects, content }: Props) 
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        form.post(route('admin.projects.store'), {
+
+        // Create FormData for file upload (same pattern as services and edit form)
+        const formData = new FormData();
+
+        // Append all form fields
+        formData.append('title', form.data.title);
+        formData.append('description', form.data.description || '');
+        formData.append('category', form.data.category);
+        formData.append('status', form.data.status);
+        formData.append('is_featured', form.data.is_featured ? '1' : '0');
+        formData.append('client_name', form.data.client_name || '');
+        formData.append('project_url', form.data.project_url || '');
+        formData.append('github_url', form.data.github_url || '');
+        formData.append('completion_date', form.data.completion_date || '');
+
+        // Handle technologies array
+        if (form.data.technologies && form.data.technologies.length > 0) {
+            form.data.technologies.forEach((tech, index) => {
+                formData.append(`technologies[${index}]`, tech);
+            });
+        }
+
+        // Handle image file
+        if (form.data.image && form.data.image instanceof File) {
+            formData.append('image', form.data.image);
+        }
+
+        // Use router.post with FormData
+        router.post(route('admin.projects.store'), formData, {
+            forceFormData: true,
             onSuccess: () => {
                 setIsAddDialogOpen(false);
                 form.reset();
                 toast.success('Project created successfully');
+
+                // Reload the page to get fresh data
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             },
+            onError: (errors) => {
+                console.error('Create error:', errors);
+                toast.error('Failed to create project. Please check the form for errors.');
+            }
         });
     };
 
@@ -190,7 +295,9 @@ export default function Projects({ projects: initialProjects, content }: Props) 
             await fetch(route('admin.projects.destroy', { project: projectToDelete.id }), {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'X-CSRF-TOKEN': document
+                        .querySelector('meta[name="csrf-token"]')
+                        ?.getAttribute('content') || '',
                 },
             });
             setProjects(projects.filter(p => p.id !== projectToDelete.id));
@@ -208,7 +315,9 @@ export default function Projects({ projects: initialProjects, content }: Props) 
             await fetch(route('admin.projects.toggle-featured', { project: project.id }), {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'X-CSRF-TOKEN': document
+                        .querySelector('meta[name="csrf-token"]')
+                        ?.getAttribute('content') || '',
                 },
             });
             setProjects(projects.map(p => 
@@ -230,53 +339,65 @@ export default function Projects({ projects: initialProjects, content }: Props) 
             is_featured: project.is_featured,
             client_name: project.client_name ?? '',
             project_url: project.project_url ?? '',
+            github_url: project.github_url ?? '',
             completion_date: project.completion_date,
             technologies: project.technologies,
             image: project.image,
-        } as FormData);
+        } as any);
     };
 
     const handleUpdate = (e: React.FormEvent) => {
         e.preventDefault();
         if (!editingProject) return;
 
+        // Create FormData for file upload (same pattern as services)
         const formData = new FormData();
-        Object.keys(editForm.data).forEach(key => {
-            if (editForm.data[key] !== null) {
-                if (key === 'image' && editForm.data.image instanceof File) {
-                    formData.append(key, editForm.data.image);
-                } else if (key !== 'image') {
-                    formData.append(key, String(editForm.data[key]));
-                }
-            }
-        });
 
-        editForm.post(route('admin.projects.update', { project: editingProject.id }), {
+        // Append all form fields
+        formData.append('title', editForm.data.title);
+        formData.append('description', editForm.data.description || '');
+        formData.append('category', editForm.data.category);
+        formData.append('status', editForm.data.status);
+        formData.append('is_featured', editForm.data.is_featured ? '1' : '0');
+        formData.append('client_name', editForm.data.client_name || '');
+        formData.append('project_url', editForm.data.project_url || '');
+        formData.append('github_url', editForm.data.github_url || '');
+        formData.append('completion_date', editForm.data.completion_date || '');
+
+        // Handle technologies array
+        if (editForm.data.technologies && editForm.data.technologies.length > 0) {
+            editForm.data.technologies.forEach((tech: string, index: number) => {
+                formData.append(`technologies[${index}]`, tech);
+            });
+        }
+
+        // Handle image file
+        if (editForm.data.image && (editForm.data.image as any) instanceof File) {
+            formData.append('image', editForm.data.image as File);
+        }
+
+        // Use router.post with method spoofing (same pattern as services)
+        router.post(route('admin.projects.update', { project: editingProject.id }), formData, {
+            forceFormData: true,
+            onBefore: () => {
+                // Add the _method field to make Laravel recognize this as a PUT request
+                formData.append('_method', 'PUT');
+                return true;
+            },
             onSuccess: () => {
-                // Update the projects list with the edited data
-                setProjects(projects.map(p => {
-                    if (p.id === editingProject.id) {
-                        return {
-                            ...p,
-                            title: editForm.data.title,
-                            description: editForm.data.description,
-                            category: editForm.data.category,
-                            status: editForm.data.status,
-                            is_featured: editForm.data.is_featured,
-                            client_name: editForm.data.client_name,
-                            project_url: editForm.data.project_url,
-                            completion_date: editForm.data.completion_date,
-                            technologies: editForm.data.technologies,
-                            // Only update image if it's a string or null
-                            image: typeof editForm.data.image === 'string' ? editForm.data.image : p.image
-                        };
-                    }
-                    return p;
-                }));
                 setEditingProject(null);
                 editForm.reset();
                 toast.success('Project updated successfully');
+
+                // Reload the page to get fresh data
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             },
+            onError: (errors) => {
+                console.error('Update error:', errors);
+                toast.error('Failed to update project. Please check the form for errors.');
+            }
         });
     };
 
@@ -288,6 +409,55 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                 toast.success('Projects content updated successfully');
             },
         });
+    };
+
+    // New handlers for project management cards
+    const handleView = (project: Project) => {
+        // Navigate to project detail page or open in new tab
+        window.open(`/projects/${project.id}`, '_blank');
+    };
+
+    const handleToggleStatus = async (project: Project) => {
+        const newStatus = project.status === 'published' ? 'draft' : 'published';
+
+        try {
+            await fetch(route('admin.projects.update', { project: project.id }), {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                },
+                body: JSON.stringify({ status: newStatus }),
+            });
+
+            // Update local state
+            setProjects(projects.map(p =>
+                p.id === project.id ? { ...p, status: newStatus as 'draft' | 'published' } : p
+            ));
+
+            toast.success(`Project ${newStatus === 'published' ? 'published' : 'moved to draft'} successfully`);
+        } catch (error) {
+            toast.error('Failed to update project status');
+        }
+    };
+
+    const handleDuplicate = (project: Project) => {
+        // Pre-fill the add form with project data (excluding id and dates)
+        form.setData({
+            title: `${project.title} (Copy)`,
+            description: project.description,
+            category: project.category,
+            status: 'draft',
+            is_featured: false,
+            client_name: project.client_name || '',
+            project_url: '',
+            github_url: '',
+            completion_date: '',
+            technologies: project.technologies,
+            image: null,
+        });
+        setIsAddDialogOpen(true);
+        toast.info('Project data copied to new project form');
     };
 
     return (
@@ -302,12 +472,18 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                 >
                     <div className="space-y-1">
                         <div className="flex items-center gap-4">
-                            <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Projects</h1>
+                            <h1 className="text-2xl font-semibold tracking-tight text-gray-900">
+                                Projects
+                            </h1>
                             <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ delay: 0.2 }}
-                                className="px-2.5 py-0.5 text-xs font-medium bg-green-50 text-green-700 rounded-full border border-green-100"
+                                className={cn(
+                                    "px-2.5 py-0.5 text-xs font-medium",
+                                    "bg-green-50 text-green-700 rounded-full",
+                                    "border border-green-100"
+                                )}
                             >
                                 {filteredProjects.length} Total
                             </motion.div>
@@ -317,7 +493,10 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                     <div className="flex gap-3">
                         <Button
                             onClick={() => setIsAddDialogOpen(true)}
-                            className="bg-[#20B2AA] hover:bg-[#1a9994] text-white"
+                            className={cn(
+                                "bg-[#20B2AA] hover:bg-[#1a9994]",
+                                "text-white"
+                            )}
                         >
                             <Plus className="w-4 h-4 mr-2" />
                             Add Project
@@ -328,7 +507,12 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                 {/* Tabs for Projects Management and Content Management */}
                 <Tabs defaultValue="projects" className="w-full">
                     <TabsList className="mb-6 border border-gray-200">
-                        <TabsTrigger value="projects" className="border-r border-gray-200">Projects Management</TabsTrigger>
+                        <TabsTrigger
+                            value="projects"
+                            className="border-r border-gray-200"
+                        >
+                            Projects Management
+                        </TabsTrigger>
                         <TabsTrigger value="content" className="bg-red-50">Content Management</TabsTrigger>
                     </TabsList>
 
@@ -396,9 +580,57 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                             </SelectContent>
                         </Select>
                     </div>
+
+                    {/* View Mode Toggle */}
+                    <div className="flex items-center justify-end gap-2 mt-4">
+                        <span className="text-sm text-gray-600">View:</span>
+                        <div className="flex items-center border border-gray-200 rounded-lg p-1">
+                            <Button
+                                variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                                size="sm"
+                                onClick={() => setViewMode('grid')}
+                                className={cn(
+                                    "h-7 px-2",
+                                    viewMode === 'grid'
+                                        ? "bg-[#20B2AA] hover:bg-[#1a9994] text-white"
+                                        : "hover:bg-gray-100"
+                                )}
+                            >
+                                <Grid className="w-3 h-3" />
+                            </Button>
+                            <Button
+                                variant={viewMode === 'table' ? 'default' : 'ghost'}
+                                size="sm"
+                                onClick={() => setViewMode('table')}
+                                className={cn(
+                                    "h-7 px-2",
+                                    viewMode === 'table'
+                                        ? "bg-[#20B2AA] hover:bg-[#1a9994] text-white"
+                                        : "hover:bg-gray-100"
+                                )}
+                            >
+                                <List className="w-3 h-3" />
+                            </Button>
+                        </div>
+                    </div>
                 </motion.div>
 
-                {/* Projects Table */}
+                {/* Conditional Rendering: Grid or Table View */}
+                {viewMode === 'grid' ? (
+                    <ProjectManagementGrid
+                        projects={filteredProjects}
+                        onEdit={handleEdit}
+                        onDelete={confirmDelete}
+                        onView={handleView}
+                        onToggleFeatured={handleToggleFeatured}
+                        onToggleStatus={handleToggleStatus}
+                        onDuplicate={handleDuplicate}
+                        onAddNew={() => setIsAddDialogOpen(true)}
+                        viewMode={viewMode}
+                        onViewModeChange={setViewMode}
+                    />
+                ) : (
+                    /* Projects Table */
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -412,7 +644,12 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                         <table className="w-full">
                             <thead>
                                 <tr className="bg-gray-50/50">
-                                    <th className="text-left py-3.5 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
+                                    <th className={cn(
+                                        "text-left py-3.5 px-4 text-xs font-medium",
+                                        "text-gray-500 uppercase tracking-wider"
+                                    )}>
+                                        Image
+                                    </th>
                                     <th className="text-left py-3.5 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <div className="flex items-center gap-1">
                                             Title
@@ -421,9 +658,24 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                             </svg>
                                         </div>
                                     </th>
-                                    <th className="text-left py-3.5 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                    <th className="text-left py-3.5 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th className="text-left py-3.5 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Featured</th>
+                                    <th className={cn(
+                                        "text-left py-3.5 px-4 text-xs font-medium",
+                                        "text-gray-500 uppercase tracking-wider"
+                                    )}>
+                                        Category
+                                    </th>
+                                    <th className={cn(
+                                        "text-left py-3.5 px-4 text-xs font-medium",
+                                        "text-gray-500 uppercase tracking-wider"
+                                    )}>
+                                        Status
+                                    </th>
+                                    <th className={cn(
+                                        "text-left py-3.5 px-4 text-xs font-medium",
+                                        "text-gray-500 uppercase tracking-wider"
+                                    )}>
+                                        Featured
+                                    </th>
                                     <th className="text-left py-3.5 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         <div className="flex items-center gap-1">
                                             Date
@@ -569,7 +821,8 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                             </tbody>
                         </table>
                     </div>
-                </motion.div>
+                    </motion.div>
+                )}
                     </TabsContent>
 
                     {/* Content Management Tab */}
@@ -944,7 +1197,7 @@ export default function Projects({ projects: initialProjects, content }: Props) 
 
             {/* Add Project Dialog */}
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-                <DialogContent className="sm:max-w-[600px]">
+                <DialogContent className="w-[95vw] max-w-[600px] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <Plus className="w-5 h-5 text-[#20B2AA]" />
@@ -955,9 +1208,9 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="col-span-2 space-y-2">
+                    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
                                     Project Title
                                     <span className="text-red-500">*</span>
@@ -974,7 +1227,7 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                 )}
                             </div>
 
-                            <div className="col-span-2 space-y-2">
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
                                     Description
                                     <span className="text-red-500">*</span>
@@ -995,24 +1248,14 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                     Category
                                     <span className="text-red-500">*</span>
                                 </label>
-                                <Select
+                                <Combobox
                                     value={form.data.category}
-                                    onValueChange={(value) => form.setData('category', value)}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categoryOptions.map((category) => (
-                                            <SelectItem key={category} value={category}>
-                                                {category}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {form.errors.category && (
-                                    <p className="text-sm text-red-500">{form.errors.category}</p>
-                                )}
+                                    onChange={(value) => form.setData('category', value as any)}
+                                    options={getAllCategories()}
+                                    placeholder="Select or type category..."
+                                    allowCustom={true}
+                                    error={form.errors.category}
+                                />
                             </div>
 
                             <div className="space-y-2">
@@ -1042,7 +1285,23 @@ export default function Projects({ projects: initialProjects, content }: Props) 
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
-                                    Project URL
+                                    Client Name
+                                </label>
+                                <Input
+                                    type="text"
+                                    value={form.data.client_name}
+                                    onChange={e => form.setData('client_name', e.target.value)}
+                                    className="w-full"
+                                    placeholder="Enter client name"
+                                />
+                                {form.errors.client_name && (
+                                    <p className="text-sm text-red-500">{form.errors.client_name}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Live Demo URL
                                 </label>
                                 <Input
                                     type="url"
@@ -1053,6 +1312,22 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                 />
                                 {form.errors.project_url && (
                                     <p className="text-sm text-red-500">{form.errors.project_url}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    GitHub Repository URL
+                                </label>
+                                <Input
+                                    type="url"
+                                    value={form.data.github_url}
+                                    onChange={e => form.setData('github_url', e.target.value)}
+                                    className="w-full"
+                                    placeholder="https://github.com/username/repository"
+                                />
+                                {form.errors.github_url && (
+                                    <p className="text-sm text-red-500">{form.errors.github_url}</p>
                                 )}
                             </div>
 
@@ -1071,65 +1346,96 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                 )}
                             </div>
 
-                            <div className="col-span-2 space-y-2">
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Technologies Used
+                                </label>
+                                <TagInput
+                                    value={form.data.technologies}
+                                    onChange={(tags) => form.setData('technologies', tags)}
+                                    placeholder="Type a technology and press Enter (e.g., React, Laravel)"
+                                    error={form.errors.technologies}
+                                    maxTags={15}
+                                />
+                                <p className="text-xs text-gray-500">Add technologies used in this project</p>
+                                {form.errors.technologies && (
+                                    <p className="text-sm text-red-500">{form.errors.technologies}</p>
+                                )}
+                            </div>
+
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id="is_featured"
+                                        checked={form.data.is_featured}
+                                        onCheckedChange={(checked) => form.setData('is_featured', checked as boolean)}
+                                    />
+                                    <label
+                                        htmlFor="is_featured"
+                                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                                    >
+                                        Featured Project
+                                    </label>
+                                </div>
+                                <p className="text-xs text-gray-500">Featured projects will be highlighted on the homepage</p>
+                                {form.errors.is_featured && (
+                                    <p className="text-sm text-red-500">{form.errors.is_featured}</p>
+                                )}
+                            </div>
+
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
                                     Project Image
                                 </label>
-                                <div className="mt-1 flex flex-col sm:flex-row gap-4">
-                                    <div className="flex-shrink-0">
-                                        <div className="relative group">
-                                            <div className={cn(
-                                                "w-32 h-32 rounded-lg overflow-hidden border-2 border-dashed transition-all duration-200",
-                                                form.data.image 
-                                                    ? "border-[#20B2AA] bg-[#E6F7F6]" 
-                                                    : "border-gray-200 bg-gray-50 group-hover:border-gray-300"
-                                            )}>
-                                                {form.data.image && form.data.image instanceof File && (
-                                                    <>
-                                                        <img
-                                                            src={URL.createObjectURL(form.data.image)}
-                                                            alt="Preview"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => form.setData('image', null)}
-                                                                className="text-white hover:text-red-400 transition-colors"
-                                                            >
-                                                                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                </svg>
-                                                            </button>
-                                                        </div>
-                                                    </>
-                                                )}
+                                <div className="mt-1 flex flex-col gap-4">
+                                    {form.data.image && (form.data.image as any) instanceof File && (
+                                        <div className="flex-shrink-0 mx-auto sm:mx-0">
+                                            <div className="relative group">
+                                                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg overflow-hidden border-2 border-[#20B2AA] bg-[#E6F7F6]">
+                                                    <img
+                                                        src={URL.createObjectURL(form.data.image as File)}
+                                                        alt="Preview"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => form.setData('image', null)}
+                                                            className="text-white hover:text-red-400 transition-colors"
+                                                        >
+                                                            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="flex-1 space-y-4">
+                                    )}
+                                    <div className="flex-1 space-y-3 sm:space-y-4">
                                         <div>
                                             <label 
                                                 htmlFor="project-image-upload" 
                                                 className={cn(
-                                                    "flex flex-col items-center justify-center w-full h-24 rounded-lg cursor-pointer transition-all duration-200",
+                                                    "flex flex-col items-center justify-center w-full h-20 sm:h-24 rounded-lg cursor-pointer transition-all duration-200",
                                                     "border-2 border-dashed",
-                                                    form.data.image 
-                                                        ? "border-[#20B2AA] bg-[#E6F7F6] hover:bg-[#d9f2f1]" 
+                                                    form.data.image
+                                                        ? "border-[#20B2AA] bg-[#E6F7F6] hover:bg-[#d9f2f1]"
                                                         : "border-gray-200 bg-gray-50 hover:bg-gray-100"
                                                 )}
                                             >
-                                                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <div className="flex flex-col items-center justify-center py-3 sm:py-4 px-2">
                                                     <svg className={cn(
-                                                        "w-8 h-8 mb-3",
+                                                        "w-6 h-6 sm:w-8 sm:h-8 mb-2 sm:mb-3",
                                                         form.data.image ? "text-[#20B2AA]" : "text-gray-400"
                                                     )} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                                     </svg>
-                                                    <p className="mb-2 text-sm text-gray-500">
-                                                        <span className="font-medium">Click to upload</span> or drag and drop
+                                                    <p className="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-500 text-center">
+                                                        <span className="font-medium">Click to upload</span>
+                                                        <span className="hidden sm:inline"> or drag and drop</span>
                                                     </p>
-                                                    <p className="text-xs text-gray-500">PNG, JPG or WEBP (MAX. 2MB)</p>
+                                                    <p className="text-xs text-gray-500 text-center">PNG, JPG or WEBP (MAX. 2MB)</p>
                                                 </div>
                                                 <input 
                                                     id="project-image-upload"
@@ -1149,7 +1455,7 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                                                 toast.error('Image size should be less than 2MB');
                                                                 return;
                                                             }
-                                                            form.setData('image', file);
+                                                            form.setData('image', file as any);
                                                         }
                                                     }}
                                                     accept="image/png,image/jpeg,image/webp"
@@ -1186,18 +1492,18 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                             </div>
                         </div>
 
-                        <DialogFooter>
+                        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={() => setIsAddDialogOpen(false)}
-                                className="mr-2"
+                                className="w-full sm:w-auto sm:mr-2 order-2 sm:order-1"
                             >
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
-                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white"
+                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white w-full sm:w-auto order-1 sm:order-2"
                                 disabled={form.processing}
                             >
                                 {form.processing ? (
@@ -1219,7 +1525,7 @@ export default function Projects({ projects: initialProjects, content }: Props) 
 
             {/* Edit Project Dialog */}
             <Dialog open={!!editingProject} onOpenChange={(open) => !open && setEditingProject(null)}>
-                <DialogContent className="sm:max-w-[600px]">
+                <DialogContent className="w-[95vw] max-w-[600px] max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
                             <Edit2 className="w-5 h-5 text-[#20B2AA]" />
@@ -1230,9 +1536,9 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                         </DialogDescription>
                     </DialogHeader>
 
-                    <form onSubmit={handleUpdate} className="space-y-6">
-                        <div className="grid grid-cols-2 gap-6">
-                            <div className="col-span-2 space-y-2">
+                    <form onSubmit={handleUpdate} className="space-y-4 sm:space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
                                     Project Title
                                     <span className="text-red-500">*</span>
@@ -1249,7 +1555,7 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                 )}
                             </div>
 
-                            <div className="col-span-2 space-y-2">
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-gray-700 flex items-center gap-1">
                                     Description
                                     <span className="text-red-500">*</span>
@@ -1270,24 +1576,14 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                     Category
                                     <span className="text-red-500">*</span>
                                 </label>
-                                <Select
+                                <Combobox
                                     value={editForm.data.category}
-                                    onValueChange={(value) => editForm.setData('category', value)}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categoryOptions.map((category) => (
-                                            <SelectItem key={category} value={category}>
-                                                {category}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                {editForm.errors.category && (
-                                    <p className="text-sm text-red-500">{editForm.errors.category}</p>
-                                )}
+                                    onChange={(value) => editForm.setData('category', value as any)}
+                                    options={getAllCategories()}
+                                    placeholder="Select or type category..."
+                                    allowCustom={true}
+                                    error={editForm.errors.category}
+                                />
                             </div>
 
                             <div className="space-y-2">
@@ -1317,7 +1613,23 @@ export default function Projects({ projects: initialProjects, content }: Props) 
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
-                                    Project URL
+                                    Client Name
+                                </label>
+                                <Input
+                                    type="text"
+                                    value={editForm.data.client_name}
+                                    onChange={e => editForm.setData('client_name', e.target.value)}
+                                    className="w-full"
+                                    placeholder="Enter client name"
+                                />
+                                {editForm.errors.client_name && (
+                                    <p className="text-sm text-red-500">{editForm.errors.client_name}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Live Demo URL
                                 </label>
                                 <Input
                                     type="url"
@@ -1328,6 +1640,22 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                 />
                                 {editForm.errors.project_url && (
                                     <p className="text-sm text-red-500">{editForm.errors.project_url}</p>
+                                )}
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    GitHub Repository URL
+                                </label>
+                                <Input
+                                    type="url"
+                                    value={editForm.data.github_url}
+                                    onChange={e => editForm.setData('github_url', e.target.value)}
+                                    className="w-full"
+                                    placeholder="https://github.com/username/repository"
+                                />
+                                {editForm.errors.github_url && (
+                                    <p className="text-sm text-red-500">{editForm.errors.github_url}</p>
                                 )}
                             </div>
 
@@ -1346,7 +1674,44 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                 )}
                             </div>
 
-                            <div className="col-span-2 space-y-2">
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Technologies Used
+                                </label>
+                                <TagInput
+                                    value={editForm.data.technologies}
+                                    onChange={(tags) => editForm.setData('technologies', tags)}
+                                    placeholder="Type a technology and press Enter (e.g., React, Laravel)"
+                                    error={editForm.errors.technologies}
+                                    maxTags={15}
+                                />
+                                <p className="text-xs text-gray-500">Add technologies used in this project</p>
+                                {editForm.errors.technologies && (
+                                    <p className="text-sm text-red-500">{editForm.errors.technologies}</p>
+                                )}
+                            </div>
+
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id="edit_is_featured"
+                                        checked={editForm.data.is_featured}
+                                        onCheckedChange={(checked) => editForm.setData('is_featured', checked as boolean)}
+                                    />
+                                    <label
+                                        htmlFor="edit_is_featured"
+                                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                                    >
+                                        Featured Project
+                                    </label>
+                                </div>
+                                <p className="text-xs text-gray-500">Featured projects will be highlighted on the homepage</p>
+                                {editForm.errors.is_featured && (
+                                    <p className="text-sm text-red-500">{editForm.errors.is_featured}</p>
+                                )}
+                            </div>
+
+                            <div className="col-span-1 sm:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-gray-700">
                                     Project Image
                                 </label>
@@ -1364,7 +1729,7 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                                         <img
                                                             src={typeof editForm.data.image === 'string' 
                                                                 ? editForm.data.image 
-                                                                : editForm.data.image instanceof File
+                                                                : (editForm.data.image as any) instanceof File
                                                                     ? URL.createObjectURL(editForm.data.image)
                                                                     : ''}
                                                             alt="Preview"
@@ -1435,7 +1800,7 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                                                                 toast.error('Image size should be less than 2MB');
                                                                 return;
                                                             }
-                                                            editForm.setData('image', file);
+                                                            editForm.setData('image', file as any);
                                                         }
                                                     }}
                                                     accept="image/png,image/jpeg,image/webp"
@@ -1472,18 +1837,18 @@ export default function Projects({ projects: initialProjects, content }: Props) 
                             </div>
                         </div>
 
-                        <DialogFooter>
+                        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0">
                             <Button
                                 type="button"
                                 variant="outline"
                                 onClick={() => setEditingProject(null)}
-                                className="mr-2"
+                                className="w-full sm:w-auto sm:mr-2 order-2 sm:order-1"
                             >
                                 Cancel
                             </Button>
                             <Button
                                 type="submit"
-                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white"
+                                className="bg-[#20B2AA] hover:bg-[#1a9994] text-white w-full sm:w-auto order-1 sm:order-2"
                                 disabled={editForm.processing}
                             >
                                 {editForm.processing ? (

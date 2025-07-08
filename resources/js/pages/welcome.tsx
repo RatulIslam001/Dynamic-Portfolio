@@ -857,6 +857,8 @@ export default function Welcome({
                                     description={project.description}
                                     category={project.category}
                                     image={project.image}
+                                    project_url={project.project_url}
+                                    github_url={project.github_url}
                                 />
                             ))}
                         </motion.div>

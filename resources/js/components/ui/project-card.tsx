@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
+import { ExternalLink, Github } from 'lucide-react';
 
 interface ProjectCardProps {
     id: number;
@@ -8,10 +9,12 @@ interface ProjectCardProps {
     description: string;
     category: string;
     image: string | null;
+    project_url?: string | null;
+    github_url?: string | null;
     className?: string;
 }
 
-export function ProjectCard({ id, title, description, category, image, className }: ProjectCardProps) {
+export function ProjectCard({ id, title, description, category, image, project_url, github_url, className }: ProjectCardProps) {
     return (
         <Link href={`/projects/${id}`}>
             <motion.div
@@ -71,7 +74,7 @@ export function ProjectCard({ id, title, description, category, image, className
                             >
                                 {title}
                             </motion.h3>
-                            <motion.p 
+                            <motion.p
                                 className="text-gray-200 text-sm line-clamp-2 max-w-md opacity-90 group-hover:text-white transition-colors duration-300"
                                 initial={{ y: 20, opacity: 0 }}
                                 whileInView={{ y: 0, opacity: 1 }}
@@ -79,6 +82,47 @@ export function ProjectCard({ id, title, description, category, image, className
                             >
                                 {description}
                             </motion.p>
+
+                            {/* Action Buttons */}
+                            {(project_url || github_url) && (
+                                <motion.div
+                                    className="flex gap-3 mt-4"
+                                    initial={{ y: 20, opacity: 0 }}
+                                    whileInView={{ y: 0, opacity: 1 }}
+                                    transition={{ delay: 0.5 }}
+                                >
+                                    {project_url && (
+                                        <motion.button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                window.open(project_url, '_blank');
+                                            }}
+                                            className="flex items-center gap-2 px-4 py-2 bg-[#20B2AA] hover:bg-[#1a9b94] text-white text-sm rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            <ExternalLink className="w-4 h-4" />
+                                            View Live
+                                        </motion.button>
+                                    )}
+                                    {github_url && (
+                                        <motion.button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                window.open(github_url, '_blank');
+                                            }}
+                                            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white text-sm rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                        >
+                                            <Github className="w-4 h-4" />
+                                            View Code
+                                        </motion.button>
+                                    )}
+                                </motion.div>
+                            )}
                         </div>
                     </div>
                 </div>

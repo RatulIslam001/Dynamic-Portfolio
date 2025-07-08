@@ -18,7 +18,6 @@ type Project = {
   project_url?: string;
   technologies: string[];
   github_url?: string;
-  live_url?: string;
 };
 
 type Props = {
@@ -190,9 +189,9 @@ export default function ProjectDetail({ project, relatedProjects }: Props) {
                       
                       {/* Project Actions */}
                       <div className="flex flex-wrap gap-4">
-                        {project.live_url && (
-                          <a 
-                            href={project.live_url}
+                        {project.project_url && (
+                          <a
+                            href={project.project_url}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center gap-2 bg-[#20B2AA] hover:bg-[#1a9994] text-white px-5 py-3 rounded-lg transition-colors duration-300"

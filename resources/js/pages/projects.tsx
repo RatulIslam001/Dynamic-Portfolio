@@ -21,7 +21,6 @@ type Project = {
   project_url?: string;
   technologies: string[];
   github_url?: string;
-  live_url?: string;
 };
 
 type Content = {
@@ -393,10 +392,10 @@ export default function Projects({ projects, profile, content }: Props) {
                                             
                                         {/* Action Buttons */}
                                         <div className="px-6 pb-6 flex gap-3">
-                                            {project.live_url && (
-                                                <a 
-                                                    href={project.live_url} 
-                                                    target="_blank" 
+                                            {project.project_url && (
+                                                <a
+                                                    href={project.project_url}
+                                                    target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="flex-1 inline-flex items-center justify-center py-3 px-4 bg-[#20B2AA] text-white font-medium rounded-lg hover:bg-[#1a9e98] transition-all duration-300 shadow-sm shadow-[#20B2AA]/20"
                                                 >
